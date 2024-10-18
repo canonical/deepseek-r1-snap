@@ -17,11 +17,6 @@ parts:
     plugin: python
     python-packages:
       - mistral-inference
-    override-build: |
-      python3 -m venv $CRAFT_PART_INSTALL
-      # HARDWARE OPTIMIZATION
-      PARTS_PYTHON_VENV_INTERP_PATH=$CRAFT_PART_INSTALL/bin/python3 $CRAFT_PART_INSTALL/bin/pip install torch --index-url https://download.pytorch.org/whl/cu118
-      craftctl default
   cli:
     source: src/
     plugin: dump
@@ -51,3 +46,11 @@ apps:
     command: cli/init.py
   prompt:
     command: cli/prompt.py
+    plugs:
+      - opengl
+
+
+plugs:
+  graphics-core22:
+    interface: content
+    target: $SNAP/graphics

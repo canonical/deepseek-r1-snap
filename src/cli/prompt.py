@@ -9,6 +9,7 @@ from mistral_common.protocol.instruct.request import ChatCompletionRequest
 import os
 import sys
 import subprocess
+from datetime import datetime
 
 snap_name = os.environ['SNAP_INSTANCE_NAME']
 snap_revision = os.environ['SNAP_REVISION']
@@ -21,10 +22,12 @@ if not active_model:
     print("ERROR: no model selected")
     exit(1)
 
+print("[%s] Loading tokenizer... " % datetime.now())
 tokenizer = MistralTokenizer.from_file(f"/snap/{snap_name}/components/{snap_revision}/{active_model}/tokenizer.model.v3")  # change to extracted tokenizer file
+print("[%s] Tokenizer loaded. " % datetime.now())
+print("[%s] Loading model... " % datetime.now())
 model = Transformer.from_folder(f"/snap/{snap_name}/components/{snap_revision}/{active_model}")  # change to extracted model dir
-
-# prompt = "How expensive would it be to ask a window cleaner to clean all windows in Paris. Make a reasonable guess in US Dollar."
+print("[%s] Model loaded. " % datetime.now())
 
 completion_request = ChatCompletionRequest(messages=[UserMessage(content=sys.argv[1])])
 
