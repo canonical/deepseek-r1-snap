@@ -29,11 +29,15 @@ print("[%s] Loading model... " % datetime.now())
 model = Transformer.from_folder(f"/snap/{snap_name}/components/{snap_revision}/{active_model}")  # change to extracted model dir
 print("[%s] Model loaded. " % datetime.now())
 
-completion_request = ChatCompletionRequest(messages=[UserMessage(content=sys.argv[1])])
 
-tokens = tokenizer.encode_chat_completion(completion_request).tokens
+while True:
+    prompt = input("chat >>")
 
-out_tokens, _ = generate([tokens], model, max_tokens=1024, temperature=0.35, eos_id=tokenizer.instruct_tokenizer.tokenizer.eos_id)
-result = tokenizer.instruct_tokenizer.tokenizer.decode(out_tokens[0])
+    completion_request = ChatCompletionRequest(messages=[UserMessage(content=prompt)])
 
-print(result)
+    tokens = tokenizer.encode_chat_completion(completion_request).tokens
+
+    out_tokens, _ = generate([tokens], model, max_tokens=1024, temperature=0.35, eos_id=tokenizer.instruct_tokenizer.tokenizer.eos_id)
+    result = tokenizer.instruct_tokenizer.tokenizer.decode(out_tokens[0])
+
+    print(result)
