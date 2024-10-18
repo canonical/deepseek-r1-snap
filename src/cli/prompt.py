@@ -7,20 +7,24 @@ from mistral_common.protocol.instruct.messages import UserMessage
 from mistral_common.protocol.instruct.request import ChatCompletionRequest
 
 import os
-import sys
 import subprocess
+import sys
 from datetime import datetime
 
 snap_name = os.environ['SNAP_INSTANCE_NAME']
 snap_revision = os.environ['SNAP_REVISION']
 
-active_model = subprocess.run(["snapctl", "get", "active"], capture_output=True, text=True).stdout.strip()
+model = sys.argv[1]
 
-print(f"active_model: {active_model}")
-
-if not active_model:
-    print("ERROR: no model selected")
+if not model:
+    print(f"Usage: {snap_name}.prompt <model>")
     exit(1)
+
+if not os.path.isdir(f"/snap/{snap_name}/components/{snap_revision}/{model}"):
+    result = subprocess.run(["snapctl", "install", f"+{model}"], capture_output=True, text=True)
+    if result.returncode:
+        print(f"Error installing model: {result.stderr}")
+        exit(1)
 
 print("[%s] Loading tokenizer... " % datetime.now())
 tokenizer = MistralTokenizer.from_file(f"/snap/{snap_name}/components/{snap_revision}/{active_model}/tokenizer.model.v3")  # change to extracted tokenizer file

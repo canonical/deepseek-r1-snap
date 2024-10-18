@@ -42,13 +42,10 @@ components:
     version: "v0.3"
 
 apps:
-  init:
-    command: cli/init.py
   prompt:
     command: cli/prompt.py
     plugs:
       - opengl
-
 
 plugs:
   graphics-core22:
