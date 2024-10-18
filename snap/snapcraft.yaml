@@ -1,0 +1,53 @@
+name: lewontin-mistral-inference # you probably want to 'snapcraft register <name>'
+base: core22 # the base snap is the execution environment for this snap
+version: '0.1' # just for humans, typically '1.2+git' or '1.3.2'
+summary: Single-line elevator pitch for your amazing snap # 79 char long summary
+description: |
+  This is my-snap's description. You have a paragraph or two to tell the
+  most important story about your snap. Keep it under 100 words though,
+  we live in tweetspace and your description wants to look good in the snap
+  store.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+parts:
+  mistral-inference:
+    source: src/
+    plugin: python
+    python-packages:
+      - mistral-inference
+    override-build: |
+      python3 -m venv $CRAFT_PART_INSTALL
+      # HARDWARE OPTIMIZATION
+      PARTS_PYTHON_VENV_INTERP_PATH=$CRAFT_PART_INSTALL/bin/python3 $CRAFT_PART_INSTALL/bin/pip install torch --index-url https://download.pytorch.org/whl/cu118
+      craftctl default
+  cli:
+    source: src/
+    plugin: dump
+
+  7b-instruct:
+    # source: https://models.mistralcdn.com/mistral-7b-v0-3/mistral-7B-Instruct-v0.3.tar
+    # source-checksum: 80b71fcb6416085bcb4efad86dfb4d52
+    source: mistral-7B-Instruct-v0.3.tar
+    plugin: dump
+    organize:
+      consolidated.safetensors: (component/7b-instruct)/consolidated.safetensors
+      params.json: (component/7b-instruct)/params.json
+      tokenizer.model.v3: (component/7b-instruct)/tokenizer.model.v3
+    override-build: |
+      craftctl default
+      chmod 664 $CRAFT_PART_INSTALL/consolidated.safetensors
+
+components:
+  7b-instruct:
+    type: test
+    summary: Mistral 7B
+    description: Mistral 7B
+    version: "v0.3"
+
+apps:
+  init:
+    command: cli/init.py
+  prompt:
+    command: cli/prompt.py
