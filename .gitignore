@@ -1,0 +1,10 @@
+# Snap artifacts
+partitions/
+parts/
+stage/
+prime/
+*.snap
+*.comp
+
+# Weights
+mistral-7B-Instruct-v0.3.tar
