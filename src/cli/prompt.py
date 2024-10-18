@@ -26,11 +26,14 @@ if not os.path.isdir(f"/snap/{snap_name}/components/{snap_revision}/{model}"):
         print(f"Error installing model: {result.stderr}")
         exit(1)
 
+# TODO: select tokenizer by model
+tokenizer = "tokenizer.model.v3"
+
 print("[%s] Loading tokenizer... " % datetime.now())
-tokenizer = MistralTokenizer.from_file(f"/snap/{snap_name}/components/{snap_revision}/{active_model}/tokenizer.model.v3")  # change to extracted tokenizer file
+tokenizer = MistralTokenizer.from_file(f"/snap/{snap_name}/components/{snap_revision}/{model}/{tokenizer}")
 print("[%s] Tokenizer loaded. " % datetime.now())
 print("[%s] Loading model... " % datetime.now())
-model = Transformer.from_folder(f"/snap/{snap_name}/components/{snap_revision}/{active_model}")  # change to extracted model dir
+model = Transformer.from_folder(f"/snap/{snap_name}/components/{snap_revision}/{model}")
 print("[%s] Model loaded. " % datetime.now())
 
 
