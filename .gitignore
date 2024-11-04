@@ -5,6 +5,7 @@ stage/
 prime/
 *.snap
 *.comp
+squashfs-root
 
 # Weights
 mistral-7B-Instruct-v0.3.tar
