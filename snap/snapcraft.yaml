@@ -7,14 +7,17 @@ description: Inference with Mistral 7B Instruct
 grade: devel
 confinement: devmode
 
+compression: lzo
+
 parts:
   mistral-inference:
-    source: src/
+    source: src/engine
     plugin: python
     python-packages:
       - mistral-inference
-  cli:
-    source: src/
+  
+  mistral-cli:
+    source: src/cli
     plugin: dump
 
   model-mistral-7b-instruct:
@@ -39,7 +42,7 @@ components:
 
 apps:
   prompt:
-    command: cli/prompt.py
+    command: prompt.py
     plugs:
       - opengl
 
