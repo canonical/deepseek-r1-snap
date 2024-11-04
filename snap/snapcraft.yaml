@@ -21,21 +21,21 @@ parts:
     source: src/
     plugin: dump
 
-  7b-instruct:
+  model-mistral-7b-instruct:
     # source: https://models.mistralcdn.com/mistral-7b-v0-3/mistral-7B-Instruct-v0.3.tar
     # source-checksum: 80b71fcb6416085bcb4efad86dfb4d52
     source: mistral-7B-Instruct-v0.3.tar
     plugin: dump
     organize:
-      consolidated.safetensors: (component/7b-instruct)/consolidated.safetensors
-      params.json: (component/7b-instruct)/params.json
-      tokenizer.model.v3: (component/7b-instruct)/tokenizer.model.v3
+      consolidated.safetensors: (component/model-mistral-7b-instruct)/consolidated.safetensors
+      params.json: (component/model-mistral-7b-instruct)/params.json
+      tokenizer.model.v3: (component/model-mistral-7b-instruct)/tokenizer.model.v3
     override-build: |
       craftctl default
       chmod 664 $CRAFT_PART_INSTALL/consolidated.safetensors
 
 components:
-  7b-instruct:
+  model-mistral-7b-instruct:
     type: test
     summary: Mistral 7B
     description: Mistral 7B

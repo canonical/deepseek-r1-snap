@@ -14,13 +14,17 @@ from datetime import datetime
 snap_name = os.environ['SNAP_INSTANCE_NAME']
 snap_revision = os.environ['SNAP_REVISION']
 
-model = sys.argv[1]
 
-if not model:
+if len(sys.argv) != 2:
     print(f"Usage: {snap_name}.prompt <model>")
     exit(1)
 
-if not os.path.isdir(f"/snap/{snap_name}/components/{snap_revision}/{model}"):
+model = sys.argv[1]
+model_dir = f"/snap/{snap_name}/components/{snap_revision}/model-{model}"
+print(f"Loading model from {model_dir}")
+
+if not os.path.isdir(model_dir):
+    # Download and install model from Store
     result = subprocess.run(["snapctl", "install", f"+{model}"], capture_output=True, text=True)
     if result.returncode:
         print(f"Error installing model: {result.stderr}")
@@ -30,10 +34,10 @@ if not os.path.isdir(f"/snap/{snap_name}/components/{snap_revision}/{model}"):
 tokenizer = "tokenizer.model.v3"
 
 print("[%s] Loading tokenizer... " % datetime.now())
-tokenizer = MistralTokenizer.from_file(f"/snap/{snap_name}/components/{snap_revision}/{model}/{tokenizer}")
+tokenizer = MistralTokenizer.from_file(f"{model_dir}/{tokenizer}")
 print("[%s] Tokenizer loaded. " % datetime.now())
 print("[%s] Loading model... " % datetime.now())
-model = Transformer.from_folder(f"/snap/{snap_name}/components/{snap_revision}/{model}")
+model = Transformer.from_folder(model_dir)
 print("[%s] Model loaded. " % datetime.now())
 
 
