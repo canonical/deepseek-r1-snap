@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 from mistral_inference.transformer import Transformer
 from mistral_inference.generate import generate
 
@@ -7,28 +8,26 @@ from mistral_common.protocol.instruct.messages import UserMessage
 from mistral_common.protocol.instruct.request import ChatCompletionRequest
 
 import os
-import subprocess
 import sys
 from datetime import datetime
 
-snap_name = os.environ['SNAP_INSTANCE_NAME']
-snap_revision = os.environ['SNAP_REVISION']
 
+# snap_name = os.environ['SNAP_INSTANCE_NAME']
+# snap_revision = os.environ['SNAP_REVISION']
+# model = os.environ['MODEL_NAME']
+# snap_components = f"/snap/{snap_name}/components/{snap_revision}" # this should eventually become available via a SNAP env var
+# model_dir = f"{snap_components}/model-{model}"
 
 if len(sys.argv) != 2:
-    print(f"Usage: {snap_name}.prompt <model>")
+    print(f"Usage: {snap_name}.chat <model-dir>")
     exit(1)
 
-model = sys.argv[1]
-model_dir = f"/snap/{snap_name}/components/{snap_revision}/model-{model}"
-print(f"Loading model from {model_dir}")
+model_dir = sys.argv[1]
 
 if not os.path.isdir(model_dir):
-    # Download and install model from Store
-    result = subprocess.run(["snapctl", "install", f"+{model}"], capture_output=True, text=True)
-    if result.returncode:
-        print(f"Error installing model: {result.stderr}")
-        exit(1)
+    print(f"Model directory not found: {model_dir}")
+    exit(1)
+print(f"Model directory: {model_dir}")
 
 # TODO: select tokenizer by model
 tokenizer = "tokenizer.model.v3"

@@ -7,8 +7,9 @@ wget https://models.mistralcdn.com/mistral-7b-v0-3/mistral-7B-Instruct-v0.3.tar
 
 Build the snap and its component:
 ```shell
-snapcraft -v
+SNAPCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=1 snapcraft -v
 ```
+`SNAPCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS` set is to use `env-injector`. 
 
 Install snap and then the component: 
 ```shell

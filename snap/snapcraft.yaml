@@ -2,51 +2,68 @@ name: mistral-7b-instruct
 base: core24
 version: "v0.3+0.0.1"
 summary: Mistral 7B Instruct
-description: Inference with Mistral 7B Instruct
+description: |
+  This snap installs an optimized environment for inference with the
+  mistral-7b-instruct LLM.
+
 
 grade: devel
 confinement: devmode
 
 compression: lzo
 
+# environment:
+#   SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
+
 parts:
+  local:
+    source: snap/local
+    plugin: dump
+  
   mistral-inference:
-    source: src/engine
+    source: inference/mistral-inference/engine
     plugin: python
     python-packages:
-      - mistral-inference
+      - mistral-inference==1.5.0
+    organize:
+      "*": (component/mistral-inference)
   
   mistral-cli:
-    source: src/cli
-    plugin: dump
-
-  model-mistral-7b-instruct:
-    # source: https://models.mistralcdn.com/mistral-7b-v0-3/mistral-7B-Instruct-v0.3.tar
-    # source-checksum: 80b71fcb6416085bcb4efad86dfb4d52
-    source: mistral-7B-Instruct-v0.3.tar
+    source: inference/mistral-inference/cli
     plugin: dump
     organize:
-      consolidated.safetensors: (component/model-mistral-7b-instruct)/consolidated.safetensors
-      params.json: (component/model-mistral-7b-instruct)/params.json
-      tokenizer.model.v3: (component/model-mistral-7b-instruct)/tokenizer.model.v3
+      "*": (component/mistral-inference)/bin/
+
+  model-mistral-7b-instruct:
+    source: mistral-7B-Instruct-v0.3.test.tar
+    plugin: dump
+    organize:
+      "*": (component/model-mistral-7b-instruct)
     override-build: |
       craftctl default
       chmod 664 $CRAFT_PART_INSTALL/consolidated.safetensors
 
 components:
+  mistral-inference:
+    type: test
+    summary: Mistral Inference
+    description: Inference Engine from Mistral
+    version: "1.5.0" # should match the python package
   model-mistral-7b-instruct:
     type: test
     summary: Mistral 7B Instruct
     description: Model with safetensors, params, and tokenizer
-    version: "v0.3"
+    version: "v0.3" # should be consistent with the package version
 
 apps:
-  prompt:
-    command: prompt.py
+  chat:
+    command: bin/chat.sh
+    extensions:
+      - env-injector
     plugs:
       - opengl
 
 plugs:
-  graphics-core22:
+  graphics:
     interface: content
     target: $SNAP/graphics
