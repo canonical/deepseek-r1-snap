@@ -35,7 +35,7 @@ parts:
       "*": (component/mistral-inference)/bin/
 
   model-mistral-7b-instruct:
-    source: mistral-7B-Instruct-v0.3.test.tar
+    source: mistral-7B-Instruct-v0.3.tar
     plugin: dump
     organize:
       "*": (component/model-mistral-7b-instruct)
@@ -58,8 +58,6 @@ components:
 apps:
   chat:
     command: bin/chat.sh
-    extensions:
-      - env-injector
     plugs:
       - opengl
 

@@ -1,4 +1,4 @@
-# Mistral 7B Instruct
+# Mistral 7B Instruct snap
 
 Download the model (~14GB):
 ```shell
@@ -7,25 +7,25 @@ wget https://models.mistralcdn.com/mistral-7b-v0-3/mistral-7B-Instruct-v0.3.tar
 
 Build the snap and its component:
 ```shell
-SNAPCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=1 snapcraft -v
+snapcraft -v
 ```
-`SNAPCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS` set is to use `env-injector`. 
 
-Install snap and then the component: 
+Install snap and its components: 
 ```shell
-sudo snap install --dangerous --devmode \
-    mistral-7b-instruct_v0.3+0.0.1_amd64.snap
-
-sudo snap install --dangerous \
-    mistral-7b-instruct+model-mistral-7b-instruct_v0.3.comp
+./install.sh
 ```
 
 Install NVIDIA drivers (Ubuntu 24.04):
 ```shell
+sudo apt install nvidia-driver-565
+```
+
+Install CUDA Toolkit:
+```shell
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
 sudo dpkg -i cuda-keyring_1.1-1_all.deb
 sudo apt-get update
-sudo apt-get install cuda-toolkit
+sudo apt-get install -y cuda-toolkit
 sudo reboot
 ```
 Source: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu
@@ -33,12 +33,19 @@ Source: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ub
 Install snapped mesa libraries snap and connect the content interfaces:
 ```shell
 sudo snap install mesa-2404
-sudo snap connect mistral-7b-instruct:graphics-core22 mesa-2404:gpu-2404
+sudo snap connect mistral-7b-instruct:graphics mesa-2404:gpu-2404
 ```
 
 Use:
 ```shell
-mistral-7b-instruct.prompt mistral-7b-instruct
+$ mistral-7b-instruct.chat
+Model directory: /snap/mistral-7b-instruct/components/x1/model-mistral-7b-instruct
+[2024-11-11 16:41:43.555718] Loading tokenizer... 
+[2024-11-11 16:41:43.572029] Tokenizer loaded. 
+[2024-11-11 16:41:43.572044] Loading model... 
+[2024-11-11 16:42:09.274762] Model loaded. 
+chat >> can you code?
+As a text-based AI model, I don't have the ability to directly execute code. However, I can certainly help explain code, write code snippets, and assist with coding questions to the best of my ability! If you have any specific programming questions or need help with a coding problem, feel free to ask!
 ```
 
 ## FAQ
