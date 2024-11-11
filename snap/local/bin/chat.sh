@@ -1,8 +1,5 @@
 #!/bin/bash -u
 
-# This should eventually become directly available via a SNAP env var
-SNAP_COMPONENTS="/snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION" 
-
 # Read stack config
 MODEL="$(snapctl get model)"
 ENGINE="$(snapctl get internal.engine)"
