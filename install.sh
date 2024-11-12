@@ -8,4 +8,4 @@ name=mistral-7b-instruct
 
 sudo snap install --dangerous --devmode $name_*.snap
 sudo snap install --dangerous $name+mistral-inference_*.comp
-sudo snap install --dangerous $name+model-mistral-7b-instruct_*.comp
+sudo snap install --dangerous $name+mistral-7b-instruct-model_*.comp

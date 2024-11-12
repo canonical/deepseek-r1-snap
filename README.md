@@ -39,7 +39,7 @@ sudo snap connect mistral-7b-instruct:graphics mesa-2404:gpu-2404
 Use:
 ```shell
 $ mistral-7b-instruct.chat
-Model directory: /snap/mistral-7b-instruct/components/x1/model-mistral-7b-instruct
+Model directory: /snap/mistral-7b-instruct/components/x1/mistral-7b-instruct-model
 [2024-11-11 16:41:43.555718] Loading tokenizer... 
 [2024-11-11 16:41:43.572029] Tokenizer loaded. 
 [2024-11-11 16:41:43.572044] Loading model... 
