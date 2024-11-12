@@ -11,13 +11,6 @@ import os
 import sys
 from datetime import datetime
 
-
-# snap_name = os.environ['SNAP_INSTANCE_NAME']
-# snap_revision = os.environ['SNAP_REVISION']
-# model = os.environ['MODEL_NAME']
-# snap_components = f"/snap/{snap_name}/components/{snap_revision}" # this should eventually become available via a SNAP env var
-# model_dir = f"{snap_components}/model-{model}"
-
 if len(sys.argv) != 2:
     print(f"Usage: {snap_name}.chat <model-dir>")
     exit(1)
@@ -27,21 +20,21 @@ model_dir = sys.argv[1]
 if not os.path.isdir(model_dir):
     print(f"Model directory not found: {model_dir}")
     exit(1)
-print(f"Model directory: {model_dir}")
+print("[%s] Model directory: %s" % (datetime.now(), model_dir))
 
 # TODO: select tokenizer by model
 tokenizer = "tokenizer.model.v3"
 
 print("[%s] Loading tokenizer... " % datetime.now())
 tokenizer = MistralTokenizer.from_file(f"{model_dir}/{tokenizer}")
-print("[%s] Tokenizer loaded. " % datetime.now())
+
 print("[%s] Loading model... " % datetime.now())
 model = Transformer.from_folder(model_dir)
-print("[%s] Model loaded. " % datetime.now())
 
+print("[%s] Ready!" % datetime.now())
 
 while True:
-    prompt = input("chat >>")
+    prompt = input("\nPrompt > ")
 
     completion_request = ChatCompletionRequest(messages=[UserMessage(content=prompt)])
 
@@ -50,4 +43,4 @@ while True:
     out_tokens, _ = generate([tokens], model, max_tokens=1024, temperature=0.35, eos_id=tokenizer.instruct_tokenizer.tokenizer.eos_id)
     result = tokenizer.instruct_tokenizer.tokenizer.decode(out_tokens[0])
 
-    print(result)
+    print(f"\nResponse: \n{result}")
