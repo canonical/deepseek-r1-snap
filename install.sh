@@ -7,7 +7,7 @@ fi
 name=mistral-7b-instruct
 
 # install the snap
-sudo snap install --dangerous --devmode $name_*.snap
+sudo snap install --dangerous $name_*.snap
 
 # install the snap components
 sudo snap install --dangerous $name+mistral-inference_*.comp

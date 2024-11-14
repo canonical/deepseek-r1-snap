@@ -8,7 +8,7 @@ description: |
 
 
 grade: devel
-confinement: devmode
+confinement: strict
 
 compression: lzo
 
@@ -60,6 +60,7 @@ apps:
     command: bin/chat.sh
     plugs:
       - opengl
+      - network-bind # this is for cuda-uvmfd to listen on a unix socket
 
 plugs:
   graphics:
