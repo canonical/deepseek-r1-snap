@@ -1,0 +1,8 @@
+#!/bin/bash -eux
+
+ENGINE=$SNAP_COMPONENTS/mistral-inference
+MODEL_DIR=$SNAP_COMPONENTS/model
+
+export PYTHONPATH=$ENGINE/lib/python3.12/site-packages
+
+exec $ENGINE/bin/mistral-chat $MODEL_DIR

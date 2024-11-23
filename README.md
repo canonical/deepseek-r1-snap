@@ -19,9 +19,15 @@ sudo snap install mesa-2404
 
 ## Build and install
 
-Download the model (~14GB):
+Download models:
 ```shell
+mkdir -p models
+
+# ~14GB
 wget https://models.mistralcdn.com/mistral-7b-v0-3/mistral-7B-Instruct-v0.3.tar
+
+# ~4GB
+wget https://huggingface.co/lmstudio-community/Mistral-7B-Instruct-v0.3-GGUF/resolve/main/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
 ```
 
 Build the snap and its component:
@@ -29,32 +35,47 @@ Build the snap and its component:
 $ snapcraft -v
 ...
 Creating snap package...                                                                                                     
-Packed: mistral-7b-instruct_v0.3+0.0.1_amd64.snap, mistral-7b-instruct+mistral-inference_1.5.0.comp, mistral-7b-instruct+mistral-7b-instruct-model_v0.3.comp  
+Packed: mistral-7b-instruct_v0.3_amd64.snap, mistral-7b-instruct+mistral-inference_1.5.0.comp, mistral-7b-instruct+llamacpp_b4130.comp, mistral-7b-instruct+model_v0.3.comp, mistral-7b-instruct+model-q4-k-m-gguf_v0.3.comp
+
+$ file *.snap *.comp
+mistral-7b-instruct_v0.3_amd64.snap:              Squashfs filesystem, little endian, version 4.0, lzo compressed, 2586 bytes, 16 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:22:22 2024
+mistral-7b-instruct+llamacpp_b4130.comp:          Squashfs filesystem, little endian, version 4.0, lzo compressed, 13563724 bytes, 12 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:23:15 2024
+mistral-7b-instruct+mistral-inference_1.5.0.comp: Squashfs filesystem, little endian, version 4.0, lzo compressed, 3499739130 bytes, 24835 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:23:14 2024
+mistral-7b-instruct+model-q4-k-m-gguf_v0.3.comp:  Squashfs filesystem, little endian, version 4.0, lzo compressed, 4367010870 bytes, 4 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:26:26 2024
+mistral-7b-instruct+model_v0.3.comp:              Squashfs filesystem, little endian, version 4.0, lzo compressed, 13582299347 bytes, 6 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:25:54 2024
 ```
 
-Install: 
+Install either of: 
 ```console
-$ ./install.sh
-mistral-7b-instruct v0.3+0.0.1 installed
-component mistral-inference 1.5.0 for mistral-7b-instruct v0.3+0.0.1 installed
-component mistral-7b-instruct-model v0.3 for mistral-7b-instruct v0.3+0.0.1 installed
+$ ./install-fallback-gpu.sh
+
+$ ./install-fallback-cpu.sh
 ```
 
 ## Usage
 
+The output varies based on the stack.
+
 ```console
 $ mistral-7b-instruct.chat 
-[2024-11-12 17:13:14.825162] Model directory: /snap/mistral-7b-instruct/components/x7/mistral-7b-instruct-model
-[2024-11-12 17:13:14.825178] Loading tokenizer... 
-[2024-11-12 17:13:14.841729] Loading model... 
-[2024-11-12 17:13:40.727845] Ready!
+> can you code?
 
-Prompt > can you code?
-
-Response: 
 Yes, I can help with coding questions and problems! I can't write or execute code myself, but I can certainly provide guidance, explanations, and suggestions to help you solve coding problems. I'm familiar with a variety of programming languages, including Python, JavaScript, Java, C++, and more. Let me know what you're working on, and I'll do my best to assist you!
 
-Prompt > 
+> 
+```
+
+## Upload
+Note: This doesn't currently work for two reasons:
+- Due to upload limitations. It only works if the overall size is reduced, for example by commenting out the `mistral-inference` and `model` parts in snapcraft.yaml.
+- It fails after the upload with the following message: `Issues while processing snap: Snap is not allowed to use components`
+
+```console
+snapcraft upload mistral-7b-instruct_v0.3_amd64.snap \
+    --component mistral-inference=mistral-7b-instruct+mistral-inference_1.5.0.comp \
+    --component llamacpp=mistral-7b-instruct+llamacpp_b4130.comp \
+    --component model=mistral-7b-instruct+model_v0.3.comp \
+    --component model-q4-k-m-gguf=mistral-7b-instruct+model-q4-k-m-gguf_v0.3.comp
 ```
 
 ## FAQ

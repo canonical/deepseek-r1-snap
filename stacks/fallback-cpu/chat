@@ -1,0 +1,9 @@
+#!/bin/bash -eux
+
+ENGINE=$SNAP_COMPONENTS/llamacpp
+MODEL=$SNAP_COMPONENTS/model-q4-k-m-gguf/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
+
+# For staged shared objects
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ENGINE/usr/lib/$ARCH_TRIPLET
+
+exec $ENGINE/llama-cli --conversation --model $MODEL

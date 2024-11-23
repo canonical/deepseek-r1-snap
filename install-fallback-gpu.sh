@@ -11,7 +11,7 @@ sudo snap install --dangerous $name_*.snap
 
 # install the snap components
 sudo snap install --dangerous $name+mistral-inference_*.comp
-sudo snap install --dangerous $name+mistral-7b-instruct-model_*.comp
+sudo snap install --dangerous $name+model_*.comp
 
 # connect the graphics interface
 sudo snap connect mistral-7b-instruct:graphics mesa-2404:gpu-2404
@@ -21,3 +21,5 @@ if [[ "$1" == "re-connect" ]]; then
     sudo snap disconnect mistral-7b-instruct:graphics
     sudo snap connect mistral-7b-instruct:graphics mesa-2404:gpu-2404
 fi
+
+sudo snap set $name stack=fallback-gpu

@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/bin/bash -e
 
-# TODO: Detect the suitable stack for mistral-7b-instruct
-snapctl set \
-    model=mistral-7b-instruct \
-    internal.engine=mistral-inference \
-    internal.engine-chat="bin/chat.py" \
-    internal.engine-python-packages="lib/python3.12/site-packages"
+# TODO:
+# 1. Detect the suitable stack
+# 2. Install the needed snap components
+# 3. Set the stack's name as a config option
+
+#snapctl set stack=fallback-gpu
+snapctl set stack=fallback-cpu

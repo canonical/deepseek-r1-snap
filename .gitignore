@@ -8,4 +8,4 @@ prime/
 squashfs-root
 
 # Weights
-mistral-7B-Instruct-v0.3.tar
+models/

@@ -1,6 +1,6 @@
 name: mistral-7b-instruct
 base: core24
-version: "v0.3+0.0.1"
+version: &snap-version "v0.3"
 summary: Mistral 7B Instruct
 description: |
   This snap installs an optimized environment for inference with the
@@ -12,57 +12,99 @@ confinement: strict
 
 compression: lzo
 
+plugs:
+  graphics:
+    interface: content
+    target: $SNAP/graphics
+
 environment:
+  # Workaround until it gets added to snapd
   SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
 
 parts:
   local:
     source: snap/local
     plugin: dump
+
+  stacks:
+    source: stacks
+    plugin: dump
+    organize:
+      "*": stacks/
   
   mistral-inference:
-    source: inference/mistral-inference/engine
+    source: snap/local/.static
+    source-type: file
     plugin: python
     python-packages:
       - mistral-inference==1.5.0
     organize:
       "*": (component/mistral-inference)
-  
-  mistral-cli:
-    source: inference/mistral-inference/cli
-    plugin: dump
-    organize:
-      "*": (component/mistral-inference)/bin/
 
-  mistral-7b-instruct-model:
-    source: mistral-7B-Instruct-v0.3.tar
+  llamacpp:
+    source: https://github.com/ggerganov/llama.cpp.git
+    source-tag: &llamacpp-tag b4130 
+    source-depth: 1
+    plugin: make
+    override-build: |
+      make --jobs=$(nproc)
+      cp -v llama-cli $CRAFT_PART_INSTALL/
+    stage-packages:
+      - libgomp1
+    organize:
+      # move everything, including the staged packages
+      "*": (component/llamacpp)
+
+  model:
+    source: models/mistral-7B-Instruct-v0.3.tar
     plugin: dump
     organize:
-      "*": (component/mistral-7b-instruct-model)
+      "*": (component/model)
     override-build: |
       craftctl default
       chmod 664 $CRAFT_PART_INSTALL/consolidated.safetensors
 
+  model-q4-k-m-gguf:
+    source: models/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
+    source-type: file
+    plugin: dump
+    organize:
+      "*": (component/model-q4-k-m-gguf)
+
 components:
+  # engines
   mistral-inference:
     type: test
     summary: Mistral Inference
     description: Inference Engine from Mistral
     version: "1.5.0" # should match the python package
-  mistral-7b-instruct-model:
+  llamacpp:
+    type: test
+    summary: llama.cpp Engine
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+  
+  # models
+  model:
     type: test
     summary: Mistral 7B Instruct
-    description: Model with safetensors, params, and tokenizer
-    version: "v0.3" # should be consistent with the package version
+    description: Original model with safetensors, params, and tokenizer
+    version: *snap-version
+  model-q4-k-m-gguf:
+    type: test
+    summary: Mistral 7B Instruct v0.3 Q4_K_M
+    description: Quantized model in gguf format with Q4_K_M weight encoding
+    version: *snap-version
 
 apps:
   chat:
     command: bin/chat.sh
     plugs:
       - opengl
-      - network-bind # this is for cuda-uvmfd to listen on a unix socket
-
-plugs:
-  graphics:
-    interface: content
-    target: $SNAP/graphics
+      # Needed by mistral-inference,
+      # for cuda-uvmfd to listen on a unix socket
+      - network-bind
+    environment:
+      # Needed for shared libraries used by llama.cpp's cli
+      # TODO: Should this instead be added in an env file to llamacpp component
+      ARCH_TRIPLET: $CRAFT_ARCH_TRIPLET_BUILD_FOR
