@@ -1,6 +1,6 @@
 # Mistral 7B Instruct snap
 
-## Install dependencies (Ubuntu 24.04)
+## Install GPU-related dependencies (Ubuntu 24.04)
 
 Install CUDA drivers:
 ```shell
@@ -19,30 +19,20 @@ sudo snap install mesa-2404
 
 ## Build and install
 
-Download models:
-```shell
-mkdir -p models
-
-# ~14GB
-wget https://models.mistralcdn.com/mistral-7b-v0-3/mistral-7B-Instruct-v0.3.tar
-
-# ~4GB
-wget https://huggingface.co/lmstudio-community/Mistral-7B-Instruct-v0.3-GGUF/resolve/main/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
-```
-
 Build the snap and its component:
 ```console
-$ snapcraft -v
-...
-Creating snap package...                                                                                                     
-Packed: mistral-7b-instruct_v0.3_amd64.snap, mistral-7b-instruct+mistral-inference_1.5.0.comp, mistral-7b-instruct+llamacpp_b4130.comp, mistral-7b-instruct+model_v0.3.comp, mistral-7b-instruct+model-q4-k-m-gguf_v0.3.comp
+snapcraft -v
+```
 
+It creates the following:
+```
 $ file *.snap *.comp
-mistral-7b-instruct_v0.3_amd64.snap:              Squashfs filesystem, little endian, version 4.0, lzo compressed, 2586 bytes, 16 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:22:22 2024
-mistral-7b-instruct+llamacpp_b4130.comp:          Squashfs filesystem, little endian, version 4.0, lzo compressed, 13563724 bytes, 12 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:23:15 2024
-mistral-7b-instruct+mistral-inference_1.5.0.comp: Squashfs filesystem, little endian, version 4.0, lzo compressed, 3499739130 bytes, 24835 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:23:14 2024
-mistral-7b-instruct+model-q4-k-m-gguf_v0.3.comp:  Squashfs filesystem, little endian, version 4.0, lzo compressed, 4367010870 bytes, 4 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:26:26 2024
-mistral-7b-instruct+model_v0.3.comp:              Squashfs filesystem, little endian, version 4.0, lzo compressed, 13582299347 bytes, 6 inodes, blocksize: 131072 bytes, created: Wed Nov 20 17:25:54 2024
+mistral-7b-instruct_v0.3_amd64.snap:              Squashfs filesystem, little endian, version 4.0, lzo compressed, 440770 bytes, 47 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:07:17 2024
+mistral-7b-instruct+llamacpp_b4130.comp:          Squashfs filesystem, little endian, version 4.0, lzo compressed, 13563730 bytes, 12 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:06 2024
+mistral-7b-instruct+mistral-inference_1.5.0.comp: Squashfs filesystem, little endian, version 4.0, lzo compressed, 3499886289 bytes, 24838 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:05 2024
+mistral-7b-instruct+model-f32-gguf_v0.3.comp:     Squashfs filesystem, little endian, version 4.0, lzo compressed, 935 bytes, 5 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:06 2024
+mistral-7b-instruct+model-q4-k-m-gguf_v0.3.comp:  Squashfs filesystem, little endian, version 4.0, lzo compressed, 1242 bytes, 7 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:06 2024
+mistral-7b-instruct+model_v0.3.comp:              Squashfs filesystem, little endian, version 4.0, lzo compressed, 985 bytes, 5 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:06 2024
 ```
 
 Install either of: 
@@ -53,6 +43,11 @@ $ ./install-fallback-cpu.sh
 ```
 
 ## Usage
+
+Set the stack:
+```shell
+sudo snap set mistral-7b-instruct stack=fallback-cpu
+```
 
 The output varies based on the stack.
 

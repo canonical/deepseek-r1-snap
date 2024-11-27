@@ -5,5 +5,4 @@
 # 2. Install the needed snap components
 # 3. Set the stack's name as a config option
 
-#snapctl set stack=fallback-gpu
-snapctl set stack=fallback-cpu
+#snapctl set stack=fallback-cpu

@@ -18,12 +18,19 @@ plugs:
     target: $SNAP/graphics
 
 environment:
-  # Workaround until it gets added to snapd
+  # Workaround until it gets set by snapd
   SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
 
+layout:
+  # Wget's default config file
+  # This is to avoid runtime errors and AppArmor denials
+  /etc/wgetrc:
+    bind-file: $SNAP/etc/wgetrc
+
 parts:
-  local:
-    source: snap/local
+  chat:
+    source: chat.sh
+    source-type: file
     plugin: dump
 
   stacks:
@@ -33,8 +40,7 @@ parts:
       "*": stacks/
   
   mistral-inference:
-    source: snap/local/.static
-    source-type: file
+    source: components/mistral-inference
     plugin: python
     python-packages:
       - mistral-inference==1.5.0
@@ -56,21 +62,32 @@ parts:
       "*": (component/llamacpp)
 
   model:
-    source: models/mistral-7B-Instruct-v0.3.tar
+    source: components/model
     plugin: dump
     organize:
       "*": (component/model)
-    override-build: |
-      craftctl default
-      chmod 664 $CRAFT_PART_INSTALL/consolidated.safetensors
+    # override-build: |
+    #   craftctl default
+    #   chmod 664 $CRAFT_PART_INSTALL/consolidated.safetensors
+    stage-packages:
+      - wget
 
   model-q4-k-m-gguf:
-    source: models/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
-    source-type: file
+    source: components/model-q4-k-m-gguf
     plugin: dump
     organize:
       "*": (component/model-q4-k-m-gguf)
+    stage-packages:
+      - wget
 
+  model-f32-gguf:
+    source: components/model-f32-gguf
+    plugin: dump
+    organize:
+      "*": (component/model-f32-gguf)
+    stage-packages:
+      - wget
+      
 components:
   # engines
   mistral-inference:
@@ -92,18 +109,25 @@ components:
     version: *snap-version
   model-q4-k-m-gguf:
     type: test
-    summary: Mistral 7B Instruct v0.3 Q4_K_M
+    summary: Mistral 7B Instruct Q4_K_M
     description: Quantized model in gguf format with Q4_K_M weight encoding
+    version: *snap-version
+  model-f32-gguf:
+    type: test
+    summary: Mistral 7B Instruct F32
+    description: Model in gguf format with F32 weight encoding
     version: *snap-version
 
 apps:
   chat:
-    command: bin/chat.sh
+    command: chat.sh
     plugs:
       - opengl
       # Needed by mistral-inference,
       # for cuda-uvmfd to listen on a unix socket
       - network-bind
+      # Needed to download resources
+      - network
     environment:
       # Needed for shared libraries used by llama.cpp's cli
       # TODO: Should this instead be added in an env file to llamacpp component

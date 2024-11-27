@@ -1,0 +1,13 @@
+#!/bin/bash -eu
+
+REPO_HTTP_URL=https://huggingface.co/lmstudio-community/Mistral-7B-Instruct-v0.3-GGUF
+COMMIT=29a785419661afc70b5cd91b5023a835b0092281
+FILE=Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
+
+cd $SNAP_USER_COMMON
+
+if [ ! -f "$FILE" ]; then
+    echo "Downloading model..."
+    wget --quiet --show-progress $REPO_HTTP_URL/resolve/$COMMIT/$FILE
+fi
+

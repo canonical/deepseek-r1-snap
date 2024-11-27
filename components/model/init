@@ -1,0 +1,20 @@
+#!/bin/bash -eu
+
+BASE_URL=https://models.mistralcdn.com/mistral-7b-v0-3
+FILE=mistral-7B-Instruct-v0.3.tar
+
+cd $SNAP_USER_COMMON
+
+if [ ! -d "model" ]; then
+
+    if [ ! -f "$FILE" ]; then
+        echo "Downloading model..."
+        wget --quiet --show-progress $BASE_URL/$FILE
+    fi
+
+    echo "Extracting archive..."
+    mkdir model
+    tar --extract --verbose --file $FILE --directory model
+
+    rm $FILE
+fi

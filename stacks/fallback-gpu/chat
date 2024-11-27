@@ -1,8 +1,21 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 
 ENGINE=$SNAP_COMPONENTS/mistral-inference
-MODEL_DIR=$SNAP_COMPONENTS/model
+MODEL=$SNAP_COMPONENTS/model
+
+if [ ! -d $MODEL ]; then
+    echo "Missing component: $MODEL"
+    exit 1
+fi
+
+$MODEL/init
+MODEL_FILES=$SNAP_USER_COMMON/model
+
+if [ ! -d $ENGINE ]; then
+    echo "Missing component: $ENGINE"
+    exit 1
+fi
 
 export PYTHONPATH=$ENGINE/lib/python3.12/site-packages
 
-exec $ENGINE/bin/mistral-chat $MODEL_DIR
+exec $ENGINE/bin/mistral-chat $MODEL_FILES
