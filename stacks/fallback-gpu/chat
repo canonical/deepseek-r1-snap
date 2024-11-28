@@ -18,4 +18,4 @@ fi
 
 export PYTHONPATH=$ENGINE/lib/python3.12/site-packages
 
-exec $ENGINE/bin/mistral-chat $MODEL_FILES
+exec $ENGINE/bin/mistral-chat $MODEL_FILES --instruct --max_tokens=1024
