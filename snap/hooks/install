@@ -1,8 +1,54 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
-# TODO:
-# 1. Detect the suitable stack
-# 2. Install the needed snap components
-# 3. Set the stack's name as a config option
+TAG="snap.$SNAP_INSTANCE_NAME.install"
+log()
+{
+    MESSAGE=$1
+    # Going to journal
+    logger --tag=$TAG "$MESSAGE"
+    # Printed to stderr on non-zero exit
+    echo "$MESSAGE"
+}
 
-#snapctl set stack=fallback-cpu
+install_component()
+{
+    COMPONENT=$1
+
+    handle_err()
+    {
+        log "Snapctl: $OUT"
+        if [[ $OUT =~ "cannot install components for a snap that is unknown to the store" ]]; then
+            log "Skip component installation. Install a local build: sudo snap install $SNAP_INSTANCE_NAME+<path to $COMPONENT>"
+        else
+            # Unexpected error
+            exit 1
+        fi
+    }
+
+    trap 'handle_err $?' ERR
+
+    log "Installing component: $COMPONENT"
+    set +e
+    OUT=$(snapctl install "+$COMPONENT" 2>&1)
+    EXIT_CODE=$?
+    set -e
+    
+    if [ $EXIT_CODE -eq 0 ]; then
+        log "Installed $COMPONENT"
+    fi
+    
+}
+
+HW_INFO="$($SNAP/bin/hardware-info)"
+
+STACK="$(echo "$HW_INFO" | $SNAP/bin/select-stack --stacks=$SNAP/stacks)"
+
+STACK_NAME=$(echo "$STACK" | jq .name --raw-output)
+log "Selected stack: $STACK_NAME"
+
+snapctl set stack="$STACK_NAME"
+
+# Install stack components
+echo $STACK | jq .components[] --compact-output --raw-output | while read -r COMPONENT; do
+    install_component $COMPONENT
+done

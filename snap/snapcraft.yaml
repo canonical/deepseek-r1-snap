@@ -27,6 +27,13 @@ layout:
   /etc/wgetrc:
     bind-file: $SNAP/etc/wgetrc
 
+hooks:
+  install:
+    plugs:
+      # For hardware-info
+      - hardware-observe
+      - opengl
+
 parts:
   chat:
     source: chat.sh
@@ -38,6 +45,27 @@ parts:
     plugin: dump
     organize:
       "*": stacks/
+
+  hardware-info:
+    source: hardware-info
+    plugin: go
+    build-snaps:
+      - go/latest/stable
+    stage-packages:
+      - pciutils
+      - nvidia-utils
+
+  stack-selector:
+    source: stack-selector
+    plugin: go
+    build-snaps:
+      - go/latest/stable
+
+  common-runtime-dependencies:
+    plugin: nil
+    stage-packages:
+      - wget # model init
+      - jq # install hook
   
   mistral-inference:
     source: components/mistral-inference
@@ -66,24 +94,18 @@ parts:
     plugin: dump
     organize:
       "*": (component/model)
-    stage-packages:
-      - wget
 
   model-q4-k-m-gguf:
     source: components/model-q4-k-m-gguf
     plugin: dump
     organize:
       "*": (component/model-q4-k-m-gguf)
-    stage-packages:
-      - wget
 
   model-f32-gguf:
     source: components/model-f32-gguf
     plugin: dump
     organize:
       "*": (component/model-f32-gguf)
-    stage-packages:
-      - wget
       
 components:
   # engines

@@ -1,0 +1,6 @@
+[submodule "hardware-info"]
+	path = hardware-info
+	url = https://github.com/canonical/hardware-info.git
+[submodule "stack-selector"]
+	path = stack-selector
+	url = https://github.com/jpm-canonical/stack-selector.git

@@ -17,7 +17,15 @@ Install mesa libraries snap:
 sudo snap install mesa-2404
 ```
 
-## Build and install
+## Install
+```console
+sudo snap install mistral-7b-instruct --channel=<desired channel> --devmode
+```
+
+It should be installed in developer mode because it needs [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) during the installation.
+This interface is currently not automatically connected.
+
+## Build and install from source
 
 Build the snap and its component:
 ```console

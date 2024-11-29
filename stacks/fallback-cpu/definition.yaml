@@ -1,3 +1,4 @@
+name: fallback-cpu
 description: Fallback stack for CPU using llama.cpp engine
 maintainer: Canonical Ltd
 devices:
