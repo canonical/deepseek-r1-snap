@@ -10,7 +10,7 @@ name=mistral-7b-instruct
 sudo snap install --dangerous --devmode $name_*.snap
 
 # install the snap components
-sudo snap install --dangerous $name+llamacpp*.comp
-sudo snap install --dangerous $name+model*gguf*.comp
+sudo snap install --dangerous $name+llamacpp_*.comp
+sudo snap install --dangerous $name+model-q4-k-m-gguf_*.comp
 
-sudo snap set $name stack=fallback-cpu
+sudo snap set $name stack=canonical-1

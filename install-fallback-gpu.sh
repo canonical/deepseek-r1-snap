@@ -22,4 +22,4 @@ if [[ "$1" == "re-connect" ]]; then
     sudo snap connect mistral-7b-instruct:graphics mesa-2404:gpu-2404
 fi
 
-sudo snap set $name stack=fallback-gpu
+sudo snap set $name stack=mistral-gpu

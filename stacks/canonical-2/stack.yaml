@@ -1,4 +1,4 @@
-name: cpu-f32
+name: canonical-2
 description: Fallback stack for CPU using llama.cpp engine
 maintainer: Canonical Ltd
 devices:

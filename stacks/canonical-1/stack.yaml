@@ -1,4 +1,4 @@
-name: fallback-cpu
+name: canonical-1
 description: Fallback stack for CPU using llama.cpp engine
 maintainer: Canonical Ltd
 devices:

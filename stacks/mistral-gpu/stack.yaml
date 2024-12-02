@@ -1,4 +1,4 @@
-name: fallback-gpu
+name: mistral-gpu
 description: GPU fallback using Mistral Inference engine
 maintainer: Canonical Ltd
 devices:
