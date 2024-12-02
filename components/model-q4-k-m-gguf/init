@@ -7,7 +7,12 @@ FILE=Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
 cd $SNAP_USER_COMMON
 
 if [ ! -f "$FILE" ]; then
+    echo "Missing model: $FILE"
+    
+    # The download can be interrupted and resumed later on
+    # Use a temporary name up until the model is fully downloaded
+    TMP_FILE="$FILE.tmp"
     echo "Downloading model..."
-    wget --quiet --show-progress $REPO_HTTP_URL/resolve/$COMMIT/$FILE
+    wget --quiet --show-progress --continue "$REPO_HTTP_URL/resolve/$COMMIT/$FILE" --output-document="$TMP_FILE"
+    mv "$TMP_FILE" "$FILE"
 fi
-
