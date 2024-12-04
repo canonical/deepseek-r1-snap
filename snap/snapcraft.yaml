@@ -75,19 +75,25 @@ parts:
     organize:
       "*": (component/mistral-inference)
 
-  llamacpp:
+  llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
     source-tag: &llamacpp-tag b4130 
     source-depth: 1
-    plugin: make
-    override-build: |
-      make --jobs=$(nproc)
-      cp -v llama-cli $CRAFT_PART_INSTALL/
+    plugin: cmake
     stage-packages:
       - libgomp1
     organize:
       # move everything, including the staged packages
       "*": (component/llamacpp)
+
+  llamacpp-avx512:
+    <<: *llamacpp-part
+    cmake-parameters:
+      - -DGGML_AVX=ON
+      - -DGGML_AVX2=ON
+      - -DGGML_AVX512=ON
+    organize:
+      "*": (component/llamacpp-avx512)
 
   model:
     source: components/model
@@ -117,6 +123,11 @@ components:
   llamacpp:
     type: test
     summary: llama.cpp Engine
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+  llamacpp-avx512:
+    type: test
+    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
     description: LLM inference in C/C++
     version: *llamacpp-tag
   

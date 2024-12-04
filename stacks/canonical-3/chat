@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-ENGINE=$SNAP_COMPONENTS/llamacpp
+ENGINE=$SNAP_COMPONENTS/llamacpp-avx512
 MODEL=$SNAP_COMPONENTS/model-q4-k-m-gguf
 
 if [ ! -d $MODEL ]; then

@@ -1,12 +1,18 @@
-name: canonical-1
+name: canonical-3
 description: Fallback stack for CPU using llama.cpp engine
 maintainer: Canonical Ltd
 devices:
   any:
     - type: cpu
       architectures: [amd64]
+      flags:
+        - avx
+        - avx2
+        - avx512f
+        - avx512dq 
+        - avx512bw
 memory: 8G
 disk_space: 5G
 components:
-  - llamacpp
+  - llamacpp-avx512
   - model-q4-k-m-gguf
