@@ -1,10 +1,10 @@
 #!/bin/bash -u
 
-STACK="$(snapctl get stack)"
+stack="$(snapctl get stack)"
 
-if [ -z "$STACK" ]; then
-    echo "Stack not set!"
+if [ -z "$stack" ]; then
+    echo "stack not set!"
     exit 1
 fi
 
-exec "$SNAP/stacks/$STACK/chat"
+exec "$SNAP/stacks/$stack/chat"

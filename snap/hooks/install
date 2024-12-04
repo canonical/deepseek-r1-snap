@@ -1,24 +1,23 @@
 #!/bin/bash -eu
 
-TAG="snap.$SNAP_INSTANCE_NAME.install"
+tag="snap.$SNAP_INSTANCE_NAME.install"
 log()
 {
-    MESSAGE=$1
     # Going to journal
-    logger --tag=$TAG "$MESSAGE"
+    logger --tag=$tag "$1"
     # Printed to stderr on non-zero exit
-    echo "$MESSAGE"
+    echo "$1"
 }
 
 install_component()
 {
-    COMPONENT=$1
+    component=$1
 
     handle_err()
     {
-        log "Snapctl: $OUT"
-        if [[ $OUT =~ "cannot install components for a snap that is unknown to the store" ]]; then
-            log "Skip component installation. Install a local build: sudo snap install $SNAP_INSTANCE_NAME+<path to $COMPONENT>"
+        log "Snapctl: $output"
+        if [[ $output =~ "cannot install components for a snap that is unknown to the store" ]]; then
+            log "Skip component installation. Install a local build: sudo snap install $SNAP_INSTANCE_NAME+<path to $component>"
         else
             # Unexpected error
             exit 1
@@ -27,28 +26,28 @@ install_component()
 
     trap 'handle_err $?' ERR
 
-    log "Installing component: $COMPONENT"
+    log "Installing component: $component"
     set +e
-    OUT=$(snapctl install "+$COMPONENT" 2>&1)
-    EXIT_CODE=$?
+    output=$(snapctl install "+$component" 2>&1)
+    exit_code=$?
     set -e
     
-    if [ $EXIT_CODE -eq 0 ]; then
-        log "Installed $COMPONENT"
+    if [ $exit_code -eq 0 ]; then
+        log "Installed $component"
     fi
     
 }
 
-HW_INFO="$($SNAP/bin/hardware-info)"
+hw_info="$($SNAP/bin/hardware-info)"
 
-STACK="$(echo "$HW_INFO" | $SNAP/bin/select-stack --stacks=$SNAP/stacks)"
+stack="$(echo "$hw_info" | $SNAP/bin/select-stack --stacks=$SNAP/stacks)"
 
-STACK_NAME=$(echo "$STACK" | jq .name --raw-output)
-log "Selected stack: $STACK_NAME"
+stack_name=$(echo "$stack" | jq .name --raw-output)
+log "Selected stack: $stack_name"
 
-snapctl set stack="$STACK_NAME"
+snapctl set stack="$stack_name"
 
 # Install stack components
-echo $STACK | jq .components[] --compact-output --raw-output | while read -r COMPONENT; do
-    install_component $COMPONENT
+echo $stack | jq .components[] --compact-output --raw-output | while read -r component; do
+    install_component $component
 done

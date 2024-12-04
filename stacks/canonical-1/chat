@@ -1,22 +1,22 @@
 #!/bin/bash -eu
 
-ENGINE=$SNAP_COMPONENTS/llamacpp
-MODEL=$SNAP_COMPONENTS/model-q4-k-m-gguf
+engine=$SNAP_COMPONENTS/llamacpp
+model=$SNAP_COMPONENTS/model-q4-k-m-gguf
 
-if [ ! -d $MODEL ]; then
-    echo "Missing component: $MODEL"
+if [ ! -d $model ]; then
+    echo "Missing component: $model"
     exit 1
 fi
 
-$MODEL/init
-MODEL_FILE=$SNAP_USER_COMMON/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
+$model/init
+model_file=$SNAP_USER_COMMON/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
 
-if [ ! -d $ENGINE ]; then
-    echo "Missing component: $ENGINE"
+if [ ! -d $engine ]; then
+    echo "Missing component: $engine"
     exit 1
 fi
 
 # For staged shared objects
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ENGINE/usr/lib/$ARCH_TRIPLET:$ENGINE/usr/local/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET:$engine/usr/local/lib
 
-exec $ENGINE/usr/local/bin/llama-cli --conversation --model $MODEL_FILE
+exec $engine/usr/local/bin/llama-cli --conversation --model $model_file

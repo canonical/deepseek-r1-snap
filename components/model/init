@@ -1,21 +1,21 @@
 #!/bin/bash -eu
 
-BASE_URL=https://models.mistralcdn.com/mistral-7b-v0-3
-FILE=mistral-7B-Instruct-v0.3.tar
+base_url=https://models.mistralcdn.com/mistral-7b-v0-3
+file=mistral-7B-Instruct-v0.3.tar
 
 cd $SNAP_USER_COMMON
 
 if [ ! -d "model" ]; then
 
-    if [ ! -f "$FILE" ]; then
-        echo "Missing model: $FILE"
+    if [ ! -f "$file" ]; then
+        echo "Missing model: $file"
         
         # The download can be interrupted and resumed later on
         # Use a temporary name up until the model is fully downloaded
-        TMP_FILE="$FILE.tmp"
+        tmp_file="$file.tmp"
         echo "Downloading model..."
-        wget --quiet --show-progress --continue $BASE_URL/$FILE --output-document="$TMP_FILE"
-        mv "$TMP_FILE" "$FILE"
+        wget --quiet --show-progress --continue $base_url/$file --output-document="$tmp_file"
+        mv "$tmp_file" "$file"
     fi
 
     # Extracting can be interrupted and started over
@@ -23,8 +23,8 @@ if [ ! -d "model" ]; then
     echo "Extracting archive..."
     rm --force --recursive model-tmp
     mkdir model-tmp
-    tar --extract --verbose --file $FILE --directory model-tmp
+    tar --extract --verbose --file $file --directory model-tmp
     mv model-tmp model
 
-    rm $FILE
+    rm $file
 fi
