@@ -43,11 +43,9 @@ mistral-7b-instruct+model-q4-k-m-gguf_v0.3.comp:  Squashfs filesystem, little en
 mistral-7b-instruct+model_v0.3.comp:              Squashfs filesystem, little endian, version 4.0, lzo compressed, 985 bytes, 5 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:06 2024
 ```
 
-Install either of: 
+Install: 
 ```console
-$ ./install-fallback-gpu.sh
-
-$ ./install-fallback-cpu.sh
+$ ./install-local-build.sh <stack> [op]
 ```
 
 ## Usage
