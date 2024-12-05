@@ -1,5 +1,5 @@
-name: canonical-2
-description: Fallback stack for CPU using llama.cpp engine
+name: example-memory
+description: Example stack for legacy CPUs, offering full accuracy but very high memory use
 maintainer: Canonical Ltd
 devices:
   any:

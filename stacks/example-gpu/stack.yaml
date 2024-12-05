@@ -1,5 +1,5 @@
-name: mistral-gpu
-description: GPU fallback using Mistral Inference engine
+name: example-gpu
+description: Example stack for NVIDIA GPU use, offering full accuracy
 maintainer: Canonical Ltd
 devices:
   any:

@@ -1,5 +1,5 @@
-name: canonical-3
-description: Fallback stack for CPU using llama.cpp engine
+name: example-cpu-avx512
+description: Example stack for modern CPUs, offering good accuracy with low footprints
 maintainer: Canonical Ltd
 devices:
   any:
