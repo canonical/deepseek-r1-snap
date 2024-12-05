@@ -18,4 +18,4 @@ fi
 # For staged shared objects
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET:$engine/usr/local/lib
 
-exec $engine/usr/local/bin/llama-cli --conversation --model $MODEL_FILE
+exec $engine/usr/local/bin/llama-cli --conversation --no-mmap --model $MODEL_FILE

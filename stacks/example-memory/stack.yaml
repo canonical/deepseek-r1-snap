@@ -7,7 +7,7 @@ devices:
       vendor-id: AuthenticAMD
     - type: cpu
       vendor-id: GenuineIntel
-memory: 64G
+memory: 35G
 disk-space: 29G
 components:
   - llamacpp
