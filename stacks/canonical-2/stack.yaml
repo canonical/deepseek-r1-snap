@@ -4,11 +4,11 @@ maintainer: Canonical Ltd
 devices:
   any:
     - type: cpu
-      vendor_id: AuthenticAMD
+      vendor-id: AuthenticAMD
     - type: cpu
-      vendor_id: GenuineIntel
+      vendor-id: GenuineIntel
 memory: 64G
-disk_space: 29G
+disk-space: 29G
 components:
   - llamacpp
   - model-f32-gguf

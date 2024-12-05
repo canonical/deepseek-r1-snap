@@ -12,7 +12,7 @@ devices:
         - avx512dq 
         - avx512bw
 memory: 8G
-disk_space: 5G
+disk-space: 5G
 components:
   - llamacpp-avx512
   - model-q4-k-m-gguf

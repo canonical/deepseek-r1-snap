@@ -9,3 +9,4 @@ squashfs-root
 
 # Weights
 models/
+components/model*/*.gguf

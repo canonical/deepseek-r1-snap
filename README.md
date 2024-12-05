@@ -27,20 +27,16 @@ This interface is currently not automatically connected.
 
 ## Build and install from source
 
-Build the snap and its component:
-```console
-snapcraft -v
+To embed the `Mistral-7B-Instruct-v0.3-Q4_K_M.gguf` model inside its snap component, place it into the corresponding component directory before building the snap.
+To download it there:
 ```
+wget -P components/model-q4-k-m-gguf https://huggingface.co/lmstudio-community/Mistral-7B-Instruct-v0.3-GGUF/resolve/main/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf 
+```
+If not embedded, the model gets downloaded on first use.
 
-It creates the following:
-```
-$ file *.snap *.comp
-mistral-7b-instruct_v0.3_amd64.snap:              Squashfs filesystem, little endian, version 4.0, lzo compressed, 440770 bytes, 47 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:07:17 2024
-mistral-7b-instruct+llamacpp_b4130.comp:          Squashfs filesystem, little endian, version 4.0, lzo compressed, 13563730 bytes, 12 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:06 2024
-mistral-7b-instruct+mistral-inference_1.5.0.comp: Squashfs filesystem, little endian, version 4.0, lzo compressed, 3499886289 bytes, 24838 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:05 2024
-mistral-7b-instruct+model-f32-gguf_v0.3.comp:     Squashfs filesystem, little endian, version 4.0, lzo compressed, 935 bytes, 5 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:06 2024
-mistral-7b-instruct+model-q4-k-m-gguf_v0.3.comp:  Squashfs filesystem, little endian, version 4.0, lzo compressed, 1242 bytes, 7 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:06 2024
-mistral-7b-instruct+model_v0.3.comp:              Squashfs filesystem, little endian, version 4.0, lzo compressed, 985 bytes, 5 inodes, blocksize: 131072 bytes, created: Mon Nov 25 12:08:06 2024
+Build the snap and its component:
+```shell
+snapcraft -v
 ```
 
 Install: 

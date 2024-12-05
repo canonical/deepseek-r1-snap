@@ -1,18 +1,26 @@
 #!/bin/bash -eu
 
+log_prefix="init:"
+log()
+{
+    echo "$log_prefix $1"
+}
+
 repo_http_url=https://huggingface.co/lmstudio-community/Mistral-7B-Instruct-v0.3-GGUF
 commit=29a785419661afc70b5cd91b5023a835b0092281
 file=Mistral-7B-Instruct-v0.3-f32.gguf
 
 cd $SNAP_USER_COMMON
 
-if [ ! -f "$file" ]; then
-    echo "Missing model: $file"
+if [ ! -f $file ]; then
+    log "Missing model: $file"
     
     # The download can be interrupted and resumed later on
     # Use a temporary name up until the model is fully downloaded
-    tmp_file="$file.tmp"
-    echo "Downloading model..."
-    wget --quiet --show-progress --continue "$repo_http_url/resolve/$commit/$file" --output-document="$tmp_file"
-    mv "$tmp_file" "$file"
+    tmp_file=$file.tmp
+    log "Downloading model..."
+    wget --quiet --show-progress --continue $repo_http_url/resolve/$commit/$file --output-document=$tmp_file
+    mv $tmp_file $file
 fi
+
+export MODEL_FILE=$SNAP_USER_COMMON/$file

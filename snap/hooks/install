@@ -26,28 +26,25 @@ install_component()
 
     trap 'handle_err $?' ERR
 
-    log "Installing component: $component"
     set +e
+    # This only sends an async request.
+    # The installation happens at a later stage during the installation.
     output=$(snapctl install "+$component" 2>&1)
     exit_code=$?
     set -e
-    
-    if [ $exit_code -eq 0 ]; then
-        log "Installed $component"
-    fi
-    
 }
 
 hw_info="$($SNAP/bin/hardware-info)"
 
 stack="$(echo "$hw_info" | $SNAP/bin/select-stack --stacks=$SNAP/stacks)"
+log "Selected stack: $stack"
 
 stack_name=$(echo "$stack" | jq .name --raw-output)
-log "Selected stack: $stack_name"
 
 snapctl set stack="$stack_name"
 
 # Install stack components
 echo $stack | jq .components[] --compact-output --raw-output | while read -r component; do
+    log "Request installing component: $component"
     install_component $component
 done

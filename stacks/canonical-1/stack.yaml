@@ -6,7 +6,7 @@ devices:
     - type: cpu
       architectures: [amd64]
 memory: 8G
-disk_space: 5G
+disk-space: 5G
 components:
   - llamacpp
   - model-q4-k-m-gguf
