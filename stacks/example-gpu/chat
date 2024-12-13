@@ -1,20 +1,20 @@
 #!/bin/bash -eu
 
-engine=$SNAP_COMPONENTS/mistral-inference
-model=$SNAP_COMPONENTS/model
+engine="$SNAP_COMPONENTS/$(snapctl get engine)"
+model="$SNAP_COMPONENTS/$(snapctl get model)"
 
-if [ ! -d $model ]; then
+if [ ! -d "$model" ]; then
     echo "Missing component: $model"
     exit 1
 fi
 
-source $model/init
+source "$model/init" # exports MODEL_DIR
 
-if [ ! -d $engine ]; then
+if [ ! -d "$engine" ]; then
     echo "Missing component: $engine"
     exit 1
 fi
 
-export PYTHONPATH=$engine/lib/python3.12/site-packages
+export PYTHONPATH="$engine/lib/python3.12/site-packages"
 
-exec $engine/bin/mistral-chat $MODEL_DIR --instruct --max_tokens=1024
+exec "$engine/bin/mistral-chat" "$MODEL_DIR" --instruct --max_tokens=1024

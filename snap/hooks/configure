@@ -3,3 +3,23 @@
 # TODO:
 # - apply user config
 # - remove/install components
+
+stack="$(snapctl get stack)"
+if [ -z "$stack" ]; then
+    echo "stack not set!"
+    exit 1
+fi
+
+# TODO: reject if model and engine differ from what is set by the stack
+
+model="$(snapctl get model)"
+if [ -z "$model" ]; then
+    echo "model not set!"
+    exit 1
+fi
+
+engine="$(snapctl get engine)"
+if [ -z "$engine" ]; then
+    echo "engine not set!"
+    exit 1
+fi

@@ -34,17 +34,27 @@ install_component()
     set -e
 }
 
+# Redirect standard errors to both stderr and syslog
+exec 2> >(logger --stderr --tag=$tag)
+
 hw_info="$($SNAP/bin/hardware-info)"
 
 stack="$(echo "$hw_info" | $SNAP/bin/select-stack --stacks=$SNAP/stacks)"
 log "Selected stack: $stack"
 
-stack_name=$(echo "$stack" | jq .name --raw-output)
+#
+# Configure and install the stack
+#
 
-snapctl set stack="$stack_name"
+snapctl set stack="$(echo "$stack" | jq .name --raw-output)"
 
-# Install stack components
 echo $stack | jq .components[] --compact-output --raw-output | while read -r component; do
+    if [[ $component == model* ]]; then
+        snapctl set model=$component
+    else
+        snapctl set engine=$component
+    fi
+
     log "Request installing component: $component"
     install_component $component
 done

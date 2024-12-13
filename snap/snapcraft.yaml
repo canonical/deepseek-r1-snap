@@ -29,12 +29,17 @@ layout:
 
 hooks:
   install:
-    plugs:
+    plugs: &install-plugs
       # For hardware-info
       - hardware-observe
       - opengl
 
 parts:
+  init:
+    source: init.sh
+    source-type: file
+    plugin: dump
+  
   chat:
     source: chat.sh
     source-type: file
@@ -95,11 +100,11 @@ parts:
     organize:
       "*": (component/llamacpp-avx512)
 
-  model:
-    source: components/model
+  model-safetensors:
+    source: components/model-safetensors
     plugin: dump
     organize:
-      "*": (component/model)
+      "*": (component/model-safetensors)
 
   model-q4-k-m-gguf:
     source: components/model-q4-k-m-gguf
@@ -132,7 +137,7 @@ components:
     version: *llamacpp-tag
   
   # models
-  model:
+  model-safetensors:
     type: test
     summary: Mistral 7B Instruct
     description: Original model with safetensors, params, and tokenizer
@@ -149,6 +154,18 @@ components:
     version: *snap-version
 
 apps:
+  # For testing purposes. Use sudo <snap>.re-install
+  # Connecting mistral-7b-instruct:hardware-observe is required even if installed in dev mode!
+  re-install:
+    command: meta/hooks/install
+    plugs: *install-plugs
+
+  init:
+    command: init.sh
+    plugs:
+      # Needed to download resources
+      - network
+
   chat:
     command: chat.sh
     plugs:

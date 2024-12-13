@@ -11,7 +11,7 @@ file=mistral-7B-Instruct-v0.3.tar
 
 cd $SNAP_USER_COMMON
 
-model_dir=model
+model_dir=model-safetensors
 
 if [ ! -d $model_dir ]; then
 

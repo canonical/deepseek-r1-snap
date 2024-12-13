@@ -4,4 +4,3 @@
 [submodule "stack-selector"]
 	path = stack-selector
 	url = https://github.com/jpm-canonical/stack-selector.git
-	branch = refactor-scoring
