@@ -51,20 +51,14 @@ parts:
     organize:
       "*": stacks/
 
-  hardware-info:
-    source: hardware-info
+  ml-snap-utils:
+    source: ml-snap-utils
     plugin: go
     build-snaps:
       - go/latest/stable
     stage-packages:
       - pciutils
       - nvidia-utils
-
-  stack-selector:
-    source: stack-selector
-    plugin: go
-    build-snaps:
-      - go/latest/stable
 
   common-runtime-dependencies:
     plugin: nil
