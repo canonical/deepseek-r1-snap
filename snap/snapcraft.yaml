@@ -65,6 +65,8 @@ parts:
     stage-packages:
       - wget # model init
       - jq # install hook
+    stage-snaps:
+      - yq # install hook
   
   mistral-inference:
     source: components/mistral-inference

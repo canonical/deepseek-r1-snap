@@ -1,25 +1,76 @@
 #!/bin/bash
 
-# TODO:
-# - apply user config
-# - remove/install components
 
-stack="$(snapctl get stack)"
-if [ -z "$stack" ]; then
-    echo "stack not set!"
+
+tag="snap.$SNAP_INSTANCE_NAME.configure"
+log()
+{
+    # Going to journal
+    logger --tag=$tag "$1"
+    # Printed to stderr on non-zero exit
+    echo "$1"
+}
+
+install_component()
+{
+    component=$1
+
+    handle_err()
+    {
+        log "Snapctl: $output"
+        if [[ $output =~ "cannot install components for a snap that is unknown to the store" ]]; then
+            log "Skip component installation. Install a local build: sudo snap install $SNAP_INSTANCE_NAME+<path to $component>"
+        elif [[ $output =~ "already installed" ]]; then
+            log "Skip component installation: already installed: $component"
+        else
+            # Unexpected error
+            exit 1
+        fi
+    }
+
+    trap 'handle_err $?' ERR
+
+    set +e
+    # This only sends an async request.
+    # The installation happens at a later stage during the installation.
+    output=$(snapctl install "+$component" 2>&1)
+    exit_code=$?
+    set -e
+}
+
+#
+# Validate inputs
+#
+
+# Check if stack is set
+stack_name="$(snapctl get stack)"
+if [ -z "$stack_name" ]; then
+    echo "Stack not set!"
     exit 1
 fi
 
-# TODO: reject if model and engine differ from what is set by the stack
-
-model="$(snapctl get model)"
-if [ -z "$model" ]; then
-    echo "model not set!"
+# Check if stack definition exists
+stack_def="$(snapctl get stacks."$stack_name")"
+if [ -z "$stack_def" ]; then
+    log "Stack not found: $stack_name"
     exit 1
 fi
 
-engine="$(snapctl get engine)"
-if [ -z "$engine" ]; then
-    echo "engine not set!"
-    exit 1
-fi
+
+#
+# Configure and install the user-configured stack
+#
+
+stack_components=$(echo "$stack_def" | jq ".components[]" --compact-output --raw-output)
+echo "$stack_components" | while read -r component; do
+    log "Request installing component: $component"
+    install_component "$component"
+done
+
+stack_configurations=$(echo "$stack_def" | jq ".configurations |  to_entries[]" --compact-output --raw-output)
+echo "$stack_configurations" | while read -r item; do
+  key=$(echo "$item" | jq -r '.key')
+  value=$(echo "$item" | jq -r '.value')
+  log "Set configuration: $key=$value"
+  snapctl set "$key"="$value"
+done

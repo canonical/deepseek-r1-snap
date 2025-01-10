@@ -16,3 +16,6 @@ disk-space: 5G
 components:
   - llamacpp-avx512
   - model-q4-k-m-gguf
+configurations:
+  engine: llamacpp-avx512
+  model: model-q4-k-m-gguf

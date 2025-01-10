@@ -16,3 +16,6 @@ disk-space: 20G
 components:
   - mistral-inference
   - model-safetensors
+configurations:
+  engine: mistral-inference
+  model: model-safetensors

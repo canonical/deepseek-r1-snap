@@ -10,3 +10,6 @@ disk-space: 5G
 components:
   - llamacpp
   - model-q4-k-m-gguf
+configurations:
+  engine: llamacpp
+  model: model-q4-k-m-gguf

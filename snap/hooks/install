@@ -34,27 +34,48 @@ install_component()
     set -e
 }
 
+#
+# Set all stacks as snap config
+# 
+
+stacks="{}"
+for stack_file in "$SNAP"/stacks/*/stack.yaml; do
+    stack_name=$(basename $(dirname "$stack_file"))
+    stack_json=$(yq eval -o=json "$stack_file")
+    stacks=$(echo "$stacks" | jq --compact-output --argjson stack "$stack_json" --arg name "$stack_name" '.[$name] = $stack')
+done
+
+snapctl set -t stacks="$stacks"
+
+#
+# Select the stack
+#
+
 # Redirect standard errors to both stderr and syslog
 exec 2> >(logger --stderr --tag=$tag)
 
 hw_info="$($SNAP/bin/hardware-info)"
 
-stack="$(echo "$hw_info" | $SNAP/bin/select-stack --stacks=$SNAP/stacks)"
-log "Selected stack: $stack"
+selected_stack="$(echo "$hw_info" | $SNAP/bin/select-stack --stacks=$SNAP/stacks)"
+log "Selected stack: $selected_stack"
 
 #
 # Configure and install the stack
 #
 
-snapctl set stack="$(echo "$stack" | jq .name --raw-output)"
+stack_name="$(echo "$selected_stack" | jq .name --raw-output)"
+snapctl set stack="$stack_name"
 
-echo $stack | jq .components[] --compact-output --raw-output | while read -r component; do
-    if [[ $component == model* ]]; then
-        snapctl set model=$component
-    else
-        snapctl set engine=$component
-    fi
-
+stack_components=$(echo "$stacks" | jq ".\"$stack_name\".components[]" --compact-output --raw-output)
+echo "$stack_components" | while read -r component; do
     log "Request installing component: $component"
-    install_component $component
+    install_component "$component"
+done
+
+stack_configurations=$(echo "$stacks" | jq ".\"$stack_name\".configurations |  to_entries[]" --compact-output --raw-output)
+echo "$stack_configurations" | while read -r item; do
+  key=$(echo "$item" | jq -r '.key')
+  value=$(echo "$item" | jq -r '.value')
+  log "Set configuration: $key=$value"
+  snapctl set "$key"="$value"
 done
