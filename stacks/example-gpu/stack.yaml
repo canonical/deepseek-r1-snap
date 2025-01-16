@@ -9,7 +9,7 @@ devices:
       bus: pci
       vendor-id: 0x10de # Nvidia Corporation
       # model-ids: [ ]
-      # vram: 4G
+      vram: 8G
       # compute-capability: 7.0
 memory: 16G
 disk-space: 20G
