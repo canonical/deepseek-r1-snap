@@ -79,3 +79,10 @@ echo "$stack_configurations" | while read -r item; do
   log "Set configuration: $key=$value"
   snapctl set "$key"="$value"
 done
+
+#
+# Set generic config
+#
+
+snapctl set http.port="8080"
+snapctl set http.host="127.0.0.1"

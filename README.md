@@ -46,9 +46,9 @@ $ ./install-local-build.sh <stack> [op]
 
 ## Usage
 
-Set the stack:
+Change the stack:
 ```shell
-sudo snap set mistral-7b-instruct stack=fallback-cpu
+sudo snap set mistral-7b-instruct stack=example-gpu
 ```
 
 The output varies based on the stack.
@@ -60,6 +60,32 @@ $ mistral-7b-instruct.chat
 Yes, I can help with coding questions and problems! I can't write or execute code myself, but I can certainly provide guidance, explanations, and suggestions to help you solve coding problems. I'm familiar with a variety of programming languages, including Python, JavaScript, Java, C++, and more. Let me know what you're working on, and I'll do my best to assist you!
 
 > 
+```
+
+
+
+Start the server app (in foreground):
+```shell
+sudo snap run mistral-7b-instruct.server
+```
+
+The server exposes an [OpenAI compatible](https://github.com/openai/openai-openapi) endpoint served via HTTP.
+The HTTP server's bind host and port have the following default values:
+```console
+$ sudo snap get mistral-7b-instruct http
+Key        Value
+http.host  127.0.0.1
+http.port  8080
+```
+
+To change, for example the http port to `8999`:
+```shell
+sudo snap set mistral-7b-instruct http.port=8999
+```
+
+Once you are ready with the configurations, run the server in the background:
+```shell
+sudo snap start mistral-7b-instruct
 ```
 
 ## Upload

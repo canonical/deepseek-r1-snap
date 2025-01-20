@@ -45,6 +45,11 @@ parts:
     source-type: file
     plugin: dump
 
+  server:
+    source: server.sh
+    source-type: file
+    plugin: dump
+
   stacks:
     source: stacks
     plugin: dump
@@ -162,7 +167,7 @@ apps:
       # Needed to download resources
       - network
 
-  chat:
+  chat: &engine-app
     command: chat.sh
     plugs:
       - opengl
@@ -172,6 +177,12 @@ apps:
       # Needed to download resources
       - network
     environment:
-      # Needed for shared libraries used by llama.cpp's cli
+      # Needed for shared libraries used by llama.cpp
       # TODO: Should this instead be added in an env file to llamacpp component
       ARCH_TRIPLET: $CRAFT_ARCH_TRIPLET_BUILD_FOR
+
+  server: 
+    <<: *engine-app
+    command: server.sh
+    daemon: simple
+    install-mode: disable
