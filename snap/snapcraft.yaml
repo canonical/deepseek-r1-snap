@@ -78,7 +78,7 @@ parts:
 
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: &llamacpp-tag b4130 
+    source-tag: &llamacpp-tag b4595 
     source-depth: 1
     plugin: cmake
     stage-packages:
