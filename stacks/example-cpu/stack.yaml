@@ -5,11 +5,13 @@ devices:
   any:
     - type: cpu
       architectures: [amd64]
-memory: 8G
-disk-space: 5G
+      flags:
+        - avx
+memory: 4G
+disk-space: 4G
 components:
   - llamacpp
-  - model-q4-k-m-gguf
+  - model-distill-qwen-q8-gguf
 configurations:
   engine: llamacpp
-  model: model-q4-k-m-gguf
+  model: model-distill-qwen-q8-gguf

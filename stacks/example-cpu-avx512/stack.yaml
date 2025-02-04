@@ -11,11 +11,11 @@ devices:
         - avx512f
         - avx512dq 
         - avx512bw
-memory: 8G
-disk-space: 5G
+memory: 4G
+disk-space: 4G
 components:
   - llamacpp-avx512
-  - model-q4-k-m-gguf
+  - model-distill-qwen-q8-gguf
 configurations:
   engine: llamacpp-avx512
-  model: model-q4-k-m-gguf
+  model:  model-distill-qwen-q8-gguf

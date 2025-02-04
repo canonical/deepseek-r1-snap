@@ -1,11 +1,10 @@
-name: mistral-7b-instruct
+name: deepseek-r1
 base: core24
-version: &snap-version "v0.3"
-summary: Mistral 7B Instruct
+version: &snap-version "v3" # Refers to DeepSeek V3 base
+summary: DeepSeek R1
 description: |
   This snap installs an optimized environment for inference with the
-  mistral-7b-instruct LLM.
-
+  DeepSeek R1 LLM.
 
 grade: devel
 confinement: strict
@@ -72,20 +71,16 @@ parts:
       - jq # install hook
     stage-snaps:
       - yq # install hook
-  
-  mistral-inference:
-    source: components/mistral-inference
-    plugin: python
-    python-packages:
-      - mistral-inference==1.5.0
-    organize:
-      "*": (component/mistral-inference)
 
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
     source-tag: &llamacpp-tag b4595 
     source-depth: 1
     plugin: cmake
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+      - -DGGML_AVX=ON
+      - -DGGML_AVX2=OFF
     stage-packages:
       - libgomp1
     organize:
@@ -95,37 +90,20 @@ parts:
   llamacpp-avx512:
     <<: *llamacpp-part
     cmake-parameters:
+      - -DGGML_NATIVE=OFF
       - -DGGML_AVX=ON
       - -DGGML_AVX2=ON
       - -DGGML_AVX512=ON
     organize:
       "*": (component/llamacpp-avx512)
 
-  model-safetensors:
-    source: components/model-safetensors
+  model-distill-qwen-q8-gguf:
+    source: components/model-distill-qwen-q8-gguf
     plugin: dump
     organize:
-      "*": (component/model-safetensors)
-
-  model-q4-k-m-gguf:
-    source: components/model-q4-k-m-gguf
-    plugin: dump
-    organize:
-      "*": (component/model-q4-k-m-gguf)
-
-  model-f32-gguf:
-    source: components/model-f32-gguf
-    plugin: dump
-    organize:
-      "*": (component/model-f32-gguf)
+      "*": (component/model-distill-qwen-q8-gguf)
       
 components:
-  # engines
-  mistral-inference:
-    type: test
-    summary: Mistral Inference
-    description: Inference Engine from Mistral
-    version: "1.5.0" # should match the python package
   llamacpp:
     type: test
     summary: llama.cpp Engine
@@ -138,20 +116,10 @@ components:
     version: *llamacpp-tag
   
   # models
-  model-safetensors:
+  model-distill-qwen-q8-gguf:
     type: test
-    summary: Mistral 7B Instruct
-    description: Original model with safetensors, params, and tokenizer
-    version: *snap-version
-  model-q4-k-m-gguf:
-    type: test
-    summary: Mistral 7B Instruct Q4_K_M
-    description: Quantized model in gguf format with Q4_K_M weight encoding
-    version: *snap-version
-  model-f32-gguf:
-    type: test
-    summary: Mistral 7B Instruct F32
-    description: Model in gguf format with F32 weight encoding
+    summary: DeepSeek R1 Distill Qwen 1.5B
+    description: Quantized model in gguf format with Q8_0 weight encoding
     version: *snap-version
 
 apps:
