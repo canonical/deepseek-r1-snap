@@ -11,11 +11,6 @@ confinement: strict
 
 compression: lzo
 
-plugs:
-  graphics:
-    interface: content
-    target: $SNAP/graphics
-
 environment:
   # Workaround until it gets set by snapd
   SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
@@ -79,52 +74,48 @@ parts:
     plugin: cmake
     cmake-parameters:
       - -DGGML_NATIVE=OFF
-      - -DGGML_AVX=ON
-      - -DGGML_AVX2=OFF
     stage-packages:
       - libgomp1
     organize:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
-  llamacpp-avx512:
-    <<: *llamacpp-part
-    cmake-parameters:
-      - -DGGML_NATIVE=OFF
-      - -DGGML_AVX=ON
-      - -DGGML_AVX2=ON
-      - -DGGML_AVX512=ON
-    organize:
-      "*": (component/llamacpp-avx512)
-
-  model-distill-qwen-q8-gguf:
-    source: components/model-distill-qwen-q8-gguf
+  model-distill-qwen-1-5b-q8-0-gguf:
+    source: components/model-distill-qwen-1-5b-q8-0-gguf
     plugin: dump
     organize:
-      "*": (component/model-distill-qwen-q8-gguf)
+      "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
+  
+  model-distill-qwen-7b-q4-k-m-gguf:
+    source: components/model-distill-qwen-7b-q4-k-m-gguf
+    plugin: dump
+    organize:
+      "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
       
 components:
+  # engines
   llamacpp:
     type: test
     summary: llama.cpp Engine
     description: LLM inference in C/C++
     version: *llamacpp-tag
-  llamacpp-avx512:
-    type: test
-    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
-    description: LLM inference in C/C++
-    version: *llamacpp-tag
   
   # models
-  model-distill-qwen-q8-gguf:
+  model-distill-qwen-1-5b-q8-0-gguf:
     type: test
-    summary: DeepSeek R1 Distill Qwen 1.5B
+    summary: DeepSeek R1 Distill Qwen 1.5B Q8
     description: Quantized model in gguf format with Q8_0 weight encoding
+    version: *snap-version
+
+  model-distill-qwen-7b-q4-k-m-gguf:
+    type: test
+    summary: DeepSeek R1 Distill Qwen 7B Q4
+    description: Quantized model in gguf format with Q4_K_M weight encoding
     version: *snap-version
 
 apps:
   # For testing purposes. Use sudo <snap>.re-install
-  # Connecting mistral-7b-instruct:hardware-observe is required even if installed in dev mode!
+  # Connecting the hardware-observe interface is required even if installed in dev mode!
   re-install:
     command: meta/hooks/install
     plugs: *install-plugs
@@ -137,13 +128,6 @@ apps:
 
   chat: &engine-app
     command: chat.sh
-    plugs:
-      - opengl
-      # Needed by mistral-inference,
-      # for cuda-uvmfd to listen on a unix socket
-      - network-bind
-      # Needed to download resources
-      - network
     environment:
       # Needed for shared libraries used by llama.cpp
       # TODO: Should this instead be added in an env file to llamacpp component
@@ -152,5 +136,7 @@ apps:
   server: 
     <<: *engine-app
     command: server.sh
+    plugs:
+      - network-bind
     daemon: simple
     install-mode: disable
