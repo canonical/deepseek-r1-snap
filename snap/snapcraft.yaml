@@ -15,12 +15,6 @@ environment:
   # Workaround until it gets set by snapd
   SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
 
-layout:
-  # Wget's default config file
-  # This is to avoid runtime errors and AppArmor denials
-  /etc/wgetrc:
-    bind-file: $SNAP/etc/wgetrc
-
 hooks:
   install:
     plugs: &install-plugs
@@ -29,20 +23,11 @@ hooks:
       - opengl
 
 parts:
-  init:
-    source: init.sh
-    source-type: file
+  app-scripts:
+    source: apps
     plugin: dump
-  
-  chat:
-    source: chat.sh
-    source-type: file
-    plugin: dump
-
-  server:
-    source: server.sh
-    source-type: file
-    plugin: dump
+    organize:
+      "*": bin/
 
   stacks:
     source: stacks
@@ -62,7 +47,6 @@ parts:
   common-runtime-dependencies:
     plugin: nil
     stage-packages:
-      - wget # model init
       - jq # install hook
     stage-snaps:
       - yq # install hook
@@ -121,13 +105,13 @@ apps:
     plugs: *install-plugs
 
   init:
-    command: init.sh
+    command: bin/init.sh
     plugs:
       # Needed to download resources
       - network
 
   chat: &engine-app
-    command: chat.sh
+    command: bin/chat.sh
     environment:
       # Needed for shared libraries used by llama.cpp
       # TODO: Should this instead be added in an env file to llamacpp component
@@ -135,7 +119,7 @@ apps:
 
   server: 
     <<: *engine-app
-    command: server.sh
+    command: bin/server.sh
     plugs:
       - network-bind
     daemon: simple
