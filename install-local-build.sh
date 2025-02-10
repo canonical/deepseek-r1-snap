@@ -33,7 +33,7 @@ sudo snap set $name stack="$stack"
 
 # Install stack components
 cat "./stacks/$stack/stack.yaml" | yq .components[] | while read -r component; do
-    snap install --dangerous ./$name+"$component"_*.comp
+    sudo snap install --dangerous ./$name+"$component"_*.comp
 done
 
 if [[ "$stack" == "example-gpu" ]]; then
