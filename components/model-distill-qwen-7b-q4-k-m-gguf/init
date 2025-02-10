@@ -1,0 +1,14 @@
+#!/bin/bash -eu
+
+component_name=model-distill-qwen-7b-q4-k-m-gguf
+
+log_prefix="init:"
+log()
+{
+    echo "$log_prefix $1"
+}
+
+model_filename=DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf
+model_path=$SNAP_COMPONENTS/$component_name/$model_filename
+
+export MODEL_FILE=$model_path

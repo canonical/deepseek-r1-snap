@@ -1,4 +1,0 @@
-#!/bin/bash -eu
-
-echo "Not implemented"
-exit 1

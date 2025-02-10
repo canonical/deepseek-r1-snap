@@ -1,15 +1,16 @@
-name: example-cpu
+name: generic-cpu-1-5b
 description: Example stack for legacy CPUs, offering good accuracy with low footprints
 maintainer: Canonical Ltd
 devices:
   any:
     - type: cpu
       architectures: [amd64]
-memory: 8G
-disk-space: 5G
+      flags: [sse4_2, f16c, fma, avx, avx2]
+memory: 2G
+disk-space: 4G
 components:
-  - llamacpp
-  - model-q4-k-m-gguf
+  - &engine llamacpp
+  - &model model-distill-qwen-1-5b-q8-0-gguf
 configurations:
-  engine: llamacpp
-  model: model-q4-k-m-gguf
+  engine: *engine
+  model: *model

@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-name=mistral-7b-instruct
+name=deepseek-r1
 
 stack=$1
 op=$2
@@ -16,7 +16,13 @@ if [[ ! -f "$stack_file" ]]; then
     exit 1
 fi
 
-# Validate stack syntax (and make sure yq is installed)
+
+if [[ "$(yq --version)" != *v4* ]]; then
+    echo "Please install yq v4."
+    exit 1
+fi
+
+# Validate stack syntax
 yq stacks/$stack/stack.yaml > /dev/null
 
 # Install the snap
@@ -27,10 +33,10 @@ sudo snap set $name stack="$stack"
 
 # Install stack components
 cat "./stacks/$stack/stack.yaml" | yq .components[] | while read -r component; do
-    snap install --dangerous ./$name+"$component"_*.comp
+    sudo snap install --dangerous ./$name+"$component"_*.comp
 done
 
-if [[ "$stack" == "mistral-gpu" ]]; then
+if [[ "$stack" == "example-gpu" ]]; then
     # Connect the graphics interface
     sudo snap connect $name:graphics mesa-2404:gpu-2404
 fi

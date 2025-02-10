@@ -1,31 +1,19 @@
-name: mistral-7b-instruct
+name: deepseek-r1
 base: core24
-version: &snap-version "v0.3"
-summary: Mistral 7B Instruct
+version: &snap-version "v3" # Refers to DeepSeek V3 base
+summary: DeepSeek R1
 description: |
   This snap installs an optimized environment for inference with the
-  mistral-7b-instruct LLM.
-
+  DeepSeek R1 LLM.
 
 grade: devel
 confinement: strict
 
 compression: lzo
 
-plugs:
-  graphics:
-    interface: content
-    target: $SNAP/graphics
-
 environment:
   # Workaround until it gets set by snapd
   SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
-
-layout:
-  # Wget's default config file
-  # This is to avoid runtime errors and AppArmor denials
-  /etc/wgetrc:
-    bind-file: $SNAP/etc/wgetrc
 
 hooks:
   install:
@@ -35,20 +23,11 @@ hooks:
       - opengl
 
 parts:
-  init:
-    source: init.sh
-    source-type: file
+  app-scripts:
+    source: apps
     plugin: dump
-  
-  chat:
-    source: chat.sh
-    source-type: file
-    plugin: dump
-
-  server:
-    source: server.sh
-    source-type: file
-    plugin: dump
+    organize:
+      "*": bin/
 
   stacks:
     source: stacks
@@ -68,114 +47,71 @@ parts:
   common-runtime-dependencies:
     plugin: nil
     stage-packages:
-      - wget # model init
       - jq # install hook
     stage-snaps:
       - yq # install hook
-  
-  mistral-inference:
-    source: components/mistral-inference
-    plugin: python
-    python-packages:
-      - mistral-inference==1.5.0
-    organize:
-      "*": (component/mistral-inference)
 
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
     source-tag: &llamacpp-tag b4595 
     source-depth: 1
     plugin: cmake
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
     stage-packages:
       - libgomp1
     organize:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
-  llamacpp-avx512:
-    <<: *llamacpp-part
-    cmake-parameters:
-      - -DGGML_AVX=ON
-      - -DGGML_AVX2=ON
-      - -DGGML_AVX512=ON
-    organize:
-      "*": (component/llamacpp-avx512)
-
-  model-safetensors:
-    source: components/model-safetensors
+  model-distill-qwen-1-5b-q8-0-gguf:
+    source: components/model-distill-qwen-1-5b-q8-0-gguf
     plugin: dump
     organize:
-      "*": (component/model-safetensors)
-
-  model-q4-k-m-gguf:
-    source: components/model-q4-k-m-gguf
+      "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
+  
+  model-distill-qwen-7b-q4-k-m-gguf:
+    source: components/model-distill-qwen-7b-q4-k-m-gguf
     plugin: dump
     organize:
-      "*": (component/model-q4-k-m-gguf)
-
-  model-f32-gguf:
-    source: components/model-f32-gguf
-    plugin: dump
-    organize:
-      "*": (component/model-f32-gguf)
+      "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
       
 components:
   # engines
-  mistral-inference:
-    type: test
-    summary: Mistral Inference
-    description: Inference Engine from Mistral
-    version: "1.5.0" # should match the python package
   llamacpp:
     type: test
     summary: llama.cpp Engine
     description: LLM inference in C/C++
     version: *llamacpp-tag
-  llamacpp-avx512:
-    type: test
-    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
-    description: LLM inference in C/C++
-    version: *llamacpp-tag
   
   # models
-  model-safetensors:
+  model-distill-qwen-1-5b-q8-0-gguf:
     type: test
-    summary: Mistral 7B Instruct
-    description: Original model with safetensors, params, and tokenizer
+    summary: DeepSeek R1 Distill Qwen 1.5B Q8
+    description: Quantized model in gguf format with Q8_0 weight encoding
     version: *snap-version
-  model-q4-k-m-gguf:
+
+  model-distill-qwen-7b-q4-k-m-gguf:
     type: test
-    summary: Mistral 7B Instruct Q4_K_M
+    summary: DeepSeek R1 Distill Qwen 7B Q4
     description: Quantized model in gguf format with Q4_K_M weight encoding
-    version: *snap-version
-  model-f32-gguf:
-    type: test
-    summary: Mistral 7B Instruct F32
-    description: Model in gguf format with F32 weight encoding
     version: *snap-version
 
 apps:
   # For testing purposes. Use sudo <snap>.re-install
-  # Connecting mistral-7b-instruct:hardware-observe is required even if installed in dev mode!
+  # Connecting the hardware-observe interface is required even if installed in dev mode!
   re-install:
     command: meta/hooks/install
     plugs: *install-plugs
 
   init:
-    command: init.sh
+    command: bin/init.sh
     plugs:
       # Needed to download resources
       - network
 
   chat: &engine-app
-    command: chat.sh
-    plugs:
-      - opengl
-      # Needed by mistral-inference,
-      # for cuda-uvmfd to listen on a unix socket
-      - network-bind
-      # Needed to download resources
-      - network
+    command: bin/chat.sh
     environment:
       # Needed for shared libraries used by llama.cpp
       # TODO: Should this instead be added in an env file to llamacpp component
@@ -183,6 +119,8 @@ apps:
 
   server: 
     <<: *engine-app
-    command: server.sh
+    command: bin/server.sh
+    plugs:
+      - network-bind
     daemon: simple
     install-mode: disable

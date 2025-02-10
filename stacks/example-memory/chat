@@ -1,9 +1,0 @@
-#!/bin/bash -eu
-
-source "$(dirname "$0")/common.sh"
-
-redirection="/dev/stderr"
-if [[ "${1:-}" != "-v" ]]; then
-    redirection="/dev/null"
-fi
-exec "$engine/usr/local/bin/llama-cli" --conversation --no-mmap --model "$MODEL_FILE" 2> $redirection
