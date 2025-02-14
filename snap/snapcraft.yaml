@@ -64,6 +64,25 @@ parts:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
+  llamacpp-avx512:
+    <<: *llamacpp-part
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+      - -DGGML_AVX512=ON
+    organize:
+      "*": (component/llamacpp-avx512)
+
+  llamacpp-cuda:
+    <<: *llamacpp-part
+    build-packages:
+      - nvidia-cuda-toolkit
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+      - -DGGML_CUDA=ON
+      - -DCMAKE_CUDA_ARCHITECTURES=all-major
+    organize:
+      "*": (component/llamacpp-cuda)
+
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
     plugin: dump
@@ -81,6 +100,16 @@ components:
   llamacpp:
     type: test
     summary: llama.cpp Engine
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+  llamacpp-avx512:
+    type: test
+    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+  llamacpp-cuda:
+    type: test
+    summary: llama.cpp Engine for NVIDIA GPUs using CUDA
     description: LLM inference in C/C++
     version: *llamacpp-tag
   
