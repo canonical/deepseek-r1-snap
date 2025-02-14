@@ -27,6 +27,17 @@ Install:
 $ ./install-local-build.sh <stack> [op]
 ```
 
+## Install NVIDIA runtime dependencies (optional)
+
+These steps were tested on Ubuntu Server 24.04.1, running on a machine with an NVIDIA RTX A5000.
+The version of driver and utils might be different depending on your setup.
+
+```
+sudo apt update
+sudo apt install nvidia-driver-550 nvidia-utils-550 nvidia-cuda-toolkit
+sudo reboot
+```
+
 ## Usage
 Check the configurations:
 ```shell
