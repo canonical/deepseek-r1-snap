@@ -19,4 +19,4 @@ fi
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET:$engine/usr/local/lib"
 
 # Other user changeable configs
-N_GPU_LAYERS="$(snapctl get n-gpu-layers | echo 33)" # TODO: Update to a good default for deepseek-r1-7b
+N_GPU_LAYERS="$(snapctl get n-gpu-layers | echo 29)" # Offload 29/29 layers to GPU
