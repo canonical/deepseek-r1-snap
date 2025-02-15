@@ -15,6 +15,12 @@ environment:
   # Workaround until it gets set by snapd
   SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
 
+layout:
+  # Wget's default config file
+  # This is to avoid runtime errors and AppArmor denials
+  /etc/wgetrc:
+    bind-file: $SNAP/etc/wgetrc
+
 hooks:
   install:
     plugs: &install-plugs
@@ -47,6 +53,7 @@ parts:
   common-runtime-dependencies:
     plugin: nil
     stage-packages:
+      - wget # model init
       - jq # install hook
     stage-snaps:
       - yq # install hook
