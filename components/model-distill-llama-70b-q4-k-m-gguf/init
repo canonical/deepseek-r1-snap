@@ -1,0 +1,39 @@
+#!/bin/bash -eu
+
+component_name=model-distill-llama-70b-q4-k-m-gguf
+
+log_prefix="init:"
+log()
+{
+    echo "$log_prefix $1"
+}
+
+
+model_filename=DeepSeek-R1-Distill-Llama-70B-Q4_K_M.gguf
+model_path=$SNAP_COMPONENTS/$component_name/$model_filename
+
+if [ ! -f $model_path ]; then
+    log "Model not included in the snap component: $component_name"
+
+    repo_http_url=https://huggingface.co/unsloth/DeepSeek-R1-Distill-Llama-70B-GGUF
+    commit=62229e8a9a428ea175bf37c8b62ec5a3f5f66258
+
+    cd $SNAP_USER_COMMON
+
+    if [ ! -f $model_filename ]; then
+        log "Model not downloaded."
+        
+        # The download can be interrupted and resumed later on
+        # Use a temporary name up until the model is fully downloaded
+        tmp_file=$model_filename.tmp
+        log "Downloading model..."
+        wget --quiet --show-progress --continue $repo_http_url/resolve/$commit/$model_filename --output-document=$tmp_file
+        mv $tmp_file $model_filename
+    fi
+
+    model_path=$SNAP_USER_COMMON/$model_filename
+    
+    log "Using downloaded model: $model_path"
+fi
+
+export MODEL_FILE=$model_path
