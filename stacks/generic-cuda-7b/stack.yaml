@@ -2,7 +2,7 @@ name: generic-gpu-7b
 description: Generic stack for Nvidia GPUs using CUDA. All major CUDA versions are targeted.
 maintainer: Canonical Ltd
 devices:
-  any:
+  all:
     - type: cpu
       architectures: [amd64]
       flags: [sse4_2, f16c, fma, avx, avx2]

@@ -71,14 +71,6 @@ parts:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
-  llamacpp-avx512:
-    <<: *llamacpp-part
-    cmake-parameters:
-      - -DGGML_NATIVE=OFF
-      - -DGGML_AVX512=ON
-    organize:
-      "*": (component/llamacpp-avx512)
-
   llamacpp-cuda:
     <<: *llamacpp-part
     build-packages:
@@ -113,11 +105,6 @@ components:
   llamacpp:
     type: test
     summary: llama.cpp Engine
-    description: LLM inference in C/C++
-    version: *llamacpp-tag
-  llamacpp-avx512:
-    type: test
-    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
     description: LLM inference in C/C++
     version: *llamacpp-tag
   llamacpp-cuda:

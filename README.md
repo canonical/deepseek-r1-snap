@@ -27,7 +27,9 @@ Install:
 $ ./install-local-build.sh <stack> [op]
 ```
 
-## Install NVIDIA runtime dependencies (optional)
+## NVIDIA CUDA stacks
+
+NVIDIA drivers, utils and CUDA is required to use the CUDA-based stacks.
 
 These steps were tested on Ubuntu Server 24.04.1, running on a machine with an NVIDIA RTX A5000.
 The version of driver and utils might be different depending on your setup.
@@ -36,6 +38,23 @@ The version of driver and utils might be different depending on your setup.
 sudo apt update
 sudo apt install nvidia-driver-550 nvidia-utils-550 nvidia-cuda-toolkit
 sudo reboot
+```
+
+For CUDA-based stacks the number of layers that are loaded on to the GPU can be configured.
+By default all layers are loaded into VRAM, which requires enough VRAM to fit the entire model.
+
+To only load a limited number of layers onto the GPU, the `n-gpu-layers` snap option can be set.
+
+```
+sudo snap set deepseek-r1 n-gpu-layers=20
+```
+This is useful if your GPU does not have enough VRAM to fit the entire model.
+The remaining layers will run on the CPU.
+
+To reset to the default option, which is to load the entire model onto the GPU, this snap option can be cleared:
+
+```
+sudo snap unset deepseek-r1 n-gpu-layers
 ```
 
 ## Usage
