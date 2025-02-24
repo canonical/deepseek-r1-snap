@@ -15,6 +15,12 @@ environment:
   # Workaround until it gets set by snapd
   SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
 
+layout:
+  # Wget's default config file
+  # This is to avoid runtime errors and AppArmor denials
+  /etc/wgetrc:
+    bind-file: $SNAP/etc/wgetrc
+
 hooks:
   install:
     plugs: &install-plugs
@@ -47,6 +53,7 @@ parts:
   common-runtime-dependencies:
     plugin: nil
     stage-packages:
+      - wget # model init
       - jq # install hook
     stage-snaps:
       - yq # install hook
@@ -64,6 +71,17 @@ parts:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
+  llamacpp-cuda:
+    <<: *llamacpp-part
+    build-packages:
+      - nvidia-cuda-toolkit
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+      - -DGGML_CUDA=ON
+      - -DCMAKE_CUDA_ARCHITECTURES=all-major
+    organize:
+      "*": (component/llamacpp-cuda)
+
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
     plugin: dump
@@ -75,6 +93,12 @@ parts:
     plugin: dump
     organize:
       "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
+  
+  model-distill-llama-70b-q4-k-m-gguf:
+    source: components/model-distill-llama-70b-q4-k-m-gguf
+    plugin: dump
+    organize:
+      "*": (component/model-distill-llama-70b-q4-k-m-gguf)
       
 components:
   # engines
@@ -83,18 +107,29 @@ components:
     summary: llama.cpp Engine
     description: LLM inference in C/C++
     version: *llamacpp-tag
+  llamacpp-cuda:
+    type: test
+    summary: llama.cpp Engine for NVIDIA GPUs using CUDA
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
   
   # models
   model-distill-qwen-1-5b-q8-0-gguf:
     type: test
     summary: DeepSeek R1 Distill Qwen 1.5B Q8
-    description: Quantized model in gguf format with Q8_0 weight encoding
+    description: Quantized model with 1.5B parameters in gguf format with Q8_0 weight encoding
     version: *snap-version
 
   model-distill-qwen-7b-q4-k-m-gguf:
     type: test
     summary: DeepSeek R1 Distill Qwen 7B Q4
-    description: Quantized model in gguf format with Q4_K_M weight encoding
+    description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
+    version: *snap-version
+
+  model-distill-llama-70b-q4-k-m-gguf:
+    type: test
+    summary: DeepSeek R1 Llama 70B Q4
+    description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
     version: *snap-version
 
 apps:
