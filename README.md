@@ -1,66 +1,29 @@
 # DeepSeek R1 snap
 
-## Get the code
 
-Clone this repo with the submodule:
-```
-git clone --recurse-submodules https://github.com/canonical/deepseek-r1-snap.git
-```
-
-## Build and install from source
-
-Download the models:
-```
-wget -P components/model-distill-qwen-1-5b-q8-0-gguf \
-    https://huggingface.co/unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf
-wget -P components/model-distill-qwen-7b-q4-k-m-gguf \
-    https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf
-```
-
-Build the snap and its component:
-```shell
-snapcraft -v
-```
-
-Install: 
+## Install
 ```console
-$ ./install-local-build.sh <stack> [op]
+sudo snap install deepseek-r1 --channel=<desired channel> --devmode
 ```
 
-## NVIDIA CUDA stacks
+It should be installed in developer mode because it needs [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) during the installation.
+This interface is currently not automatically connected.
 
-NVIDIA drivers, utils and CUDA is required to use the CUDA-based stacks.
+To install gpu dependencies, refer [here](#nvidia-cuda-stacks).
 
-These steps were tested on Ubuntu Server 24.04.1, running on a machine with an NVIDIA RTX A5000.
-The version of driver and utils might be different depending on your setup.
-
-```
-sudo apt update
-sudo apt install nvidia-driver-550 nvidia-utils-550 nvidia-cuda-toolkit
-sudo reboot
-```
-
-For CUDA-based stacks the number of layers that are loaded on to the GPU can be configured.
-By default all layers are loaded into VRAM, which requires enough VRAM to fit the entire model.
-
-To only load a limited number of layers onto the GPU, the `n-gpu-layers` snap option can be set.
-
-```
-sudo snap set deepseek-r1 n-gpu-layers=20
-```
-This is useful if your GPU does not have enough VRAM to fit the entire model.
-The remaining layers will run on the CPU.
-
-To reset to the default option, which is to load the entire model onto the GPU, this snap option can be cleared:
-
-```
-sudo snap unset deepseek-r1 n-gpu-layers
-```
+To build and install from source, scroll to [here](#build-and-install-from-source).
 
 ## Usage
-Check the configurations:
+The configurations can be explored and changed using `snap get` and `snap set` respectively.
+
+Query the top level config:
 ```shell
 sudo snap get deepseek-r1
+```
+
+Query the available stacks:
+```shell
+snap get deepseek-r1 stacks
 ```
 
 Change the stack (only possible if installed from the Store):
@@ -68,10 +31,28 @@ Change the stack (only possible if installed from the Store):
 sudo snap set deepseek-r1 stack=<stack>
 ```
 
+> [!TIP]
+> For CUDA-based stacks the number of layers that are loaded on to the GPU can be configured.
+> By default all layers are loaded into VRAM, which requires enough VRAM to fit the entire model.
+> To only load a limited number of layers onto the GPU use the `n-gpu-layers` snap option:
+> ```shell
+> sudo snap set deepseek-r1 n-gpu-layers=20
+> ```
+> This is useful if your GPU does not have enough VRAM to fit the entire model.
+> The remaining layers will run on the CPU.
+> 
+> To reset to the default option, which is to load the entire model onto the GPU, unset the value:
+> ```
+> sudo snap unset deepseek-r1 n-gpu-layers
+> ```
+
+### Chat
+Start the chat app. The output varies based on the stack:
 ```shell
 deepseek-r1.chat 
 ```
 
+### Run server
 Start the server app (in foreground):
 ```shell
 sudo snap run deepseek-r1.server
@@ -95,4 +76,42 @@ sudo snap set deepseek-r1 http.port=8999
 Once you are ready with the configurations, run the server in the background:
 ```shell
 sudo snap start deepseek-r1
+```
+
+## NVIDIA CUDA stacks
+
+NVIDIA drivers, utils and CUDA are required to use the CUDA-based stacks.
+
+These steps were tested on Ubuntu Server 24.04.1, running on a machine with an NVIDIA RTX A5000.
+The version of driver and utils might be different depending on your setup.
+
+```shell
+sudo apt update
+sudo apt install nvidia-driver-550 nvidia-utils-550 nvidia-cuda-toolkit
+sudo reboot
+```
+
+## Build and install from source
+
+Clone this repo with the submodule:
+```shell
+git clone --recurse-submodules https://github.com/canonical/deepseek-r1-snap.git
+```
+
+Download the models:
+```shell
+wget -P components/model-distill-qwen-1-5b-q8-0-gguf \
+    https://huggingface.co/unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf
+wget -P components/model-distill-qwen-7b-q4-k-m-gguf \
+    https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf
+```
+
+Build the snap and its component:
+```shell
+snapcraft -v
+```
+
+Install: 
+```console
+$ ./install-local-build.sh <stack> [op]
 ```
