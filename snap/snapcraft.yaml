@@ -75,6 +75,10 @@ parts:
     <<: *llamacpp-part
     build-packages:
       - nvidia-cuda-toolkit
+    stage-packages:
+      - libgomp1
+      - libcudart12
+      - libcublas12
     cmake-parameters:
       - -DGGML_NATIVE=OFF
       - -DGGML_CUDA=ON
