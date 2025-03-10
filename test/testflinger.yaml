@@ -1,0 +1,29 @@
+job_queue: dell-precision-3660-c29399
+# job_queue: docker-nvidia
+
+provision_data:
+  # distro: oracular
+  distro: noble
+
+reserve_data:
+  ssh_keys:
+    - lp:jpm
+
+test_data:
+  # Copy test scripts to the Testflinger Agent
+  attachments:
+    - local: "scripts"
+      agent: "scripts"
+
+  # Run commands on the Testflinger Agent
+  test_cmds: |
+    #!/usr/bin/env bash
+    set -e
+
+    export SNAP_NAME="deepseek-r1"
+    export SNAP_CHANNEL="latest/edge/cuda"
+    export NVIDIA_VERSION="550"
+
+    SCRIPTS=./attachments/test/scripts
+    cd $SCRIPTS
+    ./agent-script.sh
