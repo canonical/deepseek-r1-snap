@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-SNAP_NAME="deepseek-r1"
+# SNAP_NAME="deepseek-r1"
 
 # sudo snap install mesa-2404
 sudo snap disconnect $SNAP_NAME:opengl || true

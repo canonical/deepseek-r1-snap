@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TMP_FILE="/tmp/test-llm-chat"
-SNAP_NAME="deepseek-r1"
+# SNAP_NAME="deepseek-r1"
 
 echo "Starting chat"
 ($SNAP_NAME.chat -v >$TMP_FILE 2>&1) &
@@ -41,9 +41,13 @@ if [ $API_RESULT -eq 0 ]; then
 	# Succeeded
 	TPS=$(echo $RESPONSE | jq '.timings.predicted_per_second')
 	echo "API worked. $TPS tokens per second."
+	if [ $TPS -eq "null" ]; then
+		echo $RESPONSE
+	fi
 else
 	# Failed
 	echo "API failed"
+	echo $RESPONSE
 	exit 1
 fi
 
@@ -54,9 +58,13 @@ if [ $API_RESULT -eq 0 ]; then
 	# Succeeded
 	TPS=$(echo $RESPONSE | jq '.timings.predicted_per_second')
 	echo "API worked. $TPS tokens per second."
+	if [ $TPS -eq "null" ]; then
+		echo $RESPONSE
+	fi
 else
 	# Failed
 	echo "API failed"
+	echo $RESPONSE
 	exit 1
 fi
 

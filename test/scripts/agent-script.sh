@@ -3,7 +3,22 @@
 # Stacks to test
 declare -a stacks=("generic-cpu-1-5b" "generic-cuda-7b")
 
-echo "Testing: DEVICE_IP = $DEVICE_IP"
+# Inject env vars into device scripts
+envsubst '$SNAP_NAME' \
+  < device-script.sh \
+  > device-script.temp
+mv device-script.temp device-script.sh
+
+envsubst '$SNAP_NAME' \
+  < connect-graphics.sh \
+  > connect-graphics.temp
+mv connect-graphics.temp connect-graphics.sh
+
+echo "Testing:"
+echo "DEVICE_IP = $DEVICE_IP"
+echo "SNAP_NAME = $SNAP_NAME"
+echo "SNAP_CHANNEL = $SNAP_CHANNEL"
+echo "NVIDIA_VERSION = $NVIDIA_VERSION"
 
 # Don't refresh snaps automatically
 ssh ubuntu@$DEVICE_IP "sudo snap refresh --hold=3h --no-wait"
