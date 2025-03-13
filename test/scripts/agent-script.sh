@@ -7,7 +7,7 @@ echo "SNAP_CHANNEL = $SNAP_CHANNEL"
 echo "NVIDIA_VERSION = $NVIDIA_VERSION"
 
 echo "Testing stacks: "
-for i in "${STACKS[@]}"
+for i in ${STACKS//,/ }
 do
     echo -e "\t$i"
 done
@@ -60,7 +60,7 @@ _run sudo snap set $SNAP_NAME n-gpu-layers=29 --no-wait
 wait_for_snap_changes
 
 # Loop through the array of stacks
-for i in "${STACKS[@]}"
+for i in ${STACKS//,/ }
 do
     echo ""
     echo "Testing stack $i"

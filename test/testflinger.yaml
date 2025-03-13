@@ -1,5 +1,5 @@
-job_queue: docker-nvidia
-# job_queue: dell-precision-3660-c29399
+# job_queue: docker-nvidia
+job_queue: dell-precision-3660-c29399
 # job_queue: hp-zbook-studio-g7-c28059
 
 provision_data:
@@ -25,10 +25,10 @@ test_data:
 
     export SNAP_NAME="deepseek-r1"
     export SNAP_CHANNEL="latest/edge/cuda"
-    export NVIDIA_VERSION="570-server"
+    export NVIDIA_VERSION="565-server"
 
-    # Stacks to test
-    declare -a STACKS=("generic-cpu-1-5b" "generic-cuda-7b")
+    # Comma seperated list of stacks to test
+    export STACKS="generic-cpu-1-5b,generic-cuda-7b"
 
     SCRIPTS=./attachments/test/scripts
     cd $SCRIPTS
