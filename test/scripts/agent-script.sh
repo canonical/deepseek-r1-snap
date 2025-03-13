@@ -12,7 +12,6 @@ do
     echo -e "\t$i"
 done
 
-exit 0
 # retrieve the tools installer
 curl -Ls -o install_tools.sh https://raw.githubusercontent.com/canonical/hwcert-jenkins-tools/main/install_tools.sh
 # install the scriptlets and other tools on the agent and the device, as necessary
