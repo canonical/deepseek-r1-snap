@@ -19,4 +19,8 @@ fi
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET:$engine/usr/local/lib"
 
 # Other user changeable configs
-N_GPU_LAYERS="$(snapctl get n-gpu-layers || echo 81)" # Offload 81/81 layers to GPU
+
+N_GPU_LAYERS="$(snapctl get n-gpu-layers)"
+if [ -z "$N_GPU_LAYERS" ]; then
+    N_GPU_LAYERS=33 # By default load all 33 layers on to GPU
+fi
