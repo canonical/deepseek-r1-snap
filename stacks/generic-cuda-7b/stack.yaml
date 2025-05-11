@@ -1,4 +1,4 @@
-name: generic-gpu-7b
+name: generic-cuda-7b
 description: Generic stack for Nvidia GPUs using CUDA. All major CUDA versions are targeted.
 vendor: Canonical Ltd
 grade: stable
