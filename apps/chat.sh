@@ -1,4 +1,6 @@
-#!/bin/bash -u
+#!/bin/bash -eu
+
+$SNAP/bin/init.sh
 
 stack="$(snapctl get stack)"
 

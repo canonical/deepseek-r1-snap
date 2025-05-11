@@ -1,6 +1,7 @@
 name: generic-cuda-70b
 description: Generic stack for Nvidia GPUs using CUDA. All major CUDA versions are targeted.
-maintainer: Canonical Ltd
+vendor: Canonical Ltd
+grade: devel
 devices:
   all:
     - type: cpu
