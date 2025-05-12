@@ -36,13 +36,3 @@ cat "./stacks/$stack/stack.yaml" | yq .components[] | while read -r component; d
     sudo snap install --dangerous ./$name+"$component"_*.comp
 done
 
-if [[ "$stack" == "example-gpu" ]]; then
-    # Connect the graphics interface
-    sudo snap connect $name:graphics mesa-2404:gpu-2404
-fi
-
-# See https://github.com/canonical/mistral-7b-instruct-snap/issues/3
-if [[ "$op" == "reconnect-graphics" ]]; then
-    sudo snap disconnect $name:graphics
-    sudo snap connect $name:graphics mesa-2404:gpu-2404
-fi

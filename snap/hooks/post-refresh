@@ -1,0 +1,14 @@
+#!/bin/bash -eu
+
+tag="snap.$SNAP_INSTANCE_NAME.hook.post-refresh"
+
+# Redirect stdout to stdout+syslog
+exec 1> >(tee >(logger --tag=$tag))
+# Redirect stderr to stderr+syslog
+exec 2> >(logger --stderr --priority error --tag=$tag)
+
+#
+# Set all stacks as snap config
+# 
+
+stack load

@@ -27,6 +27,8 @@ hooks:
       # For hardware-info
       - hardware-observe
       - opengl
+  configure:
+    plugs: *install-plugs
 
 parts:
   app-scripts:
@@ -75,6 +77,10 @@ parts:
     <<: *llamacpp-part
     build-packages:
       - nvidia-cuda-toolkit
+    # stage-packages:
+    #   - libgomp1
+    #   - libcudart12
+    #   - libcublas12
     cmake-parameters:
       - -DGGML_NATIVE=OFF
       - -DGGML_CUDA=ON
@@ -103,31 +109,31 @@ parts:
 components:
   # engines
   llamacpp:
-    type: test
+    type: standard
     summary: llama.cpp Engine
     description: LLM inference in C/C++
     version: *llamacpp-tag
   llamacpp-cuda:
-    type: test
+    type: standard
     summary: llama.cpp Engine for NVIDIA GPUs using CUDA
     description: LLM inference in C/C++
     version: *llamacpp-tag
   
   # models
   model-distill-qwen-1-5b-q8-0-gguf:
-    type: test
+    type: standard
     summary: DeepSeek R1 Distill Qwen 1.5B Q8
     description: Quantized model with 1.5B parameters in gguf format with Q8_0 weight encoding
     version: *snap-version
 
   model-distill-qwen-7b-q4-k-m-gguf:
-    type: test
+    type: standard
     summary: DeepSeek R1 Distill Qwen 7B Q4
     description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
     version: *snap-version
 
   model-distill-llama-70b-q4-k-m-gguf:
-    type: test
+    type: standard
     summary: DeepSeek R1 Llama 70B Q4
     description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
     version: *snap-version
@@ -144,9 +150,22 @@ apps:
     plugs:
       # Needed to download resources
       - network
+      # For hardware detection
+      - hardware-observe
+      - opengl
 
   chat: &engine-app
     command: bin/chat.sh
+    plugs:
+      # For inference and hardware detection (via init)
+      - opengl
+      # Needed by for cuda-uvmfd to listen on a unix socket?
+      # Needed for server app by inheritance
+      - network-bind
+      # Needed to download resources
+      - network
+      # For hardware detection (via init)
+      - hardware-observe
     environment:
       # Needed for shared libraries used by llama.cpp
       # TODO: Should this instead be added in an env file to llamacpp component
@@ -155,7 +174,5 @@ apps:
   server: 
     <<: *engine-app
     command: bin/server.sh
-    plugs:
-      - network-bind
     daemon: simple
     install-mode: disable

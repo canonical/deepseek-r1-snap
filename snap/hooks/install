@@ -1,84 +1,11 @@
 #!/bin/bash -eu
 
-tag="snap.$SNAP_INSTANCE_NAME.install"
-log()
-{
-    # Going to journal
-    logger --tag=$tag "$1"
-    # Printed to stderr on non-zero exit
-    echo "$1"
-}
+tag="snap.$SNAP_INSTANCE_NAME.hook.install"
 
-install_component()
-{
-    component=$1
-
-    handle_err()
-    {
-        log "Snapctl: $output"
-        if [[ $output =~ "cannot install components for a snap that is unknown to the store" ]]; then
-            log "Skip component installation. Install a local build: sudo snap install $SNAP_INSTANCE_NAME+<path to $component>"
-        else
-            # Unexpected error
-            exit 1
-        fi
-    }
-
-    trap 'handle_err $?' ERR
-
-    set +e
-    # This only sends an async request.
-    # The installation happens at a later stage during the installation.
-    output=$(snapctl install "+$component" 2>&1)
-    exit_code=$?
-    set -e
-}
-
-#
-# Set all stacks as snap config
-# 
-
-stacks="{}"
-for stack_file in "$SNAP"/stacks/*/stack.yaml; do
-    stack_name=$(basename $(dirname "$stack_file"))
-    stack_json=$(yq eval -o=json "$stack_file")
-    stacks=$(echo "$stacks" | jq --compact-output --argjson stack "$stack_json" --arg name "$stack_name" '.[$name] = $stack')
-done
-
-snapctl set -t stacks="$stacks"
-
-#
-# Select the stack
-#
-
-# Redirect standard errors to both stderr and syslog
-exec 2> >(logger --stderr --tag=$tag)
-
-hw_info="$($SNAP/bin/hardware-info)"
-
-selected_stack="$(echo "$hw_info" | $SNAP/bin/select-stack --stacks=$SNAP/stacks)"
-log "Selected stack: $selected_stack"
-
-#
-# Configure and install the stack
-#
-
-stack_name="$(echo "$selected_stack" | jq .name --raw-output)"
-snapctl set stack="$stack_name"
-
-stack_components=$(echo "$stacks" | jq ".\"$stack_name\".components[]" --compact-output --raw-output)
-echo "$stack_components" | while read -r component; do
-    log "Request installing component: $component"
-    install_component "$component"
-done
-
-stack_configurations=$(echo "$stacks" | jq ".\"$stack_name\".configurations |  to_entries[]" --compact-output --raw-output)
-echo "$stack_configurations" | while read -r item; do
-  key=$(echo "$item" | jq -r '.key')
-  value=$(echo "$item" | jq -r '.value')
-  log "Set configuration: $key=$value"
-  snapctl set "$key"="$value"
-done
+# Redirect stdout to stdout+syslog
+exec 1> >(tee >(logger --tag=$tag))
+# Redirect stderr to stderr+syslog
+exec 2> >(logger --stderr --priority error --tag=$tag)
 
 #
 # Set generic config
@@ -86,3 +13,24 @@ done
 
 snapctl set http.port="8080"
 snapctl set http.host="127.0.0.1"
+
+#
+# Set all stacks as snap config
+# 
+
+stack load
+
+#
+# Auto stack selection
+#
+
+if snapctl is-connected hardware-observe; then
+    stack select --auto
+    stack download
+elif lscpu -V &> /dev/null; then
+    echo "Able to access hardware info without hardware-observe interface connection: assuming dev mode installation."
+    stack select --auto
+    stack download
+else
+    echo "hardware-observe interface not auto connected. Skip auto stack selection."
+fi
