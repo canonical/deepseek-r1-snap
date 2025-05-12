@@ -23,6 +23,10 @@ engine="$SNAP_COMPONENTS/$(snapctl get engine)"
 
 # Download and install missing stack components, useful if stack is changed manually.
 if [[ ! -d "$engine" || ! -d "$model" ]]; then
+    # TODO: check if download happened successfully, not skipped. Also above.
+    # Otherwise,
+    # 1) the model init command fails. 
+    # 2) in confined mode & local install, the download request happens a second time here.
     stack download
 fi
 

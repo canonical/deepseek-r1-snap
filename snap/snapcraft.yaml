@@ -174,7 +174,5 @@ apps:
   server: 
     <<: *engine-app
     command: bin/server.sh
-    plugs:
-      - network-bind
     daemon: simple
     install-mode: disable
