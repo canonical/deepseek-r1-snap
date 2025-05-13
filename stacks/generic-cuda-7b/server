@@ -1,8 +1,0 @@
-#!/bin/bash -eu
-
-source "$(dirname "$0")/common.sh"
-
-port="$(snapctl get http.port)"
-host="$(snapctl get http.host)"
-
-exec "$engine/usr/local/bin/llama-server" --model "$MODEL_FILE" --n-gpu-layers $N_GPU_LAYERS --port "$port" --host "$host" --chat-template llama2

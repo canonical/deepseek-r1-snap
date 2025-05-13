@@ -1,7 +1,7 @@
-name: generic-cuda-70b
+name: cuda
 description: Generic stack for Nvidia GPUs using CUDA. All major CUDA versions are targeted.
 vendor: Canonical Ltd
-grade: devel
+grade: stable
 devices:
   all:
     - type: cpu
@@ -11,13 +11,13 @@ devices:
       bus: pci
       vendor-id: 0x10de # Nvidia Corporation
       # model-ids: [ ]
-      vram: 40G
+      vram: 5G
       # compute-capability: 5.0
 memory: 4G
 disk-space: 8G
 components:
   - &engine llamacpp-cuda
-  - &model model-distill-llama-70b-q4-k-m-gguf
+  - &model model-distill-qwen-7b-q4-k-m-gguf
 configurations:
   engine: *engine
   model: *model

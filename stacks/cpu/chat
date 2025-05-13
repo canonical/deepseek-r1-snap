@@ -6,4 +6,4 @@ redirection="/dev/stderr"
 if [[ "${1:-}" != "-v" ]]; then
     redirection="/dev/null"
 fi
-exec "$engine/usr/local/bin/llama-cli" --conversation --model "$MODEL_FILE" --n-gpu-layers $N_GPU_LAYERS 2> $redirection
+exec "$engine/usr/local/bin/llama-cli" --conversation --model "$MODEL_FILE" 2> $redirection
