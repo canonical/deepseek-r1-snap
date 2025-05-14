@@ -52,90 +52,141 @@ parts:
       - pciutils
       - nvidia-utils
 
-  common-runtime-dependencies:
-    plugin: nil
-    stage-packages:
-      - wget # model init
-      - jq # install hook
-    stage-snaps:
-      - yq # install hook
+  # common-runtime-dependencies:
+  #   plugin: nil
+  #   stage-packages:
+  #     - wget # model init
+  #     - jq # install hook
+  #   stage-snaps:
+  #     - yq # install hook
 
-  llamacpp: &llamacpp-part
-    source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: &llamacpp-tag b4595 
-    source-depth: 1
-    plugin: cmake
-    cmake-parameters:
-      - -DGGML_NATIVE=OFF
-    stage-packages:
-      - libgomp1
-    organize:
-      # move everything, including the staged packages
-      "*": (component/llamacpp)
+  # llamacpp: &llamacpp-part
+  #   source: https://github.com/ggerganov/llama.cpp.git
+  #   source-tag: &llamacpp-tag b4595 
+  #   source-depth: 1
+  #   plugin: cmake
+  #   cmake-parameters:
+  #     - -DGGML_NATIVE=OFF
+  #   stage-packages:
+  #     - libgomp1
+  #   organize:
+  #     # move everything, including the staged packages
+  #     "*": (component/llamacpp)
 
-  llamacpp-cuda:
-    <<: *llamacpp-part
-    build-packages:
-      - nvidia-cuda-toolkit
-    # stage-packages:
-    #   - libgomp1
-    #   - libcudart12
-    #   - libcublas12
-    cmake-parameters:
-      - -DGGML_NATIVE=OFF
-      - -DGGML_CUDA=ON
-      - -DCMAKE_CUDA_ARCHITECTURES=all-major
-    organize:
-      "*": (component/llamacpp-cuda)
+  # llamacpp-avx512:
+  #   <<: *llamacpp-part
+  #   cmake-parameters:
+  #     - -DGGML_NATIVE=OFF
+  #     - -DGGML_AVX512=ON
+  #   organize:
+  #     "*": (component/llamacpp-avx512)
 
-  model-distill-qwen-1-5b-q8-0-gguf:
-    source: components/model-distill-qwen-1-5b-q8-0-gguf
-    plugin: dump
-    organize:
-      "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
+  # llamacpp-cuda:
+  #   <<: *llamacpp-part
+  #   build-packages:
+  #     - nvidia-cuda-toolkit
+  #   # stage-packages:
+  #   #   - libgomp1
+  #   #   - libcudart12
+  #   #   - libcublas12
+  #   cmake-parameters:
+  #     - -DGGML_NATIVE=OFF
+  #     - -DGGML_CUDA=ON
+  #     - -DCMAKE_CUDA_ARCHITECTURES=all-major
+  #   organize:
+  #     "*": (component/llamacpp-cuda)
+
+  # model-distill-qwen-1-5b-q8-0-gguf:
+  #   source: components/model-distill-qwen-1-5b-q8-0-gguf
+  #   plugin: dump
+  #   organize:
+  #     "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
   
-  model-distill-qwen-7b-q4-k-m-gguf:
-    source: components/model-distill-qwen-7b-q4-k-m-gguf
-    plugin: dump
-    organize:
-      "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
+  # model-distill-qwen-7b-q4-k-m-gguf:
+  #   source: components/model-distill-qwen-7b-q4-k-m-gguf
+  #   plugin: dump
+  #   organize:
+  #     "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
   
-  model-distill-llama-70b-q4-k-m-gguf:
-    source: components/model-distill-llama-70b-q4-k-m-gguf
+  # model-distill-llama-70b-q4-k-m-gguf:
+  #   source: components/model-distill-llama-70b-q4-k-m-gguf
+  #   plugin: dump
+  #   organize:
+  #     "*": (component/model-distill-llama-70b-q4-k-m-gguf)
+
+  openvino-model-server:
     plugin: dump
+    source: https://github.com/openvinotoolkit/model_server/releases/download/v2025.1/ovms_ubuntu24_python_on.tar.gz
     organize:
-      "*": (component/model-distill-llama-70b-q4-k-m-gguf)
+      "*": (component/openvino-model-server)
+    stage-packages:
+      - libxml2
+      - curl
+      - libpython3.12
+
+  openvino-model-server-python-dependencies:
+    plugin: python
+    source: components/openvino-model-server
+    python-packages: 
+     - Jinja2==3.1.6
+     - MarkupSafe==3.0.2
+    organize:
+      "*": (component/openvino-model-server)
+
+  # model-distill-qwen-7b-gpu-openvino:
+  #   source: components/model-distill-qwen-7b-gpu-openvino
+  #   plugin: dump
+  #   organize:
+  #     "*": (component/model-distill-qwen-7b-gpu-openvino)
       
 components:
   # engines
-  llamacpp:
-    type: standard
-    summary: llama.cpp Engine
-    description: LLM inference in C/C++
-    version: *llamacpp-tag
-  llamacpp-cuda:
-    type: standard
-    summary: llama.cpp Engine for NVIDIA GPUs using CUDA
-    description: LLM inference in C/C++
-    version: *llamacpp-tag
+  # llamacpp:
+  #   type: standard
+  #   summary: llama.cpp Engine
+  #   description: LLM inference in C/C++
+  #   version: *llamacpp-tag
+  # llamacpp-avx512:
+  #   type: standard
+  #   summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
+  #   description: LLM inference in C/C++
+  #   version: *llamacpp-tag
+  # llamacpp-cuda:
+  #   type: standard
+  #   summary: llama.cpp Engine for NVIDIA GPUs using CUDA
+  #   description: LLM inference in C/C++
+  #   version: *llamacpp-tag
+
   
   # models
-  model-distill-qwen-1-5b-q8-0-gguf:
-    type: standard
-    summary: DeepSeek R1 Distill Qwen 1.5B Q8
-    description: Quantized model with 1.5B parameters in gguf format with Q8_0 weight encoding
-    version: *snap-version
+  # model-distill-qwen-1-5b-q8-0-gguf:
+  #   type: standard
+  #   summary: DeepSeek R1 Distill Qwen 1.5B Q8
+  #   description: Quantized model with 1.5B parameters in gguf format with Q8_0 weight encoding
+  #   version: *snap-version
 
-  model-distill-qwen-7b-q4-k-m-gguf:
-    type: standard
-    summary: DeepSeek R1 Distill Qwen 7B Q4
-    description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
-    version: *snap-version
+  # model-distill-qwen-7b-q4-k-m-gguf:
+  #   type: standard
+  #   summary: DeepSeek R1 Distill Qwen 7B Q4
+  #   description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
+  #   version: *snap-version
 
-  model-distill-llama-70b-q4-k-m-gguf:
+  # model-distill-llama-70b-q4-k-m-gguf:
+  #   type: standard
+  #   summary: DeepSeek R1 Llama 70B Q4
+  #   description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
+  #   version: *snap-version
+
+  openvino-model-server:
     type: standard
-    summary: DeepSeek R1 Llama 70B Q4
-    description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
+    summary: OpenVINO Model Server
+    description: OpenVINO Model Server for serving models
+    version: 2025.1
+
+  model-distill-qwen-7b-gpu-openvino:
+    type: standard
+    summary: DeepSeek R1 Qwen 7B GPU OpenVINO
+    description: Model with 7B parameters in OpenVINO format
     version: *snap-version
 
 apps:
@@ -166,6 +217,8 @@ apps:
       - network
       # For hardware detection (via init)
       - hardware-observe
+      # For sideloading models
+      - home 
     environment:
       # Needed for shared libraries used by llama.cpp
       # TODO: Should this instead be added in an env file to llamacpp component

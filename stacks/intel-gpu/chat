@@ -1,0 +1,8 @@
+#!/bin/bash -eu
+
+
+stack="$(snapctl get stack)"
+
+
+echo "THIS IS A HACK: Running server in the foreground."
+exec "$SNAP/stacks/$stack/server" 

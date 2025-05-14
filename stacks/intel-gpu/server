@@ -1,0 +1,44 @@
+#!/bin/bash -eu
+
+engine="$SNAP_COMPONENTS/$(snapctl get engine)"
+model="$SNAP_COMPONENTS/$(snapctl get model)"
+
+if [ ! -d "$model" ]; then
+    echo "Missing component: $model"
+    exit 1
+fi
+
+# source "$model/init" # exports MODEL_FILE
+
+if [ ! -d "$engine" ]; then
+    echo "Missing component: $engine"
+    exit 1
+fi
+
+
+port="$(snapctl get http.port)"
+# host="$(snapctl get http.host)"
+
+# For staged shared objects
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib:$engine/lib/python:$engine/usr/lib/$ARCH_TRIPLET"
+
+# export PYTHONPATH="$engine/lib/python3.12/site-packages"
+export PYTHONPATH="$engine/lib/python"
+
+
+# exec "$engine/usr/local/bin/llama-server" --model "$MODEL_FILE" --n-gpu-layers $N_GPU_LAYERS --port "$port" --host "$host" --chat-template llama2
+
+# export LD_LIBRARY_PATH=${PWD}/ovms/lib
+# export PATH=$PATH:${PWD}/ovms/bin
+# export PYTHONPATH=${PWD}/ovms/lib/python
+
+model_dir="$(snapctl get model-dir)"
+
+if [ ! -d "$model_dir" ]; then
+    echo "Missing model directory: $model_dir"
+    exit 1
+fi
+
+
+$engine/bin/ovms --rest_port "$port" --config_path "$model_dir/config.json"
+# $engine/bin/ovms --rest_port 8980 --config_path $model/models/configbad.json
