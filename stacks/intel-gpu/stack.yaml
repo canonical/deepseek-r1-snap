@@ -1,6 +1,7 @@
 name: intel-gpu
 description: Stack for inferencing on Intel Battlemage discrete GPUs
-maintainer: Intel Corporation
+vendor: Intel Corporation
+grade: stable
 devices:
   all:
     - type: cpu

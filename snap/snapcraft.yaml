@@ -125,6 +125,7 @@ parts:
       - clinfo
   
   # TODO: move to a component
+  # Source: https://github.com/canonical/openvino-ai-plugins-gimp-snap/blob/be8968938844436e48a1a94643c8e95b43062653/snap/snapcraft.yaml#L119-L150
   opencl-driver:
     # Includes all the compute runtime and OpenCL bits needed for Intel GPU support
     plugin: nil

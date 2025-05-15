@@ -1,0 +1,9 @@
+{
+    "mediapipe_config_list": [
+        {
+            "name": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+            "base_path": "model"
+        }
+    ],
+    "model_config_list": []
+}

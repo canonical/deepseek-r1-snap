@@ -19,11 +19,12 @@ fi
 port="$(snapctl get http.port)"
 # host="$(snapctl get http.host)"
 
-    # environment:
-    #   # Intel OpenCL libs install to /usr/local/lib
-    #   LD_LIBRARY_PATH: $SNAP/npu-libs:$SNAP/usr/local/lib:$LD_LIBRARY_PATH
-    #   PYTHONPATH: $SNAP/lib/python3.12/site-packages:$PYTHONPATH
-    #   OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
+# Source: https://github.com/canonical/openvino-ai-plugins-gimp-snap/blob/be8968938844436e48a1a94643c8e95b43062653/snap/snapcraft.yaml#L54-L58
+# environment:
+#   # Intel OpenCL libs install to /usr/local/lib
+#   LD_LIBRARY_PATH: $SNAP/npu-libs:$SNAP/usr/local/lib:$LD_LIBRARY_PATH
+#   PYTHONPATH: $SNAP/lib/python3.12/site-packages:$PYTHONPATH
+#   OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
 
 # For staged shared objects
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib:$engine/lib/python:$engine/usr/lib/$ARCH_TRIPLET:$SNAP/usr/local/lib"
@@ -40,13 +41,18 @@ export PYTHONPATH="$engine/lib/python:$engine/lib/python3.12/site-packages"
 # export PATH=$PATH:${PWD}/ovms/bin
 # export PYTHONPATH=${PWD}/ovms/lib/python
 
+# Side-load from path
 model_dir="$(snapctl get model-dir)"
-
-if [ ! -d "$model_dir" ]; then
-    echo "Missing model directory: $model_dir"
+if [[ -n "$model_dir" && ! -d "$model_dir" ]]; then
+    echo "Missing given model directory: $model_dir"
     exit 1
 fi
 
+if [[ -z "$model_dir" ]]; then
+    model_dir="$model"
+fi
+
+echo "Loading model from $model_dir"
+
 
 $engine/bin/ovms --rest_port "$port" --config_path "$model_dir/config.json"
-# $engine/bin/ovms --rest_port 8980 --config_path $model/models/configbad.json
