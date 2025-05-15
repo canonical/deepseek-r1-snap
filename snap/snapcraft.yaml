@@ -77,46 +77,46 @@ parts:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
-  # llamacpp-avx512:
-  #   <<: *llamacpp-part
-  #   cmake-parameters:
-  #     - -DGGML_NATIVE=OFF
-  #     - -DGGML_AVX512=ON
-  #   organize:
-  #     "*": (component/llamacpp-avx512)
+  llamacpp-avx512:
+    <<: *llamacpp-part
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+      - -DGGML_AVX512=ON
+    organize:
+      "*": (component/llamacpp-avx512)
 
-  # llamacpp-cuda:
-  #   <<: *llamacpp-part
-  #   build-packages:
-  #     - nvidia-cuda-toolkit
-  #   # stage-packages:
-  #   #   - libgomp1
-  #   #   - libcudart12
-  #   #   - libcublas12
-  #   cmake-parameters:
-  #     - -DGGML_NATIVE=OFF
-  #     - -DGGML_CUDA=ON
-  #     - -DCMAKE_CUDA_ARCHITECTURES=all-major
-  #   organize:
-  #     "*": (component/llamacpp-cuda)
+  llamacpp-cuda:
+    <<: *llamacpp-part
+    build-packages:
+      - nvidia-cuda-toolkit
+    # stage-packages:
+    #   - libgomp1
+    #   - libcudart12
+    #   - libcublas12
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+      - -DGGML_CUDA=ON
+      - -DCMAKE_CUDA_ARCHITECTURES=all-major
+    organize:
+      "*": (component/llamacpp-cuda)
 
-  # model-distill-qwen-1-5b-q8-0-gguf:
-  #   source: components/model-distill-qwen-1-5b-q8-0-gguf
-  #   plugin: dump
-  #   organize:
-  #     "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
+  model-distill-qwen-1-5b-q8-0-gguf:
+    source: components/model-distill-qwen-1-5b-q8-0-gguf
+    plugin: dump
+    organize:
+      "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
   
-  # model-distill-qwen-7b-q4-k-m-gguf:
-  #   source: components/model-distill-qwen-7b-q4-k-m-gguf
-  #   plugin: dump
-  #   organize:
-  #     "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
+  model-distill-qwen-7b-q4-k-m-gguf:
+    source: components/model-distill-qwen-7b-q4-k-m-gguf
+    plugin: dump
+    organize:
+      "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
   
-  # model-distill-llama-70b-q4-k-m-gguf:
-  #   source: components/model-distill-llama-70b-q4-k-m-gguf
-  #   plugin: dump
-  #   organize:
-  #     "*": (component/model-distill-llama-70b-q4-k-m-gguf)
+  model-distill-llama-70b-q4-k-m-gguf:
+    source: components/model-distill-llama-70b-q4-k-m-gguf
+    plugin: dump
+    organize:
+      "*": (component/model-distill-llama-70b-q4-k-m-gguf)
 
   opencl:
     plugin: nil
@@ -185,30 +185,43 @@ parts:
       "*": (component/model-distill-qwen-7b-gpu-openvino)
       
 components:
-  # engines
+  #
+  # Engines
+  #
+
   llamacpp:
     type: standard
     summary: llama.cpp Engine
     description: LLM inference in C/C++
     version: *llamacpp-tag
-  # llamacpp-avx512:
-  #   type: standard
-  #   summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
-  #   description: LLM inference in C/C++
-  #   version: *llamacpp-tag
-  # llamacpp-cuda:
-  #   type: standard
-  #   summary: llama.cpp Engine for NVIDIA GPUs using CUDA
-  #   description: LLM inference in C/C++
-  #   version: *llamacpp-tag
 
-  
-  # models
-  # model-distill-qwen-1-5b-q8-0-gguf:
-  #   type: standard
-  #   summary: DeepSeek R1 Distill Qwen 1.5B Q8
-  #   description: Quantized model with 1.5B parameters in gguf format with Q8_0 weight encoding
-  #   version: *snap-version
+  llamacpp-avx512:
+    type: standard
+    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+
+  llamacpp-cuda:
+    type: standard
+    summary: llama.cpp Engine for NVIDIA GPUs using CUDA
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+
+  openvino-model-server:
+    type: standard
+    summary: OpenVINO Model Server
+    description: OpenVINO Model Server for serving models
+    version: 2025.1
+
+  # 
+  # Models
+  #
+
+  model-distill-qwen-1-5b-q8-0-gguf:
+    type: standard
+    summary: DeepSeek R1 Distill Qwen 1.5B Q8
+    description: Quantized model with 1.5B parameters in gguf format with Q8_0 weight encoding
+    version: *snap-version
 
   model-distill-qwen-7b-q4-k-m-gguf:
     type: standard
@@ -216,17 +229,11 @@ components:
     description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
     version: *snap-version
 
-  # model-distill-llama-70b-q4-k-m-gguf:
-  #   type: standard
-  #   summary: DeepSeek R1 Llama 70B Q4
-  #   description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
-  #   version: *snap-version
-
-  openvino-model-server:
+  model-distill-llama-70b-q4-k-m-gguf:
     type: standard
-    summary: OpenVINO Model Server
-    description: OpenVINO Model Server for serving models
-    version: 2025.1
+    summary: DeepSeek R1 Llama 70B Q4
+    description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
+    version: *snap-version
 
   model-distill-qwen-7b-gpu-openvino:
     type: standard
