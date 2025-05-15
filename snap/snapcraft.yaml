@@ -118,6 +118,46 @@ parts:
   #   organize:
   #     "*": (component/model-distill-llama-70b-q4-k-m-gguf)
 
+  opencl:
+    plugin: nil
+    stage-packages:
+      # - intel-opencl-icd
+      - clinfo
+  
+  # TODO: move to a component
+  opencl-driver:
+    # Includes all the compute runtime and OpenCL bits needed for Intel GPU support
+    plugin: nil
+    build-packages:
+      - wget
+    override-build: |
+      mkdir -p neo
+      cd neo
+      # Install Intel graphics compiler and compute runtime
+      # This is required to enable GPU support for OpenVINO
+      # https://docs.openvino.ai/2024/get-started/configurations/configurations-intel-gpu.html
+      wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb
+      wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-opencl-2_2.5.6+18417_amd64.deb
+      wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-level-zero-gpu_1.6.32224.5_amd64.deb
+      wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd_24.52.32224.5_amd64.deb
+      wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb
+      dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
+      # update paths to the Intel Installable Client Drivers (ICDs) for OpenCL
+      intel_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel.icd
+      intel_icd_so_path=$(cat ${intel_icd})
+      base_path="/snap/${SNAPCRAFT_PROJECT_NAME}/current"
+      echo "${base_path}""${intel_icd_so_path}" > "${intel_icd}"
+      intel_legacy1_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel_legacy1.icd
+      if [ -f ${intel_legacy1_icd} ]; then
+        intel_legacy1_icd_so_path=$(cat ${intel_legacy1_icd})
+        echo "${base_path}""${intel_legacy1_icd_so_path}" > "${intel_legacy1_icd}"
+      fi
+      # fix broken sym links
+      cd "${CRAFT_PART_INSTALL}"
+      ln -sf "${base_path}"/usr/bin/ocloc-24.39.1 etc/alternatives/ocloc
+      ln -sf "${base_path}"/etc/alternatives/ocloc usr/bin/ocloc
+      craftctl default
+
   openvino-model-server:
     plugin: dump
     source: https://github.com/openvinotoolkit/model_server/releases/download/v2025.1/ovms_ubuntu24_python_on.tar.gz

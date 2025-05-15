@@ -19,11 +19,19 @@ fi
 port="$(snapctl get http.port)"
 # host="$(snapctl get http.host)"
 
-# For staged shared objects
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib:$engine/lib/python:$engine/usr/lib/$ARCH_TRIPLET"
+    # environment:
+    #   # Intel OpenCL libs install to /usr/local/lib
+    #   LD_LIBRARY_PATH: $SNAP/npu-libs:$SNAP/usr/local/lib:$LD_LIBRARY_PATH
+    #   PYTHONPATH: $SNAP/lib/python3.12/site-packages:$PYTHONPATH
+    #   OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
 
-# export PYTHONPATH="$engine/lib/python3.12/site-packages"
-export PYTHONPATH="$engine/lib/python"
+# For staged shared objects
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib:$engine/lib/python:$engine/usr/lib/$ARCH_TRIPLET:$SNAP/usr/local/lib"
+
+export OCL_ICD_VENDORS="$SNAP/etc/OpenCL/vendors"
+
+export PYTHONPATH="$engine/lib/python:$engine/lib/python3.12/site-packages"
+# export PYTHONPATH="$engine/lib/python"
 
 
 # exec "$engine/usr/local/bin/llama-server" --model "$MODEL_FILE" --n-gpu-layers $N_GPU_LAYERS --port "$port" --host "$host" --chat-template llama2
