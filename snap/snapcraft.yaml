@@ -76,7 +76,7 @@ parts:
   llamacpp-cuda:
     <<: *llamacpp-part
     build-packages:
-      - to amd64 # see also overrides
+      - to amd64: # see also the overrides
         - nvidia-cuda-toolkit
     # stage-packages:
     #   - libgomp1
@@ -92,7 +92,7 @@ parts:
       fi
     override-build: *amd64-only
     override-stage: *amd64-only
-    # override-prime: *amd64-only
+    override-prime: *amd64-only
     organize:
       "*": (component/llamacpp-cuda)
     
