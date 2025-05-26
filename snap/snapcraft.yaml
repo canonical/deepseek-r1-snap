@@ -127,6 +127,13 @@ parts:
       "*": (component/llamacpp-cuda)
     
 
+  llama-aio:
+    source: https://ampereaidevelopus.s3.us-east-1.amazonaws.com/releases/llama.aio/3.0.0/llama_aio_v3.0.0_5b4b00f.tar.gz
+    source-type: tar
+    plugin: dump
+    organize:
+      "*": (component/llama-aio)
+
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
     plugin: dump
@@ -226,7 +233,12 @@ components:
     summary: llama.cpp Engine for NVIDIA GPUs using CUDA
     description: LLM inference in C/C++
     version: *llamacpp-tag
-
+  llama-aio:
+    type: standard
+    summary: llama-aio Engine for Ampere CPUs
+    description: LLM inference in C/C++
+    version: 5b4b00f
+  
   openvino-model-server:
     type: standard
     summary: OpenVINO Model Server

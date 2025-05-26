@@ -1,0 +1,26 @@
+name: ampere
+description: Stack for Ampere CPUs
+vendor: Canonical Ltd
+grade: stable
+devices:
+  any:
+    - type: cpu
+      architectures: [arm64]
+      vendor-id: ARM
+      model-name: Neoverse-N1 # Altra uses the ARM vendor ID along with the Neoverse-N1 model name.
+    - type: cpu
+      architectures: [arm64]
+      vendor-id: Ampere
+      model-name: Ampere-1
+    - type: cpu
+      architectures: [arm64]
+      vendor-id: Ampere
+      model-name: Ampere-1a
+memory: 4G
+disk-space: 8G
+components:
+  - &engine llama-aio
+  - &model model-distill-qwen-7b-q4-k-m-gguf
+configurations:
+  engine: *engine
+  model: *model
