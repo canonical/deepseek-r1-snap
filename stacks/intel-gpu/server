@@ -1,5 +1,8 @@
 #!/bin/bash -eu
 
+# TODO
+# Can most of this script move to the engine component?
+
 engine="$SNAP_COMPONENTS/$(snapctl get engine)"
 model="$SNAP_COMPONENTS/$(snapctl get model)"
 
@@ -8,7 +11,7 @@ if [ ! -d "$model" ]; then
     exit 1
 fi
 
-# source "$model/init" # exports MODEL_FILE
+source "$model/init" # exports MODEL_CONFIG
 
 if [ ! -d "$engine" ]; then
     echo "Missing component: $engine"
@@ -17,42 +20,54 @@ fi
 
 
 port="$(snapctl get http.port)"
-# host="$(snapctl get http.host)"
+host="$(snapctl get http.host)"
 
-# Source: https://github.com/canonical/openvino-ai-plugins-gimp-snap/blob/be8968938844436e48a1a94643c8e95b43062653/snap/snapcraft.yaml#L54-L58
-# environment:
-#   # Intel OpenCL libs install to /usr/local/lib
-#   LD_LIBRARY_PATH: $SNAP/npu-libs:$SNAP/usr/local/lib:$LD_LIBRARY_PATH
-#   PYTHONPATH: $SNAP/lib/python3.12/site-packages:$PYTHONPATH
-#   OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
+# Reference for environment set up
+# https://github.com/canonical/openvino-ai-plugins-gimp-snap/blob/be8968938844436e48a1a94643c8e95b43062653/snap/snapcraft.yaml#L54-L58
 
-# For staged shared objects
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib:$engine/lib/python:$engine/usr/lib/$ARCH_TRIPLET:$SNAP/usr/local/lib"
+# Add staged shared objects
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib:$engine/lib/python:$SNAP/usr/local/lib"
+# GPU libraries
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET"
+# NPU libraries
+# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/npu-libs"
 
 export OCL_ICD_VENDORS="$SNAP/etc/OpenCL/vendors"
 
 export PYTHONPATH="$engine/lib/python:$engine/lib/python3.12/site-packages"
-# export PYTHONPATH="$engine/lib/python"
 
 
-# exec "$engine/usr/local/bin/llama-server" --model "$MODEL_FILE" --n-gpu-layers $N_GPU_LAYERS --port "$port" --host "$host" --chat-template llama2
+# target_device="$(snapctl get target-device)"
+# if [ ! -z "$target_device" ]; then
+#     echo "target-device configuration not set!"
+#     exit 1
+# fi
+# echo "Target device: $target_device"
 
-# export LD_LIBRARY_PATH=${PWD}/ovms/lib
-# export PATH=$PATH:${PWD}/ovms/bin
-# export PYTHONPATH=${PWD}/ovms/lib/python
+# # Replace the target device type in config file, 
+# # until OVMS fixes the issue with processing --target-device
+# # --target_device TARGET_DEVICE
+# #   Target device to run the inference (default: CPU)
+# mediapipe_graph=/tmp/graph.pbtxt
+# model_config="/tmp/config.json"
+# sed 's/device: .*/device: "'"$target_device"'",/' \
+#     $model/models/*/graph.pbtxt \
+#     > $mediapipe_graph
+# jq '.mediapipe_config_list[0].graph_path = "'$mediapipe_graph'"' \
+#     config.json \
+#     > $model_config
 
-# Side-load from path
-model_dir="$(snapctl get model-dir)"
-if [[ -n "$model_dir" && ! -d "$model_dir" ]]; then
-    echo "Missing given model directory: $model_dir"
-    exit 1
+# Override the model config path if user has set one
+# The model config file includes paths to the model files
+user_config="$(snapctl get model-config)"
+if [ -n "$user_config" ]; then
+    if [ ! -f "$user_config" ]; then
+        echo "Missing given model config file: $model_config"
+        exit 1
+    fi
+    MODEL_CONFIG="$user_config"
 fi
 
-if [[ -z "$model_dir" ]]; then
-    model_dir="$model"
-fi
+echo "Using model config: $MODEL_CONFIG"
 
-echo "Loading model from $model_dir"
-
-
-$engine/bin/ovms --rest_port "$port" --config_path "$model_dir/config.json"
+$engine/bin/ovms --rest_port "$port" --rest_bind_address "$host" --config_path "$MODEL_CONFIG"

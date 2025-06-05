@@ -1,0 +1,22 @@
+name: intel-npu
+description: Stack for inference on Intel NPUs
+vendor: Intel Corporation
+grade: stable
+devices:
+  all:
+    - type: cpu
+      architectures: [amd64]
+    - bus: pci
+      vendor-id: 0x8086 # Intel Corporation
+      model-ids:
+        - 0x643e # Lunar Lake NPU
+        - 0x7d1d # Meteor Lake NPU
+memory: 4G
+disk-space: 8G
+components:
+  - &e openvino-model-server
+  - &m model-distill-qwen-7b-openvino-int4
+configurations:
+  engine: *e
+  model: *m
+  target-device: NPU
