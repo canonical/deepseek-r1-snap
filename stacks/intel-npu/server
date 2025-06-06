@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 # NPU libraries
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/npu-libs"

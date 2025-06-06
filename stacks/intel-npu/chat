@@ -1,8 +1,6 @@
-#!/bin/bash
+#!/bin/bash -eu
 
-# NPU libraries
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/npu-libs"
+stack="$(snapctl get stack)"
 
-# Reuse the Intel GPU stack chat script
-source "$SNAP/stacks/intel-gpu/chat"
-
+echo "THIS IS A HACK: Running server in the foreground. Use an OpenAI compliant chat client to connect to it."
+exec "$SNAP/stacks/$stack/server" 

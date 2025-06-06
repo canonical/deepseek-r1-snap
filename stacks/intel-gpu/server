@@ -29,33 +29,12 @@ host="$(snapctl get http.host)"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib:$engine/lib/python:$SNAP/usr/local/lib"
 # GPU libraries
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET"
-# NPU libraries
+# NPU libraries - commented out, set via intel-npu server
 # export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/npu-libs"
 
 export OCL_ICD_VENDORS="$SNAP/etc/OpenCL/vendors"
 
 export PYTHONPATH="$engine/lib/python:$engine/lib/python3.12/site-packages"
-
-
-# target_device="$(snapctl get target-device)"
-# if [ ! -z "$target_device" ]; then
-#     echo "target-device configuration not set!"
-#     exit 1
-# fi
-# echo "Target device: $target_device"
-
-# # Replace the target device type in config file, 
-# # until OVMS fixes the issue with processing --target-device
-# # --target_device TARGET_DEVICE
-# #   Target device to run the inference (default: CPU)
-# mediapipe_graph=/tmp/graph.pbtxt
-# model_config="/tmp/config.json"
-# sed 's/device: .*/device: "'"$target_device"'",/' \
-#     $model/models/*/graph.pbtxt \
-#     > $mediapipe_graph
-# jq '.mediapipe_config_list[0].graph_path = "'$mediapipe_graph'"' \
-#     config.json \
-#     > $model_config
 
 # Override the model config path if user has set one
 # The model config file includes paths to the model files
@@ -68,6 +47,6 @@ if [ -n "$user_config" ]; then
     MODEL_CONFIG="$user_config"
 fi
 
-echo "Using model config: $MODEL_CONFIG"
+echo "Model Server config path: $MODEL_CONFIG"
 
 $engine/bin/ovms --rest_port "$port" --rest_bind_address "$host" --config_path "$MODEL_CONFIG"

@@ -129,6 +129,7 @@ parts:
     organize:
       "*": (component/model-distill-qwen-7b-openvino-int4)
 
+  # TODO: is this for testing purposes only?
   opencl:
     plugin: nil
     stage-packages:

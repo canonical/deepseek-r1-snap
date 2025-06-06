@@ -115,3 +115,20 @@ Install:
 ```console
 $ ./install-local-build.sh <stack> [op]
 ```
+
+## Intel GPU
+
+The drivers are included in the snap, so the snap should work standalone. 
+It has been tested on:
+- Intel Battlemage G21 [Arc B580]
+- Intel Corporation Meteor Lake-P [Intel Arc Graphics]
+
+## Intel NPU
+
+```
+sudo snap install intel-npu-driver
+sudo snap connect deepseek-r1:intel-npu intel-npu-driver # auto connects
+sudo snap connect deepseek-r1:npu-libs intel-npu-driver
+sudo snap install deepseek-r1+model-distill-qwen-7b-openvino-int4
+sudo snap install deepseek-r1+openvino-model-server
+```
