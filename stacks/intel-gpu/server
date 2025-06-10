@@ -25,18 +25,8 @@ LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET"
 export LD_LIBRARY_PATH
 echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-# Create intel.icd with the correct path to the OpenCL library
-#
-# The staged intel-opencl-icd installs $SNAP/usr/lib/x86_64-linux-gnu/intel-opencl/intel.icd,
-# containing: /usr/lib/x86_64-linux-gnu/intel-opencl/libigdrcl.so
-# Because of the absolute path, so we can't control how the object is loaded via LD_LIBRARY_PATH.
-# We can correct that path on runtime when we know the snap instance name, using a snapcraft layout bind mount or symlink,
-# or rather self-contain it here:
-mkdir -p /tmp/etc/OpenCL/vendors
-echo "$SNAP/usr/lib/x86_64-linux-gnu/intel-opencl/libigdrcl.so" > \
-    "/tmp/etc/OpenCL/vendors/intel.icd"  
-export OCL_ICD_VENDORS="/tmp/etc/OpenCL/vendors/"
-# TODO: use layout if hardware-info requires the same
+# To find the intel.icd file, containing the path to libigdrcl.so
+export OCL_ICD_VENDORS=$SNAP/etc/OpenCL/vendors
 
 # Add Python dependencies
 export PYTHONPATH="$engine/lib/python:$engine/lib/python3.12/site-packages"
