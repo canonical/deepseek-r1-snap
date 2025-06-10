@@ -1,7 +1,6 @@
 #!/bin/bash -eu
 
-# TODO
-# Can most of this script move to the engine component?
+# TODO: should most of this script move to the ovms component?
 
 engine="$SNAP_COMPONENTS/$(snapctl get engine)"
 model="$SNAP_COMPONENTS/$(snapctl get model)"
@@ -19,22 +18,29 @@ if [ ! -d "$engine" ]; then
 fi
 
 
-port="$(snapctl get http.port)"
-host="$(snapctl get http.host)"
-
-# Reference for environment set up
-# https://github.com/canonical/openvino-ai-plugins-gimp-snap/blob/be8968938844436e48a1a94643c8e95b43062653/snap/snapcraft.yaml#L54-L58
-
 # Add staged shared objects
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib:$engine/lib/python:$SNAP/usr/local/lib"
-# GPU libraries
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET"
-# NPU libraries - commented out, set via intel-npu server
-# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/npu-libs"
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib"
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib/python"
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET"
+export LD_LIBRARY_PATH
+echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-export OCL_ICD_VENDORS="$SNAP/etc/OpenCL/vendors"
+# Create intel.icd with the correct path to the OpenCL library
+#
+# The staged intel-opencl-icd installs $SNAP/usr/lib/x86_64-linux-gnu/intel-opencl/intel.icd,
+# containing: /usr/lib/x86_64-linux-gnu/intel-opencl/libigdrcl.so
+# Because of the absolute path, so we can't control how the object is loaded via LD_LIBRARY_PATH.
+# We can correct that path on runtime when we know the snap instance name, using a snapcraft layout bind mount or symlink,
+# or rather self-contain it here:
+mkdir -p /tmp/etc/OpenCL/vendors
+echo "$SNAP/usr/lib/x86_64-linux-gnu/intel-opencl/libigdrcl.so" > \
+    "/tmp/etc/OpenCL/vendors/intel.icd"  
+export OCL_ICD_VENDORS="/tmp/etc/OpenCL/vendors/"
+# TODO: use layout if hardware-info requires the same
 
+# Add Python dependencies
 export PYTHONPATH="$engine/lib/python:$engine/lib/python3.12/site-packages"
+echo "PYTHONPATH: $PYTHONPATH"
 
 # Override the model config path if user has set one
 # The model config file includes paths to the model files
@@ -48,5 +54,8 @@ if [ -n "$user_config" ]; then
 fi
 
 echo "Model Server config path: $MODEL_CONFIG"
+
+port="$(snapctl get http.port)"
+host="$(snapctl get http.host)"
 
 $engine/bin/ovms --rest_port "$port" --rest_bind_address "$host" --config_path "$MODEL_CONFIG"
