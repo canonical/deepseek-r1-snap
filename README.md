@@ -118,10 +118,12 @@ $ ./install-local-build.sh <stack> [op]
 
 ## Intel GPU
 
-The drivers are included in the snap, so the snap should work standalone. 
+The user space drivers are included in the snap, so the snap should work standalone as long as you are running a relatively new kernel (>6.XX).
+
 It has been tested on:
 - Intel Battlemage G21 [Arc B580]
-- Intel Corporation Meteor Lake-P [Intel Arc Graphics]
+- Intel Meteor Lake-P [Intel Arc Graphics]
+- Intel Raptor Lake-S UHD Graphics
 
 ## Intel NPU
 
