@@ -125,6 +125,28 @@ It has been tested on:
 - Intel Meteor Lake-P [Intel Arc Graphics]
 - Intel Raptor Lake-S UHD Graphics
 
+The API calls using OpenVINO Model Server engine in this snap need to set their model to `DeepSeek-R1-Distill-Qwen-7B-ov-int4`.
+For example:
+```
+curl http://localhost:8080/v3/chat/completions -d \
+'{
+  "model": "DeepSeek-R1-Distill-Qwen-7B-ov-int4",
+  "max_tokens": 30,
+  "temperature": 0,
+  "stream": false,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant."
+    },
+    {
+      "role": "user",
+      "content": "What are the 3 main tourist attractions in Paris?"
+    }
+  ]
+}'
+```
+
 ## Intel NPU
 
 ```
