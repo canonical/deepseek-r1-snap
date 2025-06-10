@@ -228,6 +228,17 @@ apps:
     command: meta/hooks/install
     plugs: *install-plugs
 
+  hardware-info:
+    command: bin/hardware-info
+    plugs:
+      # For hardware detection
+      - hardware-observe
+      - opengl
+    environment:
+      # To load libigdrcl.so, for Intel GPU vRAM
+      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
+
+
   init:
     command: bin/init.sh
     plugs:
