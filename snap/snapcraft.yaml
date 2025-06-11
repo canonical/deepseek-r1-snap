@@ -76,68 +76,68 @@ parts:
     stage-snaps:
       - yq # install hook
 
-  # llamacpp: &llamacpp-part
-  #   source: https://github.com/ggerganov/llama.cpp.git
-  #   source-tag: &llamacpp-tag b4595 
-  #   source-depth: 1
-  #   plugin: cmake
-  #   cmake-parameters:
-  #     - -DGGML_NATIVE=OFF
-  #   stage-packages:
-  #     - libgomp1
-  #   organize:
-  #     # move everything, including the staged packages
-  #     "*": (component/llamacpp)
+  llamacpp: &llamacpp-part
+    source: https://github.com/ggerganov/llama.cpp.git
+    source-tag: &llamacpp-tag b4595 
+    source-depth: 1
+    plugin: cmake
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+    stage-packages:
+      - libgomp1
+    organize:
+      # move everything, including the staged packages
+      "*": (component/llamacpp)
 
-  # llamacpp-avx512:
-  #   <<: *llamacpp-part
-  #   cmake-parameters:
-  #     - -DGGML_NATIVE=OFF
-  #     - -DGGML_AVX512=ON
-  #   organize:
-  #     "*": (component/llamacpp-avx512)
+  llamacpp-avx512:
+    <<: *llamacpp-part
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+      - -DGGML_AVX512=ON
+    organize:
+      "*": (component/llamacpp-avx512)
 
-  # llamacpp-cuda:
-  #   <<: *llamacpp-part
-  #   build-packages:
-  #     - to amd64: # see also the overrides
-  #       - nvidia-cuda-toolkit
-  #   # stage-packages:
-  #   #   - libgomp1
-  #   #   - libcudart12
-  #   #   - libcublas12
-  #   cmake-parameters:
-  #     - -DGGML_NATIVE=OFF
-  #     - -DGGML_CUDA=ON
-  #     - -DCMAKE_CUDA_ARCHITECTURES=all-major
-  #   override-pull: &amd64-only |
-  #     if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
-  #       craftctl default
-  #     fi
-  #   override-build: *amd64-only
-  #   override-stage: *amd64-only
-  #   override-prime: *amd64-only
-  #   organize:
-  #     "*": (component/llamacpp-cuda)
+  llamacpp-cuda:
+    <<: *llamacpp-part
+    build-packages:
+      - to amd64: # see also the overrides
+        - nvidia-cuda-toolkit
+    # stage-packages:
+    #   - libgomp1
+    #   - libcudart12
+    #   - libcublas12
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+      - -DGGML_CUDA=ON
+      - -DCMAKE_CUDA_ARCHITECTURES=all-major
+    override-pull: &amd64-only |
+      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
+        craftctl default
+      fi
+    override-build: *amd64-only
+    override-stage: *amd64-only
+    override-prime: *amd64-only
+    organize:
+      "*": (component/llamacpp-cuda)
     
 
-  # model-distill-qwen-1-5b-q8-0-gguf:
-  #   source: components/model-distill-qwen-1-5b-q8-0-gguf
-  #   plugin: dump
-  #   organize:
-  #     "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
+  model-distill-qwen-1-5b-q8-0-gguf:
+    source: components/model-distill-qwen-1-5b-q8-0-gguf
+    plugin: dump
+    organize:
+      "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
   
-  # model-distill-qwen-7b-q4-k-m-gguf:
-  #   source: components/model-distill-qwen-7b-q4-k-m-gguf
-  #   plugin: dump
-  #   organize:
-  #     "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
+  model-distill-qwen-7b-q4-k-m-gguf:
+    source: components/model-distill-qwen-7b-q4-k-m-gguf
+    plugin: dump
+    organize:
+      "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
   
-  # model-distill-llama-70b-q4-k-m-gguf:
-  #   source: components/model-distill-llama-70b-q4-k-m-gguf
-  #   plugin: dump
-  #   organize:
-  #     "*": (component/model-distill-llama-70b-q4-k-m-gguf)
+  model-distill-llama-70b-q4-k-m-gguf:
+    source: components/model-distill-llama-70b-q4-k-m-gguf
+    plugin: dump
+    organize:
+      "*": (component/model-distill-llama-70b-q4-k-m-gguf)
 
   model-distill-qwen-7b-openvino-int4:
     source: components/model-distill-qwen-7b-openvino-int4
@@ -197,23 +197,23 @@ components:
   # Models
   #
 
-  # model-distill-qwen-1-5b-q8-0-gguf:
-  #   type: standard
-  #   summary: DeepSeek R1 Distill Qwen 1.5B Q8
-  #   description: Quantized model with 1.5B parameters in gguf format with Q8_0 weight encoding
-  #   version: *snap-version
+  model-distill-qwen-1-5b-q8-0-gguf:
+    type: standard
+    summary: DeepSeek R1 Distill Qwen 1.5B Q8
+    description: Quantized model with 1.5B parameters in gguf format with Q8_0 weight encoding
+    version: *snap-version
 
-  # model-distill-qwen-7b-q4-k-m-gguf:
-  #   type: standard
-  #   summary: DeepSeek R1 Distill Qwen 7B Q4
-  #   description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
-  #   version: *snap-version
+  model-distill-qwen-7b-q4-k-m-gguf:
+    type: standard
+    summary: DeepSeek R1 Distill Qwen 7B Q4
+    description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
+    version: *snap-version
 
-  # model-distill-llama-70b-q4-k-m-gguf:
-  #   type: standard
-  #   summary: DeepSeek R1 Llama 70B Q4
-  #   description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
-  #   version: *snap-version
+  model-distill-llama-70b-q4-k-m-gguf:
+    type: standard
+    summary: DeepSeek R1 Llama 70B Q4
+    description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
+    version: *snap-version
 
   model-distill-qwen-7b-openvino-int4:
     type: standard
