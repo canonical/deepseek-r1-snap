@@ -9,8 +9,8 @@ devices:
       
     - type: gpu
       bus: pci
-      vendor-id: 0x8086 # Intel Corporation
-      model-ids:
+      pci-vendor-id: 0x8086 # Intel Corporation
+      pci-model-ids:
         - 0xe202 # Battlemage G21 [Intel Graphics]
         - 0xe20b # Battlemage G21 [Arc B580]
         - 0xe20c # Battlemage G21 [Arc B570]

@@ -6,9 +6,10 @@ devices:
   all:
     - type: cpu
       architectures: [amd64]
-    - bus: pci
-      vendor-id: 0x8086 # Intel Corporation
-      model-ids:
+    - type: npu
+      bus: pci
+      pci-vendor-id: 0x8086 # Intel Corporation
+      pci-device-ids:
         - 0x643e # Lunar Lake NPU
         - 0x7d1d # Meteor Lake NPU
 memory: 4G
