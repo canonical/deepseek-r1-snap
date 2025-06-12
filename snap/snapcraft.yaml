@@ -197,23 +197,23 @@ components:
   # Engines
   #
 
-  # llamacpp:
-  #   type: standard
-  #   summary: llama.cpp Engine
-  #   description: LLM inference in C/C++
-  #   version: *llamacpp-tag
+  llamacpp:
+    type: standard
+    summary: llama.cpp Engine
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
 
-  # llamacpp-avx512:
-  #   type: standard
-  #   summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
-  #   description: LLM inference in C/C++
-  #   version: *llamacpp-tag
+  llamacpp-avx512:
+    type: standard
+    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
 
-  # llamacpp-cuda:
-  #   type: standard
-  #   summary: llama.cpp Engine for NVIDIA GPUs using CUDA
-  #   description: LLM inference in C/C++
-  #   version: *llamacpp-tag
+  llamacpp-cuda:
+    type: standard
+    summary: llama.cpp Engine for NVIDIA GPUs using CUDA
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
 
   openvino-model-server:
     type: standard
