@@ -119,6 +119,7 @@ $ ./install-local-build.sh <stack> [op]
 ## Intel GPU
 
 The user space drivers are included in the snap, so the snap should work standalone as long as you are running a relatively new kernel (>6.XX).
+A HWE kernel is required for discrete GPU support an some systems, please refer [here](https://dgpu-docs.intel.com/driver/client/overview.html) for details.
 
 It has been tested on:
 - Intel Battlemage G21 [Arc B580]
