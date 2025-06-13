@@ -5,21 +5,41 @@ grade: stable
 devices:
   all:
     - type: cpu
-      architectures: [amd64]
-      
+      architecture: amd64
+  any:
+    # Battlemage G21 [Intel Graphics]
     - type: gpu
-      bus: pci
-      pci-vendor-id: 0x8086 # Intel Corporation
-      pci-model-ids:
-        - 0xe202 # Battlemage G21 [Intel Graphics]
-        - 0xe20b # Battlemage G21 [Arc B580]
-        - 0xe20c # Battlemage G21 [Arc B570]
-        - 0xe20d # Battlemage G21 [Intel Graphics]
-        - 0xe210 # Battlemage G21 [Intel Graphics]
-        - 0xe212 # Battlemage G21 [Intel Graphics]
-        - 0xe215 # Battlemage G21 [Intel Graphics]
-        - 0xe216 # Battlemage G21 [Intel Graphics]
-      # vram: 5G
+      vendor-id: 0x8086 # Intel Corporation
+      device-id: 0xe202
+    # Battlemage G21 [Arc B580]
+    - type: gpu
+      vendor-id: 0x8086
+      device-id: 0xe20b
+    # Battlemage G21 [Arc B570]
+    - type: gpu
+      vendor-id: 0x8086
+      device-id: 0xe20c 
+    # Battlemage G21 [Intel Graphics]
+    - type: gpu
+      vendor-id: 0x8086
+      device-id: 0xe20d 
+    # Battlemage G21 [Intel Graphics]
+    - type: gpu
+      vendor-id: 0x8086
+      device-id: 0xe210 
+    # Battlemage G21 [Intel Graphics]
+    - type: gpu
+      vendor-id: 0x8086
+      device-id: 0xe212 
+    # Battlemage G21 [Intel Graphics]
+    - type: gpu
+      vendor-id: 0x8086
+      device-id: 0xe215 
+    # Battlemage G21 [Intel Graphics]
+    - type: gpu
+      vendor-id: 0x8086
+      device-id: 0xe216 
+    
 memory: 4G
 disk-space: 8G
 components:
