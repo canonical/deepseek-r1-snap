@@ -8,21 +8,20 @@ if [ -z "$target_device" ]; then
     exit 1
 fi
 
-
-# Replace the target device type in config file, 
-# until OVMS fixes the issue with processing --target-device
-# --target_device TARGET_DEVICE
-#   Target device to run the inference (default: CPU)
+#
+# Make necessary modifications to the mediapipe graph file and OVMS config file
+#
 mediapipe_graph=/tmp/graph.pbtxt
 model_config="/tmp/config.json"
 model_path="$model/models/DeepSeek-R1-Distill-Qwen-7B-ov-int4"
-# Replace device in mediapipe graph to value set via configuration
-# Replace models_path with the absolute path to the model 
+# 1) Replace the target device type until OVMS fixes the issue with processing
+# --target_device TARGET_DEVICE
+#   Target device to run the inference (default: CPU)
+# 2) Replace models_path with the absolute path to the model 
 sed -e 's|device: .*|device: "'"$target_device"'",|' \
     -e 's|models_path: .*|models_path: "'"$model_path"'",|' \
     $model/models/*/graph.pbtxt \
     > $mediapipe_graph
-
 
 # Replace graph path in Model Server config
 jq '.mediapipe_config_list[0].graph_path = "'$mediapipe_graph'"' \
