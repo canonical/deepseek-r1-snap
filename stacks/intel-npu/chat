@@ -1,6 +1,13 @@
 #!/bin/bash -eu
 
-stack="$(snapctl get stack)"
+echo "Error: Not implemented."
+echo ""
+echo "Start the server and use an OpenAI compliant chat client to connect to it."
+echo ""
+echo "To run the server in the background, use:"
+echo "sudo snap start $SNAP_INSTANCE_NAME.server"
+echo ""
+echo "To run the server in the foreground, use:"
+echo "sudo snap run $SNAP_INSTANCE_NAME.server"
 
-echo "THIS IS A HACK: Running server in the foreground. Use an OpenAI compliant chat client to connect to it."
-exec "$SNAP/stacks/$stack/server" 
+exit 1
