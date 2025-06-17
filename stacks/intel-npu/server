@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+
+# NPU libraries
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/npu-libs"
+
+# Reuse the Intel GPU stack server script
+source "$SNAP/stacks/intel-gpu/server"

@@ -115,3 +115,45 @@ Install:
 ```console
 $ ./install-local-build.sh <stack> [op]
 ```
+
+## Intel GPU
+
+The user space drivers are included in the snap, so the snap should work standalone as long as you are running a relatively new kernel (>6.XX).
+A HWE kernel is required for discrete GPU support an some systems, please refer [here](https://dgpu-docs.intel.com/driver/client/overview.html) for details.
+
+It has been tested on:
+- Intel Battlemage G21 [Arc B580]
+- Intel Meteor Lake-P [Intel Arc Graphics]
+- Intel Raptor Lake-S UHD Graphics
+
+The API calls using OpenVINO Model Server engine in this snap need to set their model to `DeepSeek-R1-Distill-Qwen-7B-ov-int4`.
+For example:
+```
+curl http://localhost:8080/v3/chat/completions -d \
+'{
+  "model": "DeepSeek-R1-Distill-Qwen-7B-ov-int4",
+  "max_tokens": 30,
+  "temperature": 0,
+  "stream": false,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant."
+    },
+    {
+      "role": "user",
+      "content": "What are the 3 main tourist attractions in Paris?"
+    }
+  ]
+}'
+```
+
+## Intel NPU
+
+```
+sudo snap install intel-npu-driver
+sudo snap connect deepseek-r1:intel-npu intel-npu-driver # auto connects
+sudo snap connect deepseek-r1:npu-libs intel-npu-driver
+sudo snap install deepseek-r1+model-distill-qwen-7b-openvino-int4
+sudo snap install deepseek-r1+openvino-model-server
+```

@@ -1,0 +1,52 @@
+#!/bin/bash -eu
+
+# TODO: should most of this script move to the ovms component?
+
+engine="$SNAP_COMPONENTS/$(snapctl get engine)"
+model="$SNAP_COMPONENTS/$(snapctl get model)"
+
+if [ ! -d "$model" ]; then
+    echo "Missing component: $model"
+    exit 1
+fi
+
+source "$model/init" # exports MODEL_CONFIG
+
+if [ ! -d "$engine" ]; then
+    echo "Missing component: $engine"
+    exit 1
+fi
+
+
+# Add staged shared objects
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib"
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib/python"
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET"
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/usr/local/lib"
+export LD_LIBRARY_PATH
+echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+
+# To find the intel.icd file, containing the path to libigdrcl.so
+export OCL_ICD_VENDORS=$SNAP/etc/OpenCL/vendors
+
+# Add Python dependencies
+export PYTHONPATH="$engine/lib/python:$engine/lib/python3.12/site-packages"
+echo "PYTHONPATH: $PYTHONPATH"
+
+# Override the model config path if user has set one
+# The model config file includes paths to the model files
+user_config="$(snapctl get model-config)"
+if [ -n "$user_config" ]; then
+    if [ ! -f "$user_config" ]; then
+        echo "Missing given model config file: $model_config"
+        exit 1
+    fi
+    MODEL_CONFIG="$user_config"
+fi
+
+echo "Model Server config path: $MODEL_CONFIG"
+
+port="$(snapctl get http.port)"
+host="$(snapctl get http.host)"
+
+$engine/bin/ovms --rest_port "$port" --rest_bind_address "$host" --config_path "$MODEL_CONFIG"
