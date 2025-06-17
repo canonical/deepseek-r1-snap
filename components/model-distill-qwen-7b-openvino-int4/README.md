@@ -3,7 +3,7 @@
 The model files should be added under `models` directory to be found by the engine.
 The corresponding config file is expected at `models/config.json`.
 
-For side-loading another model, set the `models-config` snap option to Model Server JSON configuration file (generated via `export_model.py --config_file_path <path>`).
+For side-loading another model, set the `models-config` snap option to the path of a Model Server JSON configuration file (generated via `export_model.py --config_file_path <path>`).
 This should not be confused with the HF model's config file.
 
 ## Download the model
