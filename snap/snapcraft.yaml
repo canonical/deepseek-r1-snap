@@ -194,7 +194,7 @@ parts:
   openvino-model-server-python-dependencies:
     plugin: python
     source: components/openvino-model-server
-    python-packages: 
+    python-packages:
      - Jinja2==3.1.6
      - MarkupSafe==3.0.2
     organize:
