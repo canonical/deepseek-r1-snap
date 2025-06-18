@@ -62,6 +62,14 @@ parts:
       - nvidia-utils # for Nvidia vRAM and Cuda Capability detection
       - clinfo # for Intel GPU vRAM detection
 
+  go-chat-client:
+    source: https://github.com/jpm-canonical/go-chat-client.git
+    source-type: git
+    source-branch: dev
+    plugin: go
+    build-snaps:
+      - go/1.24/stable
+
   common-runtime-dependencies:
     plugin: nil
     stage-packages:

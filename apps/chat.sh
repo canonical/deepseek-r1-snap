@@ -1,7 +1,22 @@
-#!/bin/bash -eu
+#!/bin/bash
 
-$SNAP/bin/init.sh
+"$SNAP"/bin/init.sh
 
-stack="$(snapctl get stack)"
+port="$(snapctl get http.port)"
+model="$(snapctl get model-name)"
 
-exec "$SNAP/stacks/$stack/chat" "$@"
+# Normally the OpenAI API is hosted under http://server:port/v1. In some cased like with OpenVINO it is under http://server:port/v3
+api_base_path="$(snapctl get api-base-path)"
+if [ -z "$base_url" ]; then
+  api_base_path="v1"
+fi
+
+OPENAI_BASE_URL="http://localhost:$port/$api_base_path" MODEL_NAME="$model" REASONING_MODEL=True "$SNAP"/bin/go-chat-client
+status=$?
+if [ $status -ne 0 ]; then
+  echo "Exit code: $status"
+  echo ""
+  echo "Unable to chat. Make sure the server is started successfully."
+fi
+
+exit $status

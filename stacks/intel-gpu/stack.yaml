@@ -49,3 +49,5 @@ configurations:
   engine: *e
   model: *m
   target-device: GPU
+  api-base-path: v3
+  model-name: DeepSeek-R1-Distill-Qwen-7B-ov-int4
