@@ -1,5 +1,7 @@
 # DeepSeek R1 snap
 
+This snap installs a hardware-optimized runtime for inference with the DeepSeek R1 LLM.
+
 ## Supported environment
 
 The software has primarily been tested on Ubuntu 24.04 and newer. 
@@ -13,14 +15,14 @@ The following hardware is supported:
   * amd64: Intel or AMD
   * arm64: Ampere
 * NPUs:   
-  * Intel Core Ultra; refer [here](intel-npu)
+  * Intel Core Ultra; refer [here](#intel-npu)
 * GPUs:
-  * Intel integrated or discrete GPUs; refer [here](intel-gpu)
-  * Nvidia GPUs for amd64 platforms; refer [here](nvidia-gpu)
+  * Intel integrated or discrete GPUs; refer [here](#intel-gpu)
+  * Nvidia GPUs for amd64 platforms; refer [here](#nvidia-gpu)
 
 
 ## Install
-Set the right channel and install the model as a snap:
+Set the right channel and install the model snap:
 ```console
 sudo snap install deepseek-r1 --channel=<channel> --devmode
 ```
@@ -28,7 +30,9 @@ sudo snap install deepseek-r1 --channel=<channel> --devmode
 It should be installed in developer mode because it needs [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) during the installation.
 This interface is currently not automatically connected.
 
-To install gpu dependencies, refer [here](#nvidia-cuda-stacks).
+> [!TIP]
+> If you install in confined mode, the auto detection will not run during the installation, but instead of first use.
+> To force auto detection, run `sudo deepseek-r1.init`.
 
 To build and install from source, scroll to [here](#build-and-install-from-source).
 
@@ -40,8 +44,9 @@ You can check the installed components with:
 sudo snap components deepseek-r1
 ```
 
-The engine is a server application, but it is not started by default.
-This is to allow on-demand start of the service and use of the computing resources.
+The installed engine is a server application which can run as a service.
+The service is NOT started by default.
+This is to allow on-demand use of the computing resources.
 
 The snap includes several configurations, some of which are set based on the detected environment. 
 To explore the configurations, use:
@@ -50,13 +55,10 @@ sudo snap get deepseek-r1
 ```
 
 ### Run server
-Start the server app (in foreground):
+Start the server app in the foreground:
 ```shell
 sudo snap run deepseek-r1.server
 ```
-
-> [!NOTE]
-> Running a llama.cpp-based engine from the root of the home directory may result in a permission denial error.
 
 The server exposes an [OpenAI compatible](https://github.com/openai/openai-openapi) endpoint served via HTTP.
 The HTTP server's bind host and port have the following default values:
