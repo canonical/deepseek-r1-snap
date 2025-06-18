@@ -172,13 +172,11 @@ curl http://localhost:8080/v3/chat/completions -d \
 ```
 
 ## Intel NPU
-
+For using an Intel NPU, install and connect the driver snap:
 ```
 sudo snap install intel-npu-driver
 sudo snap connect deepseek-r1:intel-npu intel-npu-driver # auto connects
 sudo snap connect deepseek-r1:npu-libs intel-npu-driver
-sudo snap install deepseek-r1+model-distill-qwen-7b-openvino-int4
-sudo snap install deepseek-r1+openvino-model-server
 ```
 
 ## Build and install from source
