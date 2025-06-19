@@ -5,7 +5,7 @@
 port="$(snapctl get http.port)"
 model_name="$(snapctl get model-name)"
 
-# Normally the OpenAI API is hosted under http://server:port/v1. In some cased like with OpenVINO it is under http://server:port/v3
+# Normally the OpenAI API is hosted under http://server:port/v1. In some cases like with OpenVINO it is under http://server:port/v3
 api_base_path="$(snapctl get api-base-path)"
 if [ -z "$base_url" ]; then
   api_base_path="v1"
