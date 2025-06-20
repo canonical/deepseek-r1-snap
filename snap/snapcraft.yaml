@@ -32,11 +32,15 @@ plugs:
     
 hooks:
   install:
+    environment: &install-env
+      # To load libigdrcl.so, for Intel GPU vRAM
+      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
     plugs: &install-plugs
       # For hardware-info
       - hardware-observe
       - opengl
   configure:
+    environment: *install-env
     plugs: *install-plugs
 
 parts:
@@ -61,6 +65,14 @@ parts:
       - pciutils
       - nvidia-utils # for Nvidia vRAM and Cuda Capability detection
       - clinfo # for Intel GPU vRAM detection
+
+  go-chat-client:
+    source: https://github.com/jpm-canonical/go-chat-client.git
+    source-type: git
+    source-tag: v1.0.0-beta
+    plugin: go
+    build-snaps:
+      - go/1.24/stable
 
   common-runtime-dependencies:
     plugin: nil
@@ -186,7 +198,7 @@ parts:
   openvino-model-server-python-dependencies:
     plugin: python
     source: components/openvino-model-server
-    python-packages: 
+    python-packages:
      - Jinja2==3.1.6
      - MarkupSafe==3.0.2
     organize:
