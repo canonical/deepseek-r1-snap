@@ -32,11 +32,15 @@ plugs:
     
 hooks:
   install:
+    environment: &install-env
+      # To load libigdrcl.so, for Intel GPU vRAM
+      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
     plugs: &install-plugs
       # For hardware-info
       - hardware-observe
       - opengl
   configure:
+    environment: *install-env
     plugs: *install-plugs
 
 parts:
@@ -65,7 +69,7 @@ parts:
   go-chat-client:
     source: https://github.com/jpm-canonical/go-chat-client.git
     source-type: git
-    source-branch: dev
+    source-tag: v1.0.0-beta
     plugin: go
     build-snaps:
       - go/1.24/stable
