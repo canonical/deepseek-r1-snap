@@ -9,12 +9,12 @@ if [ -z "$api_base_path" ]; then
   api_base_path="v1"
 fi
 
-set -e
+set +e
 
 OPENAI_BASE_URL="http://localhost:$port/$api_base_path" MODEL_NAME="$model_name" REASONING_MODEL=true "$SNAP"/bin/go-chat-client
 status=$?
 
-set +e
+set -e
 
 if [ $status -ne 0 ]; then
   echo "Exit code: $status"
