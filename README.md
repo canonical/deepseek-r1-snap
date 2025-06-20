@@ -4,9 +4,9 @@ This snap installs a hardware-optimized runtime for inference with the DeepSeek 
 
 ## Supported environment
 
-The software has primarily been tested on Ubuntu 24.04 and newer. 
+The software has mainly been tested on Ubuntu 24.04 and newer. 
 
-The snap supports various hardware, in many cases with the help of drivers installed on the host. 
+The snap supports a range of hardware, in many cases with the help of drivers installed on the host. 
 For the best experience, make sure the drivers are installed on the host before installing the snap.
 Follow the links below to learn about these requirements.
 
@@ -27,18 +27,18 @@ Set the right channel and install the model snap:
 sudo snap install deepseek-r1 --channel=<channel> --devmode
 ```
 
-It should be installed in developer mode because it needs [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) during the installation.
+It must be installed in developer mode because it needs [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) during the installation.
 This interface is currently not automatically connected.
 
 > [!TIP]
-> If you install in confined mode, the auto detection will not run during the installation, but instead of first use.
+> If you install in confined mode, the auto detection will run on first use, not during the installation.
 > To force auto detection, run `sudo deepseek-r1.init`.
 
 To build and install from source, scroll to [here](#build-and-install-from-source).
 
 ## Use
 
-Upon installation of the snap, a suitable *stack* comprised of an engine and a model get automatically installed as snap components. 
+When the snap is installed, a suitable *stack* comprised of an engine and a model are automatically installed as snap components. 
 You can check the installed components with:
 ```shell
 sudo snap components deepseek-r1
@@ -69,7 +69,7 @@ http.host  127.0.0.1
 http.port  8080
 ```
 
-To change, for example the HTTP port to `8999`:
+To change, for example, the HTTP port to `8999`:
 ```shell
 sudo snap set deepseek-r1 http.port=8999
 ```
@@ -93,7 +93,7 @@ deepseek-r1.chat
 
 ### Configure 
 The configurations can be explored and changed using `snap get` and `snap set`.
-See below examples.
+See the examples below.
 
 Query the top level config:
 ```shell
@@ -127,10 +127,10 @@ sudo snap set deepseek-r1 stack=<stack>
 
 ## NVIDIA GPU
 
-NVIDIA drivers, utils and CUDA are required to use the CUDA-based stacks.
+NVIDIA drivers, utils, and CUDA are required to use the CUDA-based stacks.
 
 These steps were tested on Ubuntu Server 24.04.1, running on a machine with an NVIDIA RTX A5000.
-The version of driver and utils might be different depending on your setup.
+The version of driver and utils on your machine might be different depending on your setup.
 
 ```shell
 sudo apt update
@@ -140,7 +140,7 @@ sudo reboot
 
 ## Intel GPU
 
-The user space drivers are included in the snap, so the snap should work standalone as long as you are running a relatively new kernel (>6.XX).
+The user space drivers are included in the snap so it should work standalone if you are running a relatively new kernel (>6.XX).
 A HWE kernel is required for discrete GPU support on some systems, please refer [here](https://dgpu-docs.intel.com/driver/client/overview.html) for details.
 
 It has been tested on:
@@ -148,7 +148,9 @@ It has been tested on:
 - Intel Meteor Lake-P [Intel Arc Graphics]
 - Intel Raptor Lake-S UHD Graphics
 
-The API calls using OpenVINO Model Server engine in this snap need to set their model to [`DeepSeek-R1-Distill-Qwen-7B-ov-int4`](components/model-distill-qwen-7b-openvino-int4/).
+The Intel stacks make use of OpenVINO Model Server.
+It has the OpenAI-compatible API available under the `/v3` base path.
+It also requires the `model` field in the API requests to be set to [`DeepSeek-R1-Distill-Qwen-7B-ov-int4`](components/model-distill-qwen-7b-openvino-int4/).
 
 For example:
 ```
@@ -172,12 +174,15 @@ curl http://localhost:8080/v3/chat/completions -d \
 ```
 
 ## Intel NPU
-For using an Intel NPU, install and connect the driver snap:
+To use an Intel NPU, install and connect the driver snap:
 ```
 sudo snap install intel-npu-driver
 sudo snap connect deepseek-r1:intel-npu intel-npu-driver # auto connects
 sudo snap connect deepseek-r1:npu-libs intel-npu-driver
 ```
+
+> [!NOTE]
+> The Intel NPU stack also uses OpenVINO Model Server, and therefore using its API has the same considerations as for Intel GPUs described [above](#intel-gpu). 
 
 ## Build and install from source
 
@@ -193,6 +198,8 @@ wget -P components/model-distill-qwen-1-5b-q8-0-gguf \
 wget -P components/model-distill-qwen-7b-q4-k-m-gguf \
     https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf
 ```
+
+For preparing the OpenVINO model, refer to [components/model-distill-qwen-7b-openvino-int4](./components/model-distill-qwen-7b-openvino-int4).
 
 Build the snap and its component:
 ```shell
