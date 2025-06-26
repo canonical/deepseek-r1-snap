@@ -29,7 +29,7 @@ plugs:
     interface: content
     content: npu-libs-2404
     target: $SNAP/npu-libs
-    
+
 hooks:
   install:
     environment: &install-env
@@ -130,6 +130,8 @@ parts:
     source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.0/llama_aio_v3.1.0_d1804d6.tar.gz
     source-type: tar
     plugin: dump
+    stage-packages:
+      - libcurl4
     organize:
       LICENSE.txt: usr/share/doc/llama-aio/LICENSE.txt
       LICENSE_AMPERE.txt: usr/share/doc/llama-aio/LICENSE_AMPERE.txt
@@ -213,7 +215,7 @@ parts:
      - MarkupSafe==3.0.2
     organize:
       "*": (component/openvino-model-server)
-      
+
 components:
   #
   # Engines
@@ -293,7 +295,6 @@ apps:
     environment:
       # To load libigdrcl.so, for Intel GPU vRAM
       OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
-
 
   init:
     command: bin/init.sh
