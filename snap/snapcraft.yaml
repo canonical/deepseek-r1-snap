@@ -133,8 +133,9 @@ parts:
     organize:
       LICENSE.txt: usr/share/doc/llama-aio/LICENSE.txt
       LICENSE_AMPERE.txt: usr/share/doc/llama-aio/LICENSE_AMPERE.txt
-      "llama*": (component/llama-aio)
-      "lib*": (component/llama-aio)
+      "llama-server": (component/llama-aio)
+      "libggml*": (component/llama-aio) # libggml-base.so  libggml-cpu.so  libggml.so
+      "libllama.so": (component/llama-aio)
 
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
