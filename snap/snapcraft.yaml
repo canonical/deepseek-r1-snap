@@ -84,7 +84,7 @@ parts:
 
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: &llamacpp-tag b4595 
+    source-tag: &llamacpp-tag b4595
     source-depth: 1
     plugin: cmake
     cmake-parameters:
@@ -125,27 +125,29 @@ parts:
     override-prime: *amd64-only
     organize:
       "*": (component/llamacpp-cuda)
-    
 
   llama-aio:
-    source: https://ampereaidevelopus.s3.us-east-1.amazonaws.com/releases/llama.aio/3.0.0/llama_aio_v3.0.0_5b4b00f.tar.gz
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.0/llama_aio_v3.1.0_d1804d6.tar.gz
     source-type: tar
     plugin: dump
     organize:
-      "*": (component/llama-aio)
+      LICENSE.txt: usr/share/doc/llama-aio/LICENSE.txt
+      LICENSE_AMPERE.txt: usr/share/doc/llama-aio/LICENSE_AMPERE.txt
+      "llama*": (component/llama-aio)
+      "lib*": (component/llama-aio)
 
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
     plugin: dump
     organize:
       "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
-  
+
   model-distill-qwen-7b-q4-k-m-gguf:
     source: components/model-distill-qwen-7b-q4-k-m-gguf
     plugin: dump
     organize:
       "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
-  
+
   model-distill-llama-70b-q4-k-m-gguf:
     source: components/model-distill-llama-70b-q4-k-m-gguf
     plugin: dump
@@ -233,12 +235,13 @@ components:
     summary: llama.cpp Engine for NVIDIA GPUs using CUDA
     description: LLM inference in C/C++
     version: *llamacpp-tag
+
   llama-aio:
     type: standard
     summary: llama-aio Engine for Ampere CPUs
     description: LLM inference in C/C++
-    version: 5b4b00f
-  
+    version: v3.1.0+d1804d6
+
   openvino-model-server:
     type: standard
     summary: OpenVINO Model Server
