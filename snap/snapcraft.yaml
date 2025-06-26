@@ -29,6 +29,10 @@ plugs:
     interface: content
     content: npu-libs-2404
     target: $SNAP/npu-libs
+  # To work around https://github.com/canonical/deepseek-r1-snap/issues/23
+  # and allow sideloading models by root
+  home:
+    read: all
     
 hooks:
   install:
