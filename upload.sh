@@ -4,6 +4,11 @@ channel=$1
 
 architecture=$(dpkg --print-architecture)
 
+if [[ "$(yq --version)" != *v4* ]]; then
+    echo "Please install yq v4."
+    exit 1
+fi
+
 # Extract components from snapcraft.yaml (ignore those commented-out)
 components=$(yq '.components | to_entries | map(select(.value != null)) | .[].key' snap/snapcraft.yaml | tr -d '"')
 
