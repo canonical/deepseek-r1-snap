@@ -16,4 +16,4 @@ if [ ! -d "$engine" ]; then
 fi
 
 # For staged shared objects
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/lib"

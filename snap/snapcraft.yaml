@@ -133,11 +133,13 @@ parts:
     stage-packages:
       - libcurl4
     organize:
-      LICENSE.txt: usr/share/doc/llama-aio/LICENSE.txt
-      LICENSE_AMPERE.txt: usr/share/doc/llama-aio/LICENSE_AMPERE.txt
-      llama-server: (component/llama-aio)
-      libllama.so: (component/llama-aio)
-      "libggml*": (component/llama-aio) # libggml-base.so  libggml-cpu.so  libggml.so
+      "LICENSE*.txt": usr/share/doc/llama-aio/
+      llama-server: (component/llama-aio)/bin/
+      libllama.so: (component/llama-aio)/lib/
+      "libggml*.so": (component/llama-aio)/lib/
+      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libcurl.so*": (component/llama-aio)/lib/
+    prime:
+      - -*
 
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
@@ -243,7 +245,7 @@ components:
     type: standard
     summary: llama-aio Engine for Ampere CPUs
     description: LLM inference in C/C++
-    version: v3.1.0+d1804d6
+    version: v3.1.0
 
   openvino-model-server:
     type: standard
