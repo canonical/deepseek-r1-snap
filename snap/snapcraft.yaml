@@ -137,7 +137,7 @@ parts:
       llama-server: (component/llama-aio)/bin/
       libllama.so: (component/llama-aio)/lib/
       "libggml*.so": (component/llama-aio)/lib/
-      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libcurl.so*": (component/llama-aio)/lib/
+      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio)/lib/
     prime:
       - -*
 
