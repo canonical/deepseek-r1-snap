@@ -21,7 +21,7 @@ snapcraft_yaml=$(yq '. | explode(.)' snap/snapcraft.yaml)
 
 snap_name=$(echo "$snapcraft_yaml" | yq '.name')
 snap_version=$(echo "$snapcraft_yaml" | yq '.version')
-snap_file="${snap_name}_${snap_version}_$arch.snap"
+snap_file="${snap_name}_${snap_version}_${arch}.snap"
 check_file "$snap_file"
 snap_size=$(du -h "$snap_file" | cut -f1)
 
@@ -35,7 +35,7 @@ component_args=()
 echo "Snap components:"
 for comp_name in $components; do
     comp_ver=$(echo "$snapcraft_yaml" | yq ".components.$comp_name.version")
-    comp_file="$snap_name+${comp_name}_$comp_ver.comp"
+    comp_file="${snap_name}+${comp_name}_${comp_ver}.comp"
     check_file "$comp_file"
     comp_size=$(du -h "$comp_file" | cut -f1)
     echo -e "\t$comp_file $comp_size"
