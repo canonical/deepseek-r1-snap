@@ -1,29 +1,52 @@
-#!/bin/bash -ue
+#!/bin/bash -eu
+
+function check_file() {
+    local file=$1
+    if [ ! -f "$file" ]; then
+        echo "Error: file not found: $file"
+        exit 1
+    fi
+}
 
 channel=$1
-
-architecture=$(dpkg --print-architecture)
+arch=${2:-$(dpkg --print-architecture)} # if not set, take the current architecture
 
 if [[ "$(yq --version)" != *v4* ]]; then
     echo "Please install yq v4."
     exit 1
 fi
 
-# Extract components from snapcraft.yaml (ignore those commented-out)
-components=$(yq '.components | to_entries | map(select(.value != null)) | .[].key' snap/snapcraft.yaml | tr -d '"')
+# load snapcraft.yaml into variable, explode to evaluate aliases
+snapcraft_yaml=$(yq '. | explode(.)' snap/snapcraft.yaml)
+
+snap_name=$(echo "$snapcraft_yaml" | yq '.name')
+snap_version=$(echo "$snapcraft_yaml" | yq '.version')
+snap_file="${snap_name}_${snap_version}_$arch.snap"
+check_file "$snap_file"
+snap_size=$(du -h "$snap_file" | cut -f1)
+
+echo -e "Snap file:\n\t$snap_file $snap_size"
+
+# Extract components from snapcraft.yaml
+components=$(echo "$snapcraft_yaml" | yq '.components | to_entries | .[].key')
 
 # Build components argument list
 component_args=()
-for comp in $components; do
-    files=(deepseek-r1+${comp}_*.comp)
-    if [[ -e "${files[0]}" ]]; then
-        for file in "${files[@]}"; do
-            component_args+=(--component "$comp=$file")
-        done
-    else
-        echo "Error:'$comp' comp file not found (expected: deepseek-r1+${comp}_*.comp)"
-    fi
+echo "Snap components:"
+for comp_name in $components; do
+    comp_ver=$(echo "$snapcraft_yaml" | yq ".components.$comp_name.version")
+    comp_file="$snap_name+${comp_name}_$comp_ver.comp"
+    check_file "$comp_file"
+    comp_size=$(du -h "$comp_file" | cut -f1)
+    echo -e "\t$comp_file $comp_size"
+
+    component_args+=(--component "$comp_name=$comp_file")
 done
 
-set -x
-snapcraft upload deepseek-r1_v3_$architecture.snap "${component_args[@]}" --release="$channel"
+echo -e "Channel:\n\t$channel"
+
+echo -ne "\nType Y to start the upload: "
+read confirmation
+if [[ "$confirmation" == "y" || "$confirmation" == "Y" ]]; then
+    snapcraft upload deepseek-r1_v3_$arch.snap "${component_args[@]}" --release="$channel"
+fi
