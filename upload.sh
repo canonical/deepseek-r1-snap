@@ -48,5 +48,5 @@ echo -e "Channel:\n\t$channel"
 echo -ne "\nType Y to start the upload: "
 read confirmation
 if [[ "$confirmation" == "y" || "$confirmation" == "Y" ]]; then
-    snapcraft upload deepseek-r1_v3_$arch.snap "${component_args[@]}" --release="$channel"
+    snapcraft upload "$snap_file" "${component_args[@]}" --release="$channel"
 fi
