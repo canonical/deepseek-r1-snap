@@ -1,0 +1,21 @@
+name: ampere-altra
+description: Stack for Ampere Altra CPUs
+vendor: Canonical Ltd
+grade: stable
+devices:
+  all:
+    - type: cpu
+      architecture: arm64
+      implementer-id: 0x41 # Arm Limited.
+      part-number: 0xd0c   # Neoverse-N1
+    - bus: pci
+      vendor-id: 1def      # Ampere Computing, LLC
+      device-id: e100      # Altra PCI Express Root Complex A
+memory: 4G
+disk-space: 8G
+components:
+  - &engine llama-aio
+  - &model model-distill-qwen-7b-q4-k-m-gguf
+configurations:
+  engine: *engine
+  model: *model
