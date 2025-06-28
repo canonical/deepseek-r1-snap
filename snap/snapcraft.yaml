@@ -21,13 +21,26 @@ layout:
   /etc/wgetrc:
     bind-file: $SNAP/etc/wgetrc
 
+plugs:
+  intel-npu:
+    interface: custom-device
+    custom-device: intel-npu-device
+  npu-libs:
+    interface: content
+    content: npu-libs-2404
+    target: $SNAP/npu-libs
+
 hooks:
   install:
+    environment: &install-env
+      # To load libigdrcl.so, for Intel GPU vRAM
+      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
     plugs: &install-plugs
       # For hardware-info
       - hardware-observe
       - opengl
   configure:
+    environment: *install-env
     plugs: *install-plugs
 
 parts:
@@ -47,10 +60,19 @@ parts:
     source: ml-snap-utils
     plugin: go
     build-snaps:
-      - go/latest/stable
+      - go/1.24/stable
     stage-packages:
       - pciutils
-      - nvidia-utils
+      - nvidia-utils # for Nvidia vRAM and Cuda Capability detection
+      - clinfo # for Intel GPU vRAM detection
+
+  go-chat-client:
+    source: https://github.com/jpm-canonical/go-chat-client.git
+    source-type: git
+    source-tag: v1.0.0-beta
+    plugin: go
+    build-snaps:
+      - go/1.24/stable
 
   common-runtime-dependencies:
     plugin: nil
@@ -62,7 +84,7 @@ parts:
 
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: &llamacpp-tag b4595 
+    source-tag: &llamacpp-tag b4595
     source-depth: 1
     plugin: cmake
     cmake-parameters:
@@ -73,10 +95,19 @@ parts:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
+  llamacpp-avx512:
+    <<: *llamacpp-part
+    cmake-parameters:
+      - -DGGML_NATIVE=OFF
+      - -DGGML_AVX512=ON
+    organize:
+      "*": (component/llamacpp-avx512)
+
   llamacpp-cuda:
     <<: *llamacpp-part
     build-packages:
-      - nvidia-cuda-toolkit
+      - to amd64: # see also the overrides
+        - nvidia-cuda-toolkit
     # stage-packages:
     #   - libgomp1
     #   - libcudart12
@@ -85,41 +116,147 @@ parts:
       - -DGGML_NATIVE=OFF
       - -DGGML_CUDA=ON
       - -DCMAKE_CUDA_ARCHITECTURES=all-major
+    override-pull: &amd64-only |
+      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
+        craftctl default
+      fi
+    override-build: *amd64-only
+    override-stage: *amd64-only
+    override-prime: *amd64-only
     organize:
       "*": (component/llamacpp-cuda)
+
+  llama-aio:
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.0/llama_aio_v3.1.0_d1804d6.tar.gz
+    source-type: tar
+    plugin: dump
+    stage-packages:
+      - libcurl4
+    organize:
+      "LICENSE*.txt": usr/share/doc/llama-aio/
+      llama-server: (component/llama-aio)/bin/
+      libllama.so: (component/llama-aio)/lib/
+      "libggml*.so": (component/llama-aio)/lib/
+      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio)/lib/
+    prime:
+      - -*
 
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
     plugin: dump
     organize:
       "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
-  
+
   model-distill-qwen-7b-q4-k-m-gguf:
     source: components/model-distill-qwen-7b-q4-k-m-gguf
     plugin: dump
     organize:
       "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
-  
+
   model-distill-llama-70b-q4-k-m-gguf:
     source: components/model-distill-llama-70b-q4-k-m-gguf
     plugin: dump
     organize:
       "*": (component/model-distill-llama-70b-q4-k-m-gguf)
-      
+
+  model-distill-qwen-7b-openvino-int4:
+    source: components/model-distill-qwen-7b-openvino-int4
+    plugin: dump
+    organize:
+      "*": (component/model-distill-qwen-7b-openvino-int4)
+
+  # Source: https://github.com/canonical/openvino-ai-plugins-gimp-snap/blob/be8968938844436e48a1a94643c8e95b43062653/snap/snapcraft.yaml#L119-L150
+  opencl-driver:
+    # Includes all the compute runtime and OpenCL bits needed for Intel GPU support
+    plugin: nil
+    build-packages:
+      - wget
+    override-build: |
+      mkdir -p neo
+      cd neo
+      # Install Intel graphics compiler and compute runtime
+      # This is required to enable GPU support for OpenVINO
+      # https://docs.openvino.ai/2024/get-started/configurations/configurations-intel-gpu.html
+      wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb
+      wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-opencl-2_2.5.6+18417_amd64.deb
+      wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-level-zero-gpu_1.6.32224.5_amd64.deb
+      wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd_24.52.32224.5_amd64.deb
+      wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb
+      dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
+      # update paths to the Intel Installable Client Drivers (ICDs) for OpenCL
+      intel_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel.icd
+      intel_icd_so_path=$(cat ${intel_icd})
+      base_path="/snap/${SNAPCRAFT_PROJECT_NAME}/current"
+      echo "${base_path}""${intel_icd_so_path}" > "${intel_icd}"
+      intel_legacy1_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel_legacy1.icd
+      if [ -f ${intel_legacy1_icd} ]; then
+        intel_legacy1_icd_so_path=$(cat ${intel_legacy1_icd})
+        echo "${base_path}""${intel_legacy1_icd_so_path}" > "${intel_legacy1_icd}"
+      fi
+      # fix broken sym links
+      cd "${CRAFT_PART_INSTALL}"
+      ln -sf "${base_path}"/usr/bin/ocloc-24.39.1 etc/alternatives/ocloc
+      ln -sf "${base_path}"/etc/alternatives/ocloc usr/bin/ocloc
+      craftctl default
+
+  openvino-model-server:
+    plugin: dump
+    source: https://github.com/openvinotoolkit/model_server/releases/download/v2025.1/ovms_ubuntu24_python_on.tar.gz
+    organize:
+      "*": (component/openvino-model-server)
+    stage-packages:
+      - libxml2
+      - curl
+      - libpython3.12
+
+  openvino-model-server-python-dependencies:
+    plugin: python
+    source: components/openvino-model-server
+    python-packages:
+     - Jinja2==3.1.6
+     - MarkupSafe==3.0.2
+    organize:
+      "*": (component/openvino-model-server)
+
 components:
-  # engines
+  #
+  # Engines
+  #
+
   llamacpp:
     type: standard
     summary: llama.cpp Engine
     description: LLM inference in C/C++
     version: *llamacpp-tag
+
+  llamacpp-avx512:
+    type: standard
+    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+
   llamacpp-cuda:
     type: standard
     summary: llama.cpp Engine for NVIDIA GPUs using CUDA
     description: LLM inference in C/C++
     version: *llamacpp-tag
-  
-  # models
+
+  llama-aio:
+    type: standard
+    summary: llama-aio Engine for Ampere CPUs
+    description: LLM inference in C/C++
+    version: v3.1.0
+
+  openvino-model-server:
+    type: standard
+    summary: OpenVINO Model Server
+    description: OpenVINO Model Server for serving models
+    version: 2025.1
+
+  # 
+  # Models
+  #
+
   model-distill-qwen-1-5b-q8-0-gguf:
     type: standard
     summary: DeepSeek R1 Distill Qwen 1.5B Q8
@@ -138,12 +275,28 @@ components:
     description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
     version: *snap-version
 
+  model-distill-qwen-7b-openvino-int4:
+    type: standard
+    summary: DeepSeek R1 Qwen 7B GPU OpenVINO
+    description: Model with 7B parameters in OpenVINO format
+    version: *snap-version
+
 apps:
   # For testing purposes. Use sudo <snap>.re-install
   # Connecting the hardware-observe interface is required even if installed in dev mode!
   re-install:
     command: meta/hooks/install
     plugs: *install-plugs
+
+  hardware-info:
+    command: bin/hardware-info
+    plugs:
+      # For hardware detection
+      - hardware-observe
+      - opengl
+    environment:
+      # To load libigdrcl.so, for Intel GPU vRAM
+      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
 
   init:
     command: bin/init.sh
@@ -166,6 +319,12 @@ apps:
       - network
       # For hardware detection (via init)
       - hardware-observe
+      # For sideloading models
+      - home 
+      # Intel NPU access (device node)
+      - intel-npu 
+      # Intel NPU access (libs) 
+      - npu-libs  
     environment:
       # Needed for shared libraries used by llama.cpp
       # TODO: Should this instead be added in an env file to llamacpp component

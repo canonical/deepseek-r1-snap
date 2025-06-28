@@ -5,7 +5,7 @@ grade: devel
 devices:
   any:
     - type: cpu
-      architectures: [amd64]
+      architecture: amd64
       flags: [sse4_2, f16c, fma, avx, avx2]
 memory: 2G
 disk-space: 4G
@@ -15,3 +15,4 @@ components:
 configurations:
   engine: *engine
   model: *model
+  http.base-path: v1

@@ -5,12 +5,10 @@ grade: stable
 devices:
   all:
     - type: cpu
-      architectures: [amd64]
+      architecture: amd64
       flags: [sse4_2, f16c, fma, avx, avx2]
     - type: gpu
-      bus: pci
       vendor-id: 0x10de # Nvidia Corporation
-      # model-ids: [ ]
       vram: 5G
       # compute-capability: 5.0
 memory: 4G
@@ -21,3 +19,4 @@ components:
 configurations:
   engine: *engine
   model: *model
+  http.base-path: v1

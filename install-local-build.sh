@@ -2,6 +2,8 @@
 
 name=deepseek-r1
 
+architecture=$(dpkg --print-architecture)
+
 stack=$1
 op=$2
 
@@ -26,7 +28,7 @@ fi
 yq stacks/$stack/stack.yaml > /dev/null
 
 # Install the snap
-sudo snap install --dangerous --devmode $name_*.snap
+sudo snap install --dangerous --devmode $name_*_$architecture.snap
 
 # Set stack name
 sudo snap set $name stack="$stack"
