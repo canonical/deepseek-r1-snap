@@ -8,18 +8,23 @@ The software has mainly been tested on Ubuntu 24.04 and newer.
 
 The snap supports a range of hardware, in many cases with the help of drivers installed on the host. 
 For the best experience, make sure the drivers are installed on the host before installing the snap.
-Follow the links below to learn about these requirements.
 
-The following hardware is supported. Follow the links to set them up:
 
-* CPUs:  
-✅ amd64: Intel or AMD  
-✅ arm64: Ampere
-* GPUs:  
-⚠️ [Intel](#intel-gpu)  
-⚠️ [Nvidia](#nvidia-gpu)
-* NPUs:  
-⚠️ [Intel](#intel-npu) 
+### CPUs
+
+| Architecture | Vendor      |
+|--------------|-------------|
+| amd64        | Intel, AMD  |
+| arm64        | Ampere      |
+
+
+### Accelerators
+
+| Type | Vendor  | ⚠️ Setup instructions         |
+|------|---------|---------------------------|
+| GPU  | Intel   | [Intel GPU](#intel-gpu)   |
+| GPU  | NVIDIA  | [NVIDIA GPU](#nvidia-gpu) |
+| NPU  | Intel   | [Intel NPU](#intel-npu)   |
 
 ## Install
 
