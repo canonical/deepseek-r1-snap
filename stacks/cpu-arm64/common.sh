@@ -17,3 +17,6 @@ fi
 
 # For staged shared objects
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET:$engine/usr/local/lib"
+
+# Allow llamacpp to use Scalable Matrix Extension if it's available
+export GGML_KLEIDIAI_SME=1

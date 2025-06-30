@@ -5,6 +5,5 @@ source "$(dirname "$0")/common.sh"
 port="$(snapctl get http.port)"
 host="$(snapctl get http.host)"
 
-export GGML_KLEIDIAI_SME=1
 
 exec "$engine/usr/local/bin/llama-server" --model "$MODEL_FILE" --port "$port" --host "$host"
