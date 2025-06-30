@@ -145,7 +145,7 @@ sudo snap remove <snap+component>
 
 ## NVIDIA GPU
 
-NVIDIA drivers, utils, and CUDA are required to use the CUDA-based stacks.
+Using an NVIDIA GPU has a few dependencies.
 
 These steps were tested on Ubuntu Server 24.04.1, running on a machine with an NVIDIA RTX A5000.
 The version of driver and utils on your machine might be different depending on your setup.
@@ -193,11 +193,12 @@ curl http://localhost:8080/v3/chat/completions -d \
 ```
 
 ## Intel NPU
-To use an Intel NPU, install and connect the driver snap:
-```
+To use an Intel NPU, install and connect the driver snap after installing the deepseek-r1 snap:
+```shell
 sudo snap install intel-npu-driver
-sudo snap connect deepseek-r1:intel-npu intel-npu-driver # auto connects
-sudo snap connect deepseek-r1:npu-libs intel-npu-driver
+
+# After installing deepseek-r1 snap
+sudo snap connect deepseek-r1:npu-libs intel-npu-driver 
 ```
 
 > [!NOTE]
