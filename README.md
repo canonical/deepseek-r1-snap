@@ -45,7 +45,7 @@ sudo snap install deepseek-r1 --channel=<channel> --devmode
 
 ## Use
 
-During the snap installation, the snap detects the hardware and picks a suitable *stack*.
+During the installation, the snap detects the hardware and picks a suitable *stack*.
 Each stack consists of an inference **engine** and a **model**. 
 The engine is a server application.
 
@@ -82,8 +82,9 @@ For more details on the configuration options, refer [here](configure).
 
 You can query the server logs to debug possible issues:
 ```shell
-sudo snap logs -f -n 10 deepseek-r1
+sudo snap logs deepseek-r1
 ```
+Try with `-n 100 -f` to query more lines and follow the logs.
 
 ### Chat
 You can use a range of OpenAI-compatible chat clients to interact with the server. 
@@ -113,7 +114,8 @@ sudo snap set deepseek-r1 stack=<stack>
 ```
 
 > [!TIP]
-> For CUDA-based stacks the number of layers that are loaded on to the GPU can be configured.
+> For CUDA-based stacks, the number of layers that are loaded on to the GPU can be configured.
+>
 > By default all layers are loaded into VRAM, which requires enough VRAM to fit the entire model.
 > To only load a limited number of layers onto the GPU use the `n-gpu-layers` snap option:
 > ```shell
