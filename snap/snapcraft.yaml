@@ -25,7 +25,7 @@ plugs:
   intel-npu:
     interface: custom-device
     custom-device: intel-npu-device
-  npu-libs:
+  npu-libs-2404:
     interface: content
     content: npu-libs-2404
     target: $SNAP/npu-libs

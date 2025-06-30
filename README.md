@@ -178,7 +178,7 @@ To use an Intel NPU, install and connect the driver snap:
 ```
 sudo snap install intel-npu-driver
 sudo snap connect deepseek-r1:intel-npu intel-npu-driver # auto connects
-sudo snap connect deepseek-r1:npu-libs intel-npu-driver
+sudo snap connect deepseek-r1:npu-libs-2404 intel-npu-driver
 ```
 
 > [!NOTE]
