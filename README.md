@@ -10,15 +10,16 @@ The snap supports a range of hardware, in many cases with the help of drivers in
 For the best experience, make sure the drivers are installed on the host before installing the snap.
 Follow the links below to learn about these requirements.
 
-The following hardware is supported:
+The following hardware is supported. Follow the links to set them up:
+
 * CPUs:  
 ✅ amd64: Intel or AMD  
 ✅ arm64: Ampere
 * GPUs:  
-✅ Intel integrated or discrete GPUs; refer [here](#intel-gpu)  
-⚠️ Nvidia GPUs on amd64 platforms: [install drivers](#nvidia-gpu)
-* NPUs:   
-⚠️ Intel Core Ultra: [install drivers](#intel-npu) 
+⚠️ [Intel](#intel-gpu)  
+⚠️ [Nvidia](#nvidia-gpu)
+* NPUs:  
+⚠️ [Intel](#intel-npu) 
 
 ## Install
 
