@@ -12,16 +12,20 @@ Follow the links below to learn about these requirements.
 
 The following hardware is supported:
 * CPUs:
-  * amd64: Intel or AMD
-  * arm64: Ampere
+  * ✅ amd64: Intel or AMD
+  * ✅ arm64: Ampere
 * NPUs:   
-  * Intel Core Ultra; refer [here](#intel-npu)
+  * ⚠️ Intel Core Ultra: [install drivers](#intel-npu) 
 * GPUs:
-  * Intel integrated or discrete GPUs; refer [here](#intel-gpu)
-  * Nvidia GPUs for amd64 platforms; refer [here](#nvidia-gpu)
+  * ✅ Intel integrated or discrete GPUs; refer [here](#intel-gpu)
+  * ⚠️ Nvidia GPUs on amd64 platforms: [install drivers](#nvidia-gpu)
 
 
 ## Install
+
+> [!IMPORTANT]
+> Make sure that your environment is set up correctly
+
 Set the right channel and install the model snap:
 ```console
 sudo snap install deepseek-r1 --channel=<channel> --devmode
@@ -38,26 +42,18 @@ To build and install from source, scroll to [here](#build-and-install-from-sourc
 
 ## Use
 
-When the snap is installed, a suitable *stack* comprised of an engine and a model are automatically installed as snap components. 
-You can check the installed components with:
-```shell
-sudo snap components deepseek-r1
-```
+When the snap is installed, a suitable *stack* comprised of an **engine** and a **model** are automatically installed as [components](#manaage-components).
 
-The installed engine is a server application which can run as a service.
-The service is NOT started by default.
-This is to allow on-demand use of the computing resources.
+The engine runs a server.
 
-The snap includes several configurations, some of which are set based on the detected environment. 
-To explore the configurations, use:
-```shell
-sudo snap get deepseek-r1
-```
+> [!NOTE]
+> The server is NOT started by default.
+> This is to allow on-demand use of the computing resources.
 
 ### Run server
-Start the server app in the foreground:
+Start the server in the background:
 ```shell
-sudo snap run deepseek-r1.server
+sudo snap start deepseek-r1
 ```
 
 The server exposes an [OpenAI compatible](https://github.com/openai/openai-openapi) endpoint served via HTTP.
@@ -74,13 +70,17 @@ To change, for example, the HTTP port to `8999`:
 sudo snap set deepseek-r1 http.port=8999
 ```
 
+Once changed, restart the server:
+```
+sudo snap restart deepseek-r1
+```
+
 For more details on the configuration options, refer [here](configure).
 
-Once you are ready with the configurations, re-run the service using the same command. 
 
-To run the server in the background:
+You can query the server logs to debug possible issues:
 ```shell
-sudo snap start deepseek-r1
+sudo snap logs -f -n 10 deepseek-r1
 ```
 
 ### Chat
@@ -125,6 +125,20 @@ sudo snap set deepseek-r1 stack=<stack>
 > sudo snap unset deepseek-r1 n-gpu-layers
 > ```
 
+### Manage components
+
+This snap uses snap components to deploy optional artifacts. 
+
+You can check the installed components with:
+```shell
+sudo snap components deepseek-r1
+```
+
+To remove a component, use:
+```shell
+sudo snap remove <snap+component>
+```
+
 ## NVIDIA GPU
 
 NVIDIA drivers, utils, and CUDA are required to use the CUDA-based stacks.
@@ -140,10 +154,11 @@ sudo reboot
 
 ## Intel GPU
 
-The user space drivers are included in the snap so it should work standalone if you are running a relatively new kernel (>6.XX).
-A HWE kernel is required for discrete GPU support on some systems, please refer [here](https://dgpu-docs.intel.com/driver/client/overview.html) for details.
+The user-space drivers for Intel GPUs (integrated and discrete) are included in the snap. 
 
-It has been tested on:
+Using Lunar Lake or Battlemage GPUs may require a hardware enablement (HWE) kernel; please refer [here](https://dgpu-docs.intel.com/driver/client/overview.html) for details.
+
+The snap has been tested on:
 - Intel Battlemage G21 [Arc B580]
 - Intel Meteor Lake-P [Intel Arc Graphics]
 - Intel Raptor Lake-S UHD Graphics
