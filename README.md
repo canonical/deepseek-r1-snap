@@ -11,34 +11,31 @@ For the best experience, make sure the drivers are installed on the host before 
 Follow the links below to learn about these requirements.
 
 The following hardware is supported:
-* CPUs:
-  * ✅ amd64: Intel or AMD
-  * ✅ arm64: Ampere
+* CPUs:  
+✅ amd64: Intel or AMD  
+✅ arm64: Ampere
+* GPUs:  
+✅ Intel integrated or discrete GPUs; refer [here](#intel-gpu)  
+⚠️ Nvidia GPUs on amd64 platforms: [install drivers](#nvidia-gpu)
 * NPUs:   
-  * ⚠️ Intel Core Ultra: [install drivers](#intel-npu) 
-* GPUs:
-  * ✅ Intel integrated or discrete GPUs; refer [here](#intel-gpu)
-  * ⚠️ Nvidia GPUs on amd64 platforms: [install drivers](#nvidia-gpu)
-
+⚠️ Intel Core Ultra: [install drivers](#intel-npu) 
 
 ## Install
 
 > [!IMPORTANT]
-> Make sure that your environment is set up correctly
+> Make sure that your environment is set up correctly, as explained [⇑ above ⇑](#supported-environment).
 
 Set the right channel and install the model snap:
 ```console
 sudo snap install deepseek-r1 --channel=<channel> --devmode
 ```
 
-It must be installed in developer mode because it needs [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) during the installation.
-This interface is currently not automatically connected.
-
 > [!TIP]
+> The snap is installed in developer mode because it needs [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) access during the installation.
+> This interface is currently not automatically connected.
+>
 > If you install in confined mode, the auto detection will run on first use, not during the installation.
 > To force auto detection, run `sudo deepseek-r1.init`.
-
-To build and install from source, scroll to [here](#build-and-install-from-source).
 
 ## Use
 
@@ -47,11 +44,11 @@ When the snap is installed, a suitable *stack* comprised of an **engine** and a 
 The engine runs a server.
 
 > [!NOTE]
-> The server is NOT started by default.
+> The **server does not start** by default.
 > This is to allow on-demand use of the computing resources.
 
 ### Run server
-Start the server in the background:
+Start the server:
 ```shell
 sudo snap start deepseek-r1
 ```
@@ -76,7 +73,6 @@ sudo snap restart deepseek-r1
 ```
 
 For more details on the configuration options, refer [here](configure).
-
 
 You can query the server logs to debug possible issues:
 ```shell
