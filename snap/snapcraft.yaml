@@ -104,10 +104,26 @@ parts:
       "*": (component/llamacpp-avx512)
 
   llamacpp-arm64:
-    <<: *llamacpp-part
+    source: https://github.com/ggerganov/llama.cpp.git
+    source-tag: b5780
+    source-depth: 1
+    plugin: cmake
+    build-packages:
+      - git
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_CPU_AARCH64=ON
       - -DGGML_CPU_KLEIDIAI=ON
+    override-build: |
+      rm -r kleidiai
+      git clone https://github.com/ARM-software/kleidiai.git
+      cd kleidiai
+      cmake -DCMAKE_BUILD_TYPE=Release -S . -B build/
+      cmake --build ./build
+      cd ..
+      mkdir -p bin
+      cp kleidiai/build/libkleidiai.a bin/libkleidiai.so
+      craftctl default
     organize:
       "*": (component/llamacpp-arm64)
 
