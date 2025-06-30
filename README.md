@@ -45,9 +45,9 @@ sudo snap install deepseek-r1 --channel=<channel> --devmode
 
 ## Use
 
-When the snap is installed, a suitable *stack* comprised of an **engine** and a **model** are automatically installed as [components](#manaage-components).
-
-The engine runs a server.
+During the snap installation, the snap detects the hardware and picks a suitable *stack*.
+Each stack consists of an inference **engine** and a **model**. 
+The engine is a server application.
 
 > [!NOTE]
 > The **server does not start** by default.
