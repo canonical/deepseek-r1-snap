@@ -103,6 +103,14 @@ parts:
     organize:
       "*": (component/llamacpp-avx512)
 
+  llamacpp-arm64:
+    <<: *llamacpp-part
+    cmake-parameters:
+      - -DGGML_CPU_AARCH64=ON
+      - -DGGML_CPU_KLEIDIAI=ON
+    organize:
+      "*": (component/llamacpp-arm64)
+
   llamacpp-cuda:
     <<: *llamacpp-part
     build-packages:
@@ -232,6 +240,12 @@ components:
   llamacpp-avx512:
     type: standard
     summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+
+  llamacpp-arm64:
+    type: standard
+    summary: llama.cpp Engine using arm64 optimizations
     description: LLM inference in C/C++
     version: *llamacpp-tag
 
