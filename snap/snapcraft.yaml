@@ -88,13 +88,12 @@ parts:
 
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: &llamacpp-tag b4595
+    source-tag: &llamacpp-tag b5794
     source-depth: 1
     plugin: cmake
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
-    stage-packages:
-      - libgomp1
     organize:
       # move everything, including the staged packages
       "*": (component/llamacpp)
@@ -114,6 +113,7 @@ parts:
   llamacpp-avx512:
     <<: *llamacpp-part
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
       - -DGGML_AVX512=ON
     organize:
@@ -125,10 +125,10 @@ parts:
       - to amd64: # see also the overrides
         - nvidia-cuda-toolkit
     # stage-packages:
-    #   - libgomp1
     #   - libcudart12
     #   - libcublas12
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
       - -DGGML_CUDA=ON
       - -DCMAKE_CUDA_ARCHITECTURES=all-major
