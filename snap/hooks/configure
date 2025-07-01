@@ -14,8 +14,9 @@ if [ -n "$stack" ]; then
 else
     echo "Stack not set! Will auto select a stack ..."
 
-    if snapctl is-connected hardware-observe
-    then
+    if [ -f "$SNAP_USER_COMMON/no-autoselect" ]; then
+       echo "Skipping auto stack selection due to bypass file."
+    elif snapctl is-connected hardware-observe; then
         stack select --auto
     else
         # We skip the auto selection if hardware-observe interface is not auto connected.

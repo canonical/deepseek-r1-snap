@@ -24,11 +24,13 @@ stack load
 # Auto stack selection
 #
 
-if snapctl is-connected hardware-observe; then
+if [ -f "$SNAP_USER_COMMON/no-autoselect" ]; then
+    echo "Skipping auto stack selection due to bypass file."
+elif snapctl is-connected hardware-observe; then
     stack select --auto
     stack download
 elif lscpu -V &> /dev/null; then
-    echo "Able to access hardware info without hardware-observe interface connection: assuming dev mode installation."
+    echo "Able to access hardware info without hardware-observe interface connection: assuming dangerous, dev mode installation."
     stack select --auto
     stack download
 else
