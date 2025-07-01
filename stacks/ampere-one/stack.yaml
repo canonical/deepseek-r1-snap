@@ -1,7 +1,7 @@
 name: ampere-one
 description: Stack for Ampere One CPUs
 vendor: Canonical Ltd
-grade: stable
+grade: devel
 devices:
   any:
     - type: cpu
