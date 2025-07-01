@@ -141,6 +141,21 @@ parts:
     prime:
       - -*
 
+  llama-aio-ampereone:
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.0/llama_aio_v3.1.0_d1804d6_ampereone.tar.gz
+    source-type: tar
+    plugin: dump
+    stage-packages:
+      - libcurl4
+    organize:
+      "LICENSE*.txt": usr/share/doc/llama-aio-ampereone/
+      llama-server: (component/llama-aio-ampereone)/bin/
+      libllama.so: (component/llama-aio-ampereone)/lib/
+      "libggml*.so": (component/llama-aio-ampereone)/lib/
+      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio-ampereone)/lib/
+    prime:
+      - -*
+
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
     plugin: dump
@@ -243,7 +258,13 @@ components:
 
   llama-aio:
     type: standard
-    summary: llama-aio Engine for Ampere CPUs
+    summary: llama-aio Engine for Ampere Altra CPUs
+    description: LLM inference in C/C++
+    version: v3.1.0
+
+  llama-aio-ampereone:
+    type: standard
+    summary: llama-aio Engine for Ampere One CPUs
     description: LLM inference in C/C++
     version: v3.1.0
 
