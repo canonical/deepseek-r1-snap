@@ -88,7 +88,7 @@ parts:
 
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: &llamacpp-tag b4595 
+    source-tag: &llamacpp-tag b4595
     source-depth: 1
     plugin: cmake
     cmake-parameters:
@@ -129,20 +129,34 @@ parts:
     override-prime: *amd64-only
     organize:
       "*": (component/llamacpp-cuda)
-    
+
+  llama-aio:
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.0/llama_aio_v3.1.0_d1804d6.tar.gz
+    source-type: tar
+    plugin: dump
+    stage-packages:
+      - libcurl4
+    organize:
+      "LICENSE*.txt": usr/share/doc/llama-aio/
+      llama-server: (component/llama-aio)/bin/
+      libllama.so: (component/llama-aio)/lib/
+      "libggml*.so": (component/llama-aio)/lib/
+      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio)/lib/
+    prime:
+      - -*
 
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
     plugin: dump
     organize:
       "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
-  
+
   model-distill-qwen-7b-q4-k-m-gguf:
     source: components/model-distill-qwen-7b-q4-k-m-gguf
     plugin: dump
     organize:
       "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
-  
+
   model-distill-llama-70b-q4-k-m-gguf:
     source: components/model-distill-llama-70b-q4-k-m-gguf
     plugin: dump
@@ -207,7 +221,7 @@ parts:
      - MarkupSafe==3.0.2
     organize:
       "*": (component/openvino-model-server)
-      
+
 components:
   #
   # Engines
@@ -230,6 +244,12 @@ components:
     summary: llama.cpp Engine for NVIDIA GPUs using CUDA
     description: LLM inference in C/C++
     version: *llamacpp-tag
+
+  llama-aio:
+    type: standard
+    summary: llama-aio Engine for Ampere CPUs
+    description: LLM inference in C/C++
+    version: v3.1.0
 
   openvino-model-server:
     type: standard
@@ -281,7 +301,6 @@ apps:
     environment:
       # To load libigdrcl.so, for Intel GPU vRAM
       OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
-
 
   init:
     command: bin/init.sh
