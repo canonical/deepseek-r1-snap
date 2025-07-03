@@ -88,10 +88,11 @@ parts:
 
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: &llamacpp-tag b4595
+    source-tag: &llamacpp-tag b5794
     source-depth: 1
     plugin: cmake
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
     stage-packages:
       - libgomp1
@@ -99,9 +100,22 @@ parts:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
+  llamacpp-legacy:
+    <<: *llamacpp-part
+    cmake-parameters:
+      - -DLLAMA_CURL=OFF
+      - -DGGML_NATIVE=OFF
+      - -DGGML_F16C=OFF
+      - -DGGML_FMA=OFF
+      - -DGGML_BMI2=OFF
+      - -DGGML_AVX2=OFF
+    organize:
+      "*": (component/llamacpp-legacy)
+
   llamacpp-avx512:
     <<: *llamacpp-part
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
       - -DGGML_AVX512=ON
     organize:
@@ -117,6 +131,7 @@ parts:
     #   - libcudart12
     #   - libcublas12
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
       - -DGGML_CUDA=ON
       - -DCMAKE_CUDA_ARCHITECTURES=all-major
@@ -229,13 +244,19 @@ components:
 
   llamacpp:
     type: standard
-    summary: llama.cpp Engine
+    summary: llama.cpp Engine using default CPU instruction sets
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+
+  llamacpp-legacy:
+    type: standard
+    summary: llama.cpp Engine using only SSE4.2 and AVX CPU instruction sets
     description: LLM inference in C/C++
     version: *llamacpp-tag
 
   llamacpp-avx512:
     type: standard
-    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
+    summary: llama.cpp Engine using default and AVX512 CPU instruction sets
     description: LLM inference in C/C++
     version: *llamacpp-tag
 
