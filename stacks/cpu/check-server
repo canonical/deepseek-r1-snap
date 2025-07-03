@@ -38,7 +38,7 @@ api_response=$(\
 
 # Still starting up api_response = {"error":{"code":503,"message":"Loading model","type":"unavailable_error"}}
 error_text=$(echo $api_response | jq .error.message)
-if [ -n "${error_text}" ]; then
+if [ "${error_text}" != "null" ]; then
   echo "Server is not ready: $error_text"
   exit 1
 fi
