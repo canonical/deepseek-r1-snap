@@ -21,13 +21,25 @@ else
   exit 1
 fi
 
-#served_model=$(wget http://localhost:8080/$api_base_path/models -O- 2>/dev/null | jq .data[0].id)
-#if [[ "$served_model" == *"$model_name"* ]]; then
-#  echo "Expected model is being served"
-#else
-#  echo "Models endpoint not returning expected model"
-#  exit 1
-#fi
+# http://localhost:8080/v1/config
+
+# Starting up: {}
+
+# [GPU] Can't get PERFORMANCE_HINT property as no supported devices found or an error happened during devices query.
+# [GPU] Please check OpenVINO documentation for GPU drivers setup guide.
+# {"DeepSeek-R1-Distill-Qwen-7B-ov-int4":{"model_version_status":[{"version":"1","state":"LOADING","status":{"error_code":"FAILED_PRECONDITION","error_message":"FAILED_PRECONDITION"}}]}}
+api_config=$(wget http://localhost:8080/v1/config -O- 2>/dev/null)
+if [[ "$api_config" == *"$model_name"* ]]; then
+  echo "Expected model is being served"
+else
+  echo "Models not served. Still starting?"
+  exit 1
+fi
+
+if [[ "$api_config" == *FAILED_PRECONDITION* ]]; then
+  echo "Server startup failed. Check your drivers and restart"
+  exit 1
+fi
 
 request=$(printf '{"model": "%s", "prompt": "Say this is a test", "temperature": 0, "max_tokens": 1}' "$model_name")
 api_response=$(\
