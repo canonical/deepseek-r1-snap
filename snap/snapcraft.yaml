@@ -126,7 +126,7 @@ parts:
     organize:
       "*": (component/llamacpp-cuda)
 
-  llama-aio:
+  llama-aio: &llama-aio-part
     source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.0/llama_aio_v3.1.0_d1804d6.tar.gz
     source-type: tar
     plugin: dump
@@ -142,19 +142,14 @@ parts:
       - -*
 
   llama-aio-ampereone:
+    <<: *llama-aio-part
     source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.0/llama_aio_v3.1.0_d1804d6_ampereone.tar.gz
-    source-type: tar
-    plugin: dump
-    stage-packages:
-      - libcurl4
     organize:
       "LICENSE*.txt": usr/share/doc/llama-aio-ampereone/
       llama-server: (component/llama-aio-ampereone)/bin/
       libllama.so: (component/llama-aio-ampereone)/lib/
       "libggml*.so": (component/llama-aio-ampereone)/lib/
       "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio-ampereone)/lib/
-    prime:
-      - -*
 
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
