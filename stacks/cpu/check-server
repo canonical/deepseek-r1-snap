@@ -1,0 +1,38 @@
+#!/bin/bash -eu
+
+port="$(snapctl get http.port)"
+model="$(snapctl get model)"
+
+# Check is server is started
+service_status="$(snapctl services | grep "deepseek-r1.server" | awk '{print $3}')"
+if [ "$service_status" == "active" ]; then
+  echo "Server is running"
+  else
+echo "Server is not started"
+  exit 1
+fi
+
+# Check if port is open and we can connect over TCP
+if (nc -z localhost $port 2>/dev/null); then
+  echo "Server is listening"
+else
+  echo "Server is not listening"
+  exit 1
+fi
+
+served_model=$(wget http://localhost:8080/v1/models -O- 2>/dev/null | jq .data[0].id)
+if [[ "$served_model" == *"$model"* ]]; then
+  echo "Expected model is being served"
+else
+  echo "Models endpoint not returning expected model"
+  exit 1
+fi
+
+api_response=$(wget http://localhost:8080/v1/completions --post-data='{"model": "", "prompt": "Say this is a test", "temperature": 0, "max_tokens": 1}' -O- 2>/dev/null)
+chat_text=$(echo $api_response | jq .choices[0].text)
+if [ -z "${chat_text}" ]; then
+  echo "No response from completions api"
+  exit 1
+else
+  echo "Valid response from completions api"
+fi
