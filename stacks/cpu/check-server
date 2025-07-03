@@ -3,14 +3,14 @@
 port="$(snapctl get http.port)"
 model="$(snapctl get model)"
 
-# Check is server is started
-service_status="$(snapctl services | grep "deepseek-r1.server" | awk '{print $3}')"
-if [ "$service_status" == "active" ]; then
-  echo "Server is running"
-  else
-echo "Server is not started"
-  exit 1
-fi
+# Check is server is started. - False negative when running in foreground. Will also not detect "failed".
+#service_status="$(snapctl services | grep "deepseek-r1.server" | awk '{print $3}')"
+#if [ "$service_status" == "active" ]; then
+#  echo "Server is running"
+#else
+#  echo "Server is not started"
+#  exit 1
+#fi
 
 # Check if port is open and we can connect over TCP
 if (nc -z localhost $port 2>/dev/null); then
