@@ -1,8 +1,10 @@
-#!/bin/bash -eu
+#!/bin/bash -u
 
 # exit-code 0 = server is working correctly
 # exit code 1 = server is still starting up - let's wait
 # exit code 2 = server failed, do not wait
+
+set +e
 
 port="$(snapctl get http.port)"
 model_name="$(snapctl get model-name)"
