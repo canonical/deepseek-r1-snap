@@ -4,4 +4,4 @@ $SNAP/bin/init.sh
 
 stack="$(snapctl get stack)"
 
-exec "$SNAP/stacks/$stack/check-server" "$@"
+exec "$SNAP/stacks/$stack/check-server.sh" "$@"
