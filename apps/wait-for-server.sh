@@ -8,6 +8,9 @@ while true; do
   current_time="$(date -u +%s)"
   elapsed_seconds=$((current_time-start_time))
   if [ $elapsed_seconds -gt $TIMEOUT ]; then
+    if $WAIT_PRINTED; then
+      echo ""
+    fi
     echo "Timed out waiting for server to start. Check the server logs and try again."
     exit 1
   fi
@@ -24,6 +27,9 @@ while true; do
   fi
 
   if [ $result == 2 ]; then
+    if $WAIT_PRINTED; then
+      echo ""
+    fi
     echo "Server is not running or failed. Please check the logs."
     exit 1
   fi
