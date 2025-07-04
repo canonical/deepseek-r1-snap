@@ -1,5 +1,9 @@
 #!/bin/bash -eu
 
+# exit-code 0 = server is working correctly
+# exit code 1 = server is still starting up - let's wait
+# exit code 2 = server failed, do not wait
+
 port="$(snapctl get http.port)"
 model_name="$(snapctl get model-name)"
 api_base_path="$(snapctl get http.base-path)"
@@ -18,7 +22,7 @@ if (nc -z localhost $port 2>/dev/null); then
   echo "Server is listening"
 else
   echo "Server is not listening"
-  exit 1
+  exit 2
 fi
 
 # http://localhost:8080/v1/config
@@ -28,7 +32,7 @@ fi
 # [GPU] Can't get PERFORMANCE_HINT property as no supported devices found or an error happened during devices query.
 # [GPU] Please check OpenVINO documentation for GPU drivers setup guide.
 # {"DeepSeek-R1-Distill-Qwen-7B-ov-int4":{"model_version_status":[{"version":"1","state":"LOADING","status":{"error_code":"FAILED_PRECONDITION","error_message":"FAILED_PRECONDITION"}}]}}
-api_config=$(wget http://localhost:8080/v1/config -O- 2>/dev/null)
+api_config=$(wget http://localhost:8080/v1/config --timeout=1 -O- 2>/dev/null)
 if [[ "$api_config" == *"$model_name"* ]]; then
   echo "Expected model is being served"
 else
@@ -38,12 +42,13 @@ fi
 
 if [[ "$api_config" == *FAILED_PRECONDITION* ]]; then
   echo "Server startup failed. Check your drivers and restart"
-  exit 1
+  exit 2
 fi
 
 request=$(printf '{"model": "%s", "prompt": "Say this is a test", "temperature": 0, "max_tokens": 1}' "$model_name")
 api_response=$(\
   wget http://localhost:8080/$api_base_path/completions \
+   --timeout=1 \
   --post-data="$request" \
   --content-on-error \
   -O- \
@@ -63,12 +68,10 @@ fi
 chat_text=$(echo "$api_response" | jq .choices[0].text)
 if [ "$chat_text" == null ]; then
   echo "Invalid response: $api_response"
-  exit 1
+  exit 2
 elif [ -z "${chat_text}" ]; then
   echo "No response from completions api"
-  exit 1
+  exit 2
 else
   echo "Valid response from completions api"
 fi
-
-exec "$@"

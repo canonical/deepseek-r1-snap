@@ -1,5 +1,9 @@
 #!/bin/bash -eu
 
+# exit-code 0 = server is working correctly
+# exit code 1 = server is still starting up - let's wait
+# exit code 2 = server failed, do not wait
+
 port="$(snapctl get http.port)"
 model_name="$(snapctl get model-name)"
 api_base_path="$(snapctl get http.base-path)"
@@ -18,7 +22,7 @@ if (nc -z localhost $port 2>/dev/null); then
   echo "Server is listening"
 else
   echo "Server is not listening"
-  exit 1
+  exit 2
 fi
 
 #served_model=$(wget http://localhost:8080/$api_base_path/models -O- 2>/dev/null | jq .data[0].id)
@@ -32,6 +36,7 @@ fi
 request=$(printf '{"model": "%s", "prompt": "Say this is a test", "temperature": 0, "max_tokens": 1}' "$model_name")
 api_response=$(\
   wget http://localhost:8080/$api_base_path/completions \
+   --timeout=1 \
   --post-data="$request" \
   --content-on-error \
   -O- \
@@ -48,9 +53,7 @@ fi
 chat_text=$(echo "$api_response" | jq .choices[0].text)
 if [ -z "${chat_text}" ]; then
   echo "No response from completions api"
-  exit 1
+  exit 2
 else
   echo "Valid response from completions api"
 fi
-
-exec "$@"
