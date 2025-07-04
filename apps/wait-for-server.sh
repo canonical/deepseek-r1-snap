@@ -1,6 +1,7 @@
 #!/bin/bash -u
 
 TIMEOUT=60
+WAIT_PRINTED=false
 
 start_time="$(date -u +%s)"
 while true; do
@@ -16,6 +17,9 @@ while true; do
 
   if [ $result == 0 ]; then
     # server is running
+    if $WAIT_PRINTED; then
+      echo ""
+    fi
     break
   fi
 
@@ -25,6 +29,12 @@ while true; do
   fi
 
   # else the result is 1, which means the server is still starting up, so retry after a short delay
+  if ! $WAIT_PRINTED; then
+    WAIT_PRINTED=true
+    echo -ne "Waiting for server"
+  fi
+  echo -ne "."
+
   sleep 0.5
 
 done
