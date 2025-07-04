@@ -1,6 +1,6 @@
 #!/bin/bash -u
 
-# exit-code 0 = server is working correctly
+# exit code 0 = server is working correctly
 # exit code 1 = server is still starting up - let's wait
 # exit code 2 = server failed, do not wait
 
@@ -10,7 +10,7 @@ port="$(snapctl get http.port)"
 model_name="$(snapctl get model-name)"
 api_base_path="$(snapctl get http.base-path)"
 
-# Check is server is started. - False negative when running in foreground. Will also not detect "failed".
+# Check if server is started. - False negative when running in foreground. Will also not detect "failed".
 #service_status="$(snapctl services | grep "deepseek-r1.server" | awk '{print $3}')"
 #if [ "$service_status" == "active" ]; then
 #  echo "Server is running"
@@ -20,10 +20,8 @@ api_base_path="$(snapctl get http.base-path)"
 #fi
 
 # Check if port is open and we can connect over TCP
-if (nc -z localhost $port 2>/dev/null); then
-  echo "Server is listening"
-else
-  echo "Server is not listening"
+if ! (nc -z localhost $port 2>/dev/null); then
+#  echo "Server is not listening"
   exit 2
 fi
 
@@ -35,15 +33,13 @@ fi
 # [GPU] Please check OpenVINO documentation for GPU drivers setup guide.
 # {"DeepSeek-R1-Distill-Qwen-7B-ov-int4":{"model_version_status":[{"version":"1","state":"LOADING","status":{"error_code":"FAILED_PRECONDITION","error_message":"FAILED_PRECONDITION"}}]}}
 api_config=$(wget http://localhost:8080/v1/config --timeout=1 -O- 2>/dev/null)
-if [[ "$api_config" == *"$model_name"* ]]; then
-  echo "Expected model is being served"
-else
-  echo "Models not served. Still starting?"
+if [[ "$api_config" != *"$model_name"* ]]; then
+#  echo "Models not served. Still starting?"
   exit 1
 fi
 
 if [[ "$api_config" == *FAILED_PRECONDITION* ]]; then
-  echo "Server startup failed. Check your drivers and restart"
+#  echo "Server startup failed. Check your drivers and restart"
   exit 2
 fi
 
@@ -59,21 +55,17 @@ api_response=$(\
 
 # Still starting up api_response = "Mediapipe graph definition with requested name is not found"
 if [ "${api_response}" == "Mediapipe graph definition with requested name is not found" ]; then
-  echo "Server is not ready"
+#  echo "Server is not ready"
   exit 1
-fi
-
-if ! (echo "$api_response" | jq -ne 0 2>/dev/null > /dev/null); then
-  echo "Server response is not json: $api_response"
 fi
 
 chat_text=$(echo "$api_response" | jq .choices[0].text)
 if [ "$chat_text" == null ]; then
-  echo "Invalid response: $api_response"
+#  echo "Invalid response: $api_response"
   exit 2
 elif [ -z "${chat_text}" ]; then
-  echo "No response from completions api"
+#  echo "No response from completions api"
   exit 2
-else
-  echo "Valid response from completions api"
 fi
+
+exit 0
