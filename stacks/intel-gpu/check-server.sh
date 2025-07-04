@@ -1,3 +1,3 @@
 #!/bin/bash -u
 
-exec "bin/check-server-openvino.sh" "$@"
+exec "$SNAP/bin/check-server-openvino.sh" "$@"

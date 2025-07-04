@@ -312,6 +312,7 @@ apps:
       - opengl
 
   chat: &engine-app
+    command-chain: [bin/wait-for-server.sh]
     command: bin/chat.sh
     plugs:
       # For inference and hardware detection (via init)
@@ -334,8 +335,9 @@ apps:
       # TODO: Should this instead be added in an env file to llamacpp component
       ARCH_TRIPLET: $CRAFT_ARCH_TRIPLET_BUILD_FOR
 
-  server: 
+  server:
     <<: *engine-app
+    command-chain: []
     command: bin/server.sh
     daemon: simple
     install-mode: disable

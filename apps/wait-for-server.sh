@@ -11,7 +11,7 @@ while true; do
     exit 1
   fi
 
-  bin/check-server.sh
+  "$SNAP"/bin/check-server.sh
   result=$?
 
   if [ $result == 0 ]; then
