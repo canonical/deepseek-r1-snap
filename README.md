@@ -33,15 +33,8 @@ For the best experience, make sure the drivers are installed on the host before 
 
 Set the right channel and install the model snap:
 ```console
-sudo snap install deepseek-r1 --channel=<channel> --devmode
+sudo snap install deepseek-r1 --channel=<channel>
 ```
-
-> [!TIP]
-> The snap is installed in developer mode because it needs [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) access during the installation.
-> This interface is currently not automatically connected.
->
-> If you install in confined mode, the auto detection will run on first use, not during the installation.
-> To force auto detection, run `sudo deepseek-r1.init`.
 
 ## Use
 
