@@ -1,7 +1,18 @@
 #!/bin/bash -u
 
+# This script waits for the server to start before running the commands in the arguments.
+# The script is expected to be used in the command chain of the chat app.
+
+stack="$(snapctl get stack)"
+
 TIMEOUT=60
 WAIT_PRINTED=false
+
+newline_after_wait() {
+  if $WAIT_PRINTED; then
+    echo ""
+  fi
+}
 
 start_time="$(date -u +%s)"
 while true; do
@@ -15,35 +26,37 @@ while true; do
     exit 1
   fi
 
-  "$SNAP"/bin/check-server.sh
-  result=$?
+  "$SNAP/stacks/$stack/check-server"
+  exit_code=$?
 
-  if [ $result == 0 ]; then
-    # server is running
-    if $WAIT_PRINTED; then
-      echo ""
-    fi
-    break
-  fi
-
-  if [ $result == 2 ]; then
-    if $WAIT_PRINTED; then
-      echo ""
-    fi
-    echo "Server is not running or failed. Please check the logs."
-    exit 1
-  fi
-
-  # else the result is 1, which means the server is still starting up, so retry after a short delay
-  if ! $WAIT_PRINTED; then
-    WAIT_PRINTED=true
-    echo -ne "Waiting for server"
-  fi
-  echo -ne "."
+  case $exit_code in
+    0)
+      # server is running
+      newline_after_wait
+      break
+      ;;
+    1)
+      # server is still starting up, so retry after a short delay
+      if ! $WAIT_PRINTED; then
+        WAIT_PRINTED=true
+        echo -n "Waiting for server ..."
+      fi
+      echo -n "."
+      ;;
+    2)
+      newline_after_wait
+      echo "Server is not running or failed. Please check the logs."
+      exit 1
+      ;;
+    *)
+      newline_after_wait
+      echo "Unexpected exit code when waiting for server: $exit_code"
+      exit $exit_code
+      ;;
+  esac
 
   sleep 0.5
 
 done
-
 # start the chat client
 exec "$@"

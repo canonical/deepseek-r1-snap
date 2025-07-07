@@ -11,8 +11,7 @@ model_name="$(snapctl get model-name)"
 api_base_path="$(snapctl get http.base-path)"
 
 # Checking if server is started with snapctl services produces false negative when running in foreground.
-
-# Check if ovms process is running
+# Therefore rather check if ovms process is running.
 if ! (pgrep -x "ovms" > /dev/null); then
     exit 2
 fi
