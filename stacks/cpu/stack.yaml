@@ -9,7 +9,7 @@ devices:
       flags: [sse4_2, f16c, fma, avx, avx2]
     - type: cpu
       architecture: arm64
-      features: [asimd]
+      features: [asimd]  # for ARMv8 ASIMD includes NEON instruction set
 memory: 4G
 disk-space: 8G
 components:
