@@ -121,18 +121,6 @@ parts:
     organize:
       "*": (component/llamacpp-avx512)
 
-  llamacpp-arm64:
-    source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: b5783
-    source-depth: 1
-    plugin: dump
-    override-build: |
-      cmake -B build -DGGML_CPU_AARCH64=ON -DGGML_CPU_KLEIDIAI=ON -DLLAMA_CURL=OFF
-      cmake --build build --config Release
-      cp build/bin $CRAFT_PART_INSTALL
-    organize:
-      "*": (component/llamacpp-arm64)
-
   llamacpp-cuda:
     <<: *llamacpp-part
     build-packages:
@@ -279,12 +267,6 @@ components:
   llamacpp-avx512:
     type: standard
     summary: llama.cpp Engine using default and AVX512 CPU instruction sets
-    description: LLM inference in C/C++
-    version: *llamacpp-tag
-
-  llamacpp-arm64:
-    type: standard
-    summary: llama.cpp Engine using arm64 optimizations
     description: LLM inference in C/C++
     version: *llamacpp-tag
 

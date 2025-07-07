@@ -1,5 +1,5 @@
 name: cpu-tiny
-description: Example stack for legacy CPUs, offering good accuracy with low footprints
+description: Example stack for CPUs, offering lower accuracy at higher speed
 vendor: Canonical Ltd
 grade: devel
 devices:
