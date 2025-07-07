@@ -28,7 +28,11 @@ fi
 yq stacks/$stack/stack.yaml > /dev/null
 
 # Install the snap
-sudo snap install --dangerous --devmode $name_*_$architecture.snap
+sudo snap install --dangerous $name_*_$architecture.snap
+
+# Connect interfaces
+sudo snap connect $name:home
+sudo snap connect $name:hardware-observe
 
 # Set stack name
 sudo snap set $name stack="$stack"

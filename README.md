@@ -8,56 +8,48 @@ The software has mainly been tested on Ubuntu 24.04 and newer.
 
 The snap supports a range of hardware, in many cases with the help of drivers installed on the host. 
 For the best experience, make sure the drivers are installed on the host before installing the snap.
-Follow the links below to learn about these requirements.
 
-The following hardware is supported:
-* CPUs:
-  * amd64: Intel or AMD
-  * arm64: Ampere
-* NPUs:   
-  * Intel Core Ultra; refer [here](#intel-npu)
-* GPUs:
-  * Intel integrated or discrete GPUs; refer [here](#intel-gpu)
-  * Nvidia GPUs for amd64 platforms; refer [here](#nvidia-gpu)
 
+### CPUs
+
+| Architecture | Vendor      |
+|--------------|-------------|
+| amd64        | Intel, AMD  |
+| arm64        | Ampere      |
+
+
+### Accelerators
+
+| Type | Vendor  | ⚠️ Setup instructions         |
+|------|---------|---------------------------|
+| GPU  | Intel   | [Intel GPU](#intel-gpu)   |
+| GPU  | NVIDIA  | [NVIDIA GPU](#nvidia-gpu) |
+| NPU  | Intel   | [Intel NPU](#intel-npu)   |
 
 ## Install
+
+> [!IMPORTANT]
+> Make sure that your environment is set up correctly, as explained [⇑ above ⇑](#supported-environment).
+
 Set the right channel and install the model snap:
 ```console
-sudo snap install deepseek-r1 --channel=<channel> --devmode
+sudo snap install deepseek-r1 --channel=<channel>
 ```
-
-It must be installed in developer mode because it needs [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) during the installation.
-This interface is currently not automatically connected.
-
-> [!TIP]
-> If you install in confined mode, the auto detection will run on first use, not during the installation.
-> To force auto detection, run `sudo deepseek-r1.init`.
-
-To build and install from source, scroll to [here](#build-and-install-from-source).
 
 ## Use
 
-When the snap is installed, a suitable *stack* comprised of an engine and a model are automatically installed as snap components. 
-You can check the installed components with:
-```shell
-sudo snap components deepseek-r1
-```
+During the installation, the snap detects the hardware and picks a suitable *stack*.
+Each stack consists of an inference **engine** and a **model**. 
+The engine is a server application.
 
-The installed engine is a server application which can run as a service.
-The service is NOT started by default.
-This is to allow on-demand use of the computing resources.
-
-The snap includes several configurations, some of which are set based on the detected environment. 
-To explore the configurations, use:
-```shell
-sudo snap get deepseek-r1
-```
+> [!NOTE]
+> The **server does not start** by default.
+> This is to allow on-demand use of the computing resources.
 
 ### Run server
-Start the server app in the foreground:
+Start the server:
 ```shell
-sudo snap run deepseek-r1.server
+sudo snap start deepseek-r1
 ```
 
 The server exposes an [OpenAI compatible](https://github.com/openai/openai-openapi) endpoint served via HTTP.
@@ -74,14 +66,18 @@ To change, for example, the HTTP port to `8999`:
 sudo snap set deepseek-r1 http.port=8999
 ```
 
+Once changed, restart the server:
+```
+sudo snap restart deepseek-r1
+```
+
 For more details on the configuration options, refer [here](configure).
 
-Once you are ready with the configurations, re-run the service using the same command. 
-
-To run the server in the background:
+You can query the server logs to debug possible issues:
 ```shell
-sudo snap start deepseek-r1
+sudo snap logs deepseek-r1
 ```
+Try with `-n 100 -f` to query more lines and follow the logs.
 
 ### Chat
 You can use a range of OpenAI-compatible chat clients to interact with the server. 
@@ -111,7 +107,8 @@ sudo snap set deepseek-r1 stack=<stack>
 ```
 
 > [!TIP]
-> For CUDA-based stacks the number of layers that are loaded on to the GPU can be configured.
+> For CUDA-based stacks, the number of layers that are loaded on to the GPU can be configured.
+>
 > By default all layers are loaded into VRAM, which requires enough VRAM to fit the entire model.
 > To only load a limited number of layers onto the GPU use the `n-gpu-layers` snap option:
 > ```shell
@@ -125,9 +122,23 @@ sudo snap set deepseek-r1 stack=<stack>
 > sudo snap unset deepseek-r1 n-gpu-layers
 > ```
 
+### Manage components
+
+This snap uses snap components to deploy optional artifacts. 
+
+You can check the installed components with:
+```shell
+sudo snap components deepseek-r1
+```
+
+To remove a component, use:
+```shell
+sudo snap remove <snap+component>
+```
+
 ## NVIDIA GPU
 
-NVIDIA drivers, utils, and CUDA are required to use the CUDA-based stacks.
+Using an NVIDIA GPU has a few dependencies.
 
 These steps were tested on Ubuntu Server 24.04.1, running on a machine with an NVIDIA RTX A5000.
 The version of driver and utils on your machine might be different depending on your setup.
@@ -140,10 +151,11 @@ sudo reboot
 
 ## Intel GPU
 
-The user space drivers are included in the snap so it should work standalone if you are running a relatively new kernel (>6.XX).
-A HWE kernel is required for discrete GPU support on some systems, please refer [here](https://dgpu-docs.intel.com/driver/client/overview.html) for details.
+The user-space drivers for Intel GPUs (integrated and discrete) are included in the snap. 
 
-It has been tested on:
+Using Lunar Lake or Battlemage GPUs may require a hardware enablement (HWE) kernel; please refer [here](https://dgpu-docs.intel.com/driver/client/overview.html) for details.
+
+The snap has been tested on:
 - Intel Battlemage G21 [Arc B580]
 - Intel Meteor Lake-P [Intel Arc Graphics]
 - Intel Raptor Lake-S UHD Graphics
@@ -174,11 +186,12 @@ curl http://localhost:8080/v3/chat/completions -d \
 ```
 
 ## Intel NPU
-To use an Intel NPU, install and connect the driver snap:
-```
+To use an Intel NPU, install and connect the driver snap after installing the deepseek-r1 snap:
+```shell
 sudo snap install intel-npu-driver
-sudo snap connect deepseek-r1:intel-npu intel-npu-driver # auto connects
-sudo snap connect deepseek-r1:npu-libs intel-npu-driver
+
+# After installing deepseek-r1 snap
+sudo snap connect deepseek-r1:npu-libs intel-npu-driver 
 ```
 
 > [!NOTE]

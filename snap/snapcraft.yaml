@@ -29,7 +29,11 @@ plugs:
     interface: content
     content: npu-libs-2404
     target: $SNAP/npu-libs
-
+  # To allow sideloading models by root
+  # Also, it works around https://github.com/canonical/deepseek-r1-snap/issues/23
+  home:
+    read: all
+    
 hooks:
   install:
     environment: &install-env
@@ -84,10 +88,11 @@ parts:
 
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: &llamacpp-tag b4595
+    source-tag: &llamacpp-tag b5794
     source-depth: 1
     plugin: cmake
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
     stage-packages:
       - libgomp1
@@ -95,9 +100,22 @@ parts:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
+  llamacpp-legacy:
+    <<: *llamacpp-part
+    cmake-parameters:
+      - -DLLAMA_CURL=OFF
+      - -DGGML_NATIVE=OFF
+      - -DGGML_F16C=OFF
+      - -DGGML_FMA=OFF
+      - -DGGML_BMI2=OFF
+      - -DGGML_AVX2=OFF
+    organize:
+      "*": (component/llamacpp-legacy)
+
   llamacpp-avx512:
     <<: *llamacpp-part
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
       - -DGGML_AVX512=ON
     organize:
@@ -125,6 +143,7 @@ parts:
     #   - libcudart12
     #   - libcublas12
     cmake-parameters:
+      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
       - -DGGML_CUDA=ON
       - -DCMAKE_CUDA_ARCHITECTURES=all-major
@@ -138,7 +157,7 @@ parts:
     organize:
       "*": (component/llamacpp-cuda)
 
-  llama-aio:
+  llama-aio: &llama-aio-part
     source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.0/llama_aio_v3.1.0_d1804d6.tar.gz
     source-type: tar
     plugin: dump
@@ -152,6 +171,16 @@ parts:
       "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio)/lib/
     prime:
       - -*
+
+  llama-aio-ampereone:
+    <<: *llama-aio-part
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.0/llama_aio_v3.1.0_d1804d6_ampereone.tar.gz
+    organize:
+      "LICENSE*.txt": usr/share/doc/llama-aio-ampereone/
+      llama-server: (component/llama-aio-ampereone)/bin/
+      libllama.so: (component/llama-aio-ampereone)/lib/
+      "libggml*.so": (component/llama-aio-ampereone)/lib/
+      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio-ampereone)/lib/
 
   model-distill-qwen-1-5b-q8-0-gguf:
     source: components/model-distill-qwen-1-5b-q8-0-gguf
@@ -237,13 +266,19 @@ components:
 
   llamacpp:
     type: standard
-    summary: llama.cpp Engine
+    summary: llama.cpp Engine using default CPU instruction sets
+    description: LLM inference in C/C++
+    version: *llamacpp-tag
+
+  llamacpp-legacy:
+    type: standard
+    summary: llama.cpp Engine using only SSE4.2 and AVX CPU instruction sets
     description: LLM inference in C/C++
     version: *llamacpp-tag
 
   llamacpp-avx512:
     type: standard
-    summary: llama.cpp Engine using avx, avx2 and avx512 CPU instruction sets
+    summary: llama.cpp Engine using default and AVX512 CPU instruction sets
     description: LLM inference in C/C++
     version: *llamacpp-tag
 
@@ -261,7 +296,13 @@ components:
 
   llama-aio:
     type: standard
-    summary: llama-aio Engine for Ampere CPUs
+    summary: llama-aio Engine for Ampere Altra CPUs
+    description: LLM inference in C/C++
+    version: v3.1.0
+
+  llama-aio-ampereone:
+    type: standard
+    summary: llama-aio Engine for Ampere One CPUs
     description: LLM inference in C/C++
     version: v3.1.0
 
