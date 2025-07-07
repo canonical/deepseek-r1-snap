@@ -1,5 +1,5 @@
 name: cpu-tiny
-description: Example stack for legacy CPUs, offering good accuracy with low footprints
+description: Example stack for CPUs, offering lower accuracy at higher speed
 vendor: Canonical Ltd
 grade: devel
 devices:
@@ -7,6 +7,9 @@ devices:
     - type: cpu
       architecture: amd64
       flags: [sse4_2, f16c, fma, avx, avx2]
+    - type: cpu
+      architecture: arm64
+      features: [asimd] # for ARMv8 ASIMD includes NEON instruction set
 memory: 2G
 disk-space: 4G
 components:
