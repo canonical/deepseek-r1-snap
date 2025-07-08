@@ -38,7 +38,8 @@ api_response=$(\
   2>/dev/null\
 )
 
-# No response from server - either too slow, or server is in an error state
+# No response from server means either it's very slow, or server is in an error state.
+# With a large timeout specified for the wget call, an empty response indicates an issue.
 if [ -z "$api_response" ]; then
   exit 2
 fi
