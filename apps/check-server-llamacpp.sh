@@ -17,7 +17,7 @@ if ! (pgrep -x "llama-server" > /dev/null); then
 fi
 
 # Check if port is open and we can connect over TCP
-if ! (nc -z localhost $port 2>/dev/null); then
+if ! (nc -z localhost "$port" 2>/dev/null); then
   exit 1
 fi
 
@@ -29,22 +29,35 @@ fi
 
 request=$(printf '{"model": "%s", "prompt": "Say this is a test", "temperature": 0, "max_tokens": 1}' "$model_name")
 api_response=$(\
-  wget http://localhost:8080/$api_base_path/completions \
-   --timeout=1 \
+  wget http://localhost:8080/"$api_base_path"/completions \
+  --timeout=30 \
+  --tries=1 \
   --post-data="$request" \
   --content-on-error \
   -O- \
   2>/dev/null\
 )
 
-# Still starting up api_response = {"error":{"code":503,"message":"Loading model","type":"unavailable_error"}}
-error_text=$(echo "$api_response" | jq .error.message)
-if [ "${error_text}" != "null" ]; then
-  exit 1
+# No response from server - either too slow, or server is in an error state
+if [ -z "$api_response" ]; then
+  exit 2
+fi
+
+# Check if response is an error
+has_error=$(echo "$api_response" | jq 'has("error")')
+if $has_error; then
+  error_message=$(echo "$api_response" | jq .error.message)
+  if [[ "$error_message" == "\"Loading model\"" ]]; then
+    # Still starting up api_response = {"error":{"code":503,"message":"Loading model","type":"unavailable_error"}}
+    exit 1
+  else
+    # Any other error, do not retry
+    exit 2
+  fi
 fi
 
 chat_text=$(echo "$api_response" | jq .choices[0].text)
-if [ -z "${chat_text}" ]; then
+if [ -z "$chat_text" ]; then
   # No response from completions api
   exit 2
 fi
