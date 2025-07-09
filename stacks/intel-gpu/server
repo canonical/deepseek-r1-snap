@@ -10,7 +10,7 @@ if [ ! -d "$model" ]; then
     exit 1
 fi
 
-source "$model/init" # exports MODEL_CONFIG
+source "$model/init" # imports model config
 
 if [ ! -d "$engine" ]; then
     echo "Missing component: $engine"
@@ -33,20 +33,27 @@ export OCL_ICD_VENDORS=$SNAP/etc/OpenCL/vendors
 export PYTHONPATH="$engine/lib/python:$engine/lib/python3.12/site-packages"
 echo "PYTHONPATH: $PYTHONPATH"
 
-# Override the model config path if user has set one
-# The model config file includes paths to the model files
-user_config="$(snapctl get model-config)"
-if [ -n "$user_config" ]; then
-    if [ ! -f "$user_config" ]; then
-        echo "Missing given model config file: $model_config"
-        exit 1
-    fi
-    MODEL_CONFIG="$user_config"
-fi
+# For ovms and other required binaries in the package
+# export PATH=$PATH:$engine/bin
 
-echo "Model Server config path: $MODEL_CONFIG"
+target_device="$(snapctl get target-device)"
+if [ -z "$target_device" ]; then
+    echo "target-device configuration not set!"
+    exit 1
+fi
 
 port="$(snapctl get http.port)"
 host="$(snapctl get http.host)"
 
-$engine/bin/ovms --rest_port "$port" --rest_bind_address "$host" --config_path "$MODEL_CONFIG"
+set -x
+$engine/bin/ovms \
+    --rest_port "$port" \
+    --rest_bind_address "$host" \
+    --source_model "$MODEL_NAME" \
+    --model_path "$model" \
+    --target_device "$target_device" \
+    --cache_size 2
+
+# TODO:
+# --source_model is a HF pull option
+# --model_name arg together with --cache_size does not work
