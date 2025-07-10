@@ -204,15 +204,12 @@ Clone this repo with the submodule:
 git clone --recurse-submodules https://github.com/canonical/deepseek-r1-snap.git
 ```
 
-Download the models:
-```shell
-wget -P components/model-distill-qwen-1-5b-q8-0-gguf \
-    https://huggingface.co/unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf
-wget -P components/model-distill-qwen-7b-q4-k-m-gguf \
-    https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf
-```
+Prepare the models that are required from the following list:
+- [model-distill-qwen-1-5b-q8-0-gguf](./components/model-distill-qwen-1-5b-q8-0-gguf)
+- [model-distill-qwen-7b-q4-k-m-gguf](./components/model-distill-qwen-7b-q4-k-m-gguf)
+- [model-distill-llama-70b-q4-k-m-gguf](./components/model-distill-llama-70b-q4-k-m-gguf)
+- [model-distill-qwen-7b-openvino-int4](./components/model-distill-qwen-7b-openvino-int4)
 
-For preparing the OpenVINO model, refer to [components/model-distill-qwen-7b-openvino-int4](./components/model-distill-qwen-7b-openvino-int4).
 
 Build the snap and its component:
 ```shell
