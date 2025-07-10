@@ -53,6 +53,7 @@ if $has_error; then
     exit 1
   else
     # Any other error, do not retry
+    echo "Server error: $error_message"
     exit 2
   fi
 fi
