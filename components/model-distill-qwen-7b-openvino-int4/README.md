@@ -1,6 +1,6 @@
 # DeepSeek R1 Distill Qwen 7B Optimized for OpenVINO
 
-The model directory should be placed in the current directory to be found by the engine:
+The model directory should be placed in the current directory to be found by the engine.
 
 ## Download the model
 

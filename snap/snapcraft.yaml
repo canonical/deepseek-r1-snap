@@ -192,9 +192,12 @@ parts:
     source: components/model-distill-qwen-7b-openvino-int4
     plugin: dump
     override-build: |
-      # Create a symlink for the mediapipe graph file
-      # This is needed for the OpenVINO Model Server (single model model)
-      # to write the file on each run in a writable location.
+      # OVMS (single model mode) writes the mediapipe graph file on runtime
+      # inside the model directory. 
+      # This is not possible if the model directory is in a read-only component.
+      # 
+      # Add a symlink to a writable location so that OVMS can write the graph file
+      # on runtime.
       ln -s /tmp/graph.pb.txt DeepSeek-R1-Distill-Qwen-7B-ov-int4/graph.pbtxt
 
       craftctl default
