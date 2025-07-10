@@ -191,6 +191,14 @@ parts:
   model-distill-qwen-7b-openvino-int4:
     source: components/model-distill-qwen-7b-openvino-int4
     plugin: dump
+    override-build: |
+      # At startup OVMS (single model mode) creates the mediapipe graph file inside the model directory.
+      # This directory is read-only when it is inside a component.
+      # By adding a symlink with the file's name inside the model directory, pointing to /tmp,
+      # OVMS will follow the symlink during runtime and instead create the file in /tmp.
+      ln -s /tmp/graph.pbtxt DeepSeek-R1-Distill-Qwen-7B-ov-int4/graph.pbtxt
+
+      craftctl default
     organize:
       "*": (component/model-distill-qwen-7b-openvino-int4)
 
@@ -230,7 +238,7 @@ parts:
 
   openvino-model-server:
     plugin: dump
-    source: https://github.com/openvinotoolkit/model_server/releases/download/v2025.1/ovms_ubuntu24_python_on.tar.gz
+    source: https://github.com/openvinotoolkit/model_server/releases/download/v2025.2/ovms_ubuntu24_python_on.tar.gz
     organize:
       "*": (component/openvino-model-server)
     stage-packages:
@@ -292,7 +300,7 @@ components:
     type: standard
     summary: OpenVINO Model Server
     description: OpenVINO Model Server for serving models
-    version: 2025.1
+    version: 2025.2
 
   # 
   # Models
