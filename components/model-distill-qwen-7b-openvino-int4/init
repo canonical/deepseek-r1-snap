@@ -1,4 +1,3 @@
 #!/bin/bash -eu
 
-# TODO: take from the directory
 export MODEL_NAME="DeepSeek-R1-Distill-Qwen-7B-ov-int4"
