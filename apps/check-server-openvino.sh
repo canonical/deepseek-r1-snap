@@ -18,11 +18,11 @@ fi
 
 
 # Check if port is open and we can connect over TCP
-if ! (nc -z localhost $port 2>/dev/null); then
+if ! (nc -z localhost "$port" 2>/dev/null); then
   exit 1
 fi
 
-api_config=$(wget http://localhost:8080/v1/config --timeout=1 -O- 2>/dev/null)
+api_config=$(wget http://localhost:8080/v1/config --timeout=1 --tries=1 -O- 2>/dev/null)
 # Starting up: {}
 if [[ "$api_config" != *"$model_name"* ]]; then
   exit 1
@@ -35,8 +35,9 @@ fi
 
 request=$(printf '{"model": "%s", "prompt": "Say this is a test", "temperature": 0, "max_tokens": 1}' "$model_name")
 api_response=$(\
-  wget http://localhost:8080/$api_base_path/completions \
-   --timeout=1 \
+  wget http://localhost:8080/"$api_base_path"/completions \
+  --timeout=30 \
+  --tries=1 \
   --post-data="$request" \
   --content-on-error \
   -O- \
