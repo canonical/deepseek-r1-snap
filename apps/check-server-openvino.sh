@@ -65,7 +65,8 @@ if [ -z "$api_response" ]; then
   exit 2
 fi
 
-# Anything wrong with the request returns this mediapipe not found error - seen as plain text and as json
+# Anything wrong with the request returns a mediapipe not found error
+# Old versions of OVMS returned this as raw text, while new ones put it in a json error
 if [[ "${api_response}" == *"Mediapipe graph definition with requested name is not found"* ]]; then
   debug_echo "Request error"
   exit 2
@@ -81,12 +82,12 @@ fi
 
 chat_text=$(echo "$api_response" | jq .choices[0].message.content)
 if [ "$chat_text" == null ]; then
-  # Response without chat text
-  debug_echo "empty chat response: $api_response"
+  # Chat response content key not found in JSON object
+  debug_echo "Unexpected response: $api_response"
   exit 2
 elif [ -z "${chat_text}" ]; then
-  # No response from completions api
-  debug_echo "no chat response"
+  # Chat response content is empty
+  debug_echo "Empty chat response"
   exit 2
 fi
 
