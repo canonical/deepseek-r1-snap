@@ -19,19 +19,16 @@ fi
 
 echo "Extracting model and engine"
 stack_yaml=$(yq '. | explode(.)' "$STACK_FILE")
-model=$(echo "$stack_yaml" | yq '.configurations.model')
-engine=$(echo "$stack_yaml" | yq '.configurations.engine')
-
-echo "model: $model"
-echo "engine: $engine"
+readarray -t components < <(yq '.components[]' "$STACK_FILE")
+echo "Selected from stack ${STACK_NAME}: ${components[*]}"
+printf -v llm_pieces "%s|" "${components[@]}"
 
 echo -e "Generating new snapcraft.yaml\n"
-
 essentials="app-scripts|stacks|ml-snap-utils|go-chat-client|common-runtime-dependencies"
 
 yq "explode(.) |
-  .parts |= with_entries(select(.key | test(\"^(${essentials}|${model}|${engine})$\"))) |
-  .components |= with_entries(select(.key | test(\"^(${model}|${engine})$\")))
+  .parts |= with_entries(select(.key | test(\"^(${llm_pieces}${essentials})$\"))) |
+  .components |= with_entries(select(.key | test(\"^(${llm_pieces})$\")))
 " snap/snapcraft.yaml >snapcraft.yaml
 
 if [[ ${2-} == "--dryrun" ]]; then
