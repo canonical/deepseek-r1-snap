@@ -36,4 +36,5 @@ if [[ ${2-} == "--dryrun" ]]; then
 fi
 
 echo "Building snap with stack '$STACK_NAME'"
-snapcraft -v
+snapcraft -v || true
+rm -f snapcraft.yaml
