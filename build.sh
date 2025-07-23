@@ -17,14 +17,20 @@ if [ ! -d "$STACK_DIR" ]; then
   exit 1
 fi
 
+# Load selected stack.yaml into variable, explode to evaluate aliases
 stack_yaml=$(yq '. | explode(.)' "$STACK_FILE")
+
+# Creates the components array with the contents of the .components[] list
 readarray -t components < <(yq '.components[]' "$STACK_FILE")
 echo "Selected from stack ${STACK_NAME}: ${components[*]}"
+
+# Converts the array into a string separated by '|'
 printf -v llm_pieces "%s|" "${components[@]}"
 
 echo "Generating new snapcraft.yaml"
 essentials="app-scripts|stacks|ml-snap-utils|go-chat-client|common-runtime-dependencies"
 
+# Copy snap/snapcraft.yaml to snapcraft.yaml filtering IN only the desired parts and components
 yq "explode(.) |
   .parts |= with_entries(select(.key | test(\"^(${llm_pieces}${essentials})$\"))) |
   .components |= with_entries(select(.key | test(\"^(${llm_pieces})$\")))
