@@ -331,6 +331,9 @@ components:
     version: *snap-version
 
 apps:
+  deepseek-r1:
+    command: bin/stack
+
   # For testing purposes. Use sudo <snap>.re-install
   # Connecting the hardware-observe interface is required even if installed in dev mode!
   re-install:
