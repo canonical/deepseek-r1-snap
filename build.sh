@@ -1,5 +1,10 @@
 #!/bin/bash -eu
 
+exit_error () {
+    echo "Error: ${1}" >&2
+    exit 1
+}
+
 # if no argument is provided, just build everything
 if [ -z "${1-}" ]; then
   rm -f snapcraft.yaml
@@ -13,15 +18,22 @@ echo "Stack selected: '$STACK_NAME'"
 STACK_DIR="stacks/$STACK_NAME"
 STACK_FILE="$STACK_DIR/stack.yaml"
 if [ ! -d "$STACK_DIR" ]; then
-  echo "Error: Stack '$STACK_NAME' does not exist." >&2
-  exit 1
+  exit_error "Stack '$STACK_NAME' does not exist."
 fi
 
 # Load selected stack.yaml into variable, explode to evaluate aliases
 stack_yaml=$(yq '. | explode(.)' "$STACK_FILE")
+if [[ -z "$stack_yaml" ]]; then
+  exit_error  "Stack '$STACK_FILE' is empty"
+fi
 
 # Creates the components array with the contents of the .components[] list
 readarray -t components < <(yq '.components[]' "$STACK_FILE")
+
+# Check if array lenght is 0
+if [[ ${#components[@]} -eq 0]]; then
+  exit_error "Stack '$STACK_FILE' has no components"
+fi
 echo "Selected from stack ${STACK_NAME}: ${components[*]}"
 
 # Converts the array into a string separated by '|'
