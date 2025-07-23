@@ -42,7 +42,7 @@ printf -v llm_pieces "%s|" "${components[@]}"
 echo "Generating new snapcraft.yaml"
 essentials="app-scripts|stacks|ml-snap-utils|go-chat-client|common-runtime-dependencies"
 
-# Copy snap/snapcraft.yaml to snapcraft.yaml filtering IN only the desired parts and components
+# Copy snap/snapcraft.yaml to snapcraft.yaml, retaining only the selected parts and components
 yq "explode(.) |
   .parts |= with_entries(select(.key | test(\"^(${llm_pieces}${essentials})$\"))) |
   .components |= with_entries(select(.key | test(\"^(${llm_pieces})$\")))
