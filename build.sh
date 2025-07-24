@@ -5,11 +5,14 @@ exit_error() {
   exit 1
 }
 
-# if no argument is provided, just build everything
+help() {
+  echo "Usage:" >&2
+  echo "$0 <stack-name>" >&2
+}
+
 if [ -z "${1-}" ]; then
-  rm -f snapcraft.yaml
-  snapcraft -v
-  exit 0
+  help
+  exit_error "No stack provided"
 fi
 
 STACK_NAME="${1-}"
