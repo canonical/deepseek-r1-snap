@@ -196,7 +196,10 @@ parts:
       # This directory is read-only when it is inside a component.
       # By adding a symlink with the file's name inside the model directory, pointing to /tmp,
       # OVMS will follow the symlink during runtime and instead create the file in /tmp.
-      ln -s /tmp/graph.pbtxt DeepSeek-R1-Distill-Qwen-7B-ov-int4/graph.pbtxt
+      mediapipe_graph_path="DeepSeek-R1-Distill-Qwen-7B-ov-int4/graph.pbtxt"
+      if [ ! -L "$mediapipe_graph_path" ]; then
+        ln -s /tmp/graph.pbtxt "$mediapipe_graph_path"
+      fi
 
       craftctl default
     organize:
