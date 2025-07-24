@@ -5,13 +5,6 @@ exit_error() {
   exit 1
 }
 
-# if no argument is provided, just build everything
-if [ -z "${1-}" ]; then
-  rm -f snapcraft.yaml
-  snapcraft -v
-  exit 0
-fi
-
 STACK_NAME="${1-}"
 echo "Stack selected: '$STACK_NAME'"
 
@@ -29,11 +22,6 @@ fi
 
 # Creates the components array with the contents of the .components[] list
 readarray -t components < <(yq '.components[]' "$STACK_FILE")
-
-# Check if array lenght is 0
-if [[ ${#components[@]} -eq 0 ]]; then
-  exit_error "Stack '$STACK_FILE' has no components"
-fi
 echo "Selected from stack ${STACK_NAME}: ${components[*]}"
 
 # Converts the array into a string separated by '|'
