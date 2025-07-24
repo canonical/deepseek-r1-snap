@@ -37,7 +37,7 @@ readarray -t components < <(yq '.components[]' "$STACK_FILE")
 if [[ ${#components[@]} -eq 0 ]]; then
   exit_error "Stack '$STACK_FILE' has no components"
 fi
-echo "Selected from stack ${STACK_NAME}: ${components[*]}"
+echo "Stack components: ${components[*]}"
 
 # Converts the array into a string separated by '|'
 printf -v llm_pieces "%s|" "${components[@]}"
