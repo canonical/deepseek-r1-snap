@@ -10,6 +10,11 @@ help() {
   echo "$0 <stack-name>" >&2
 }
 
+if [[ "$(yq --version)" != *v4* ]]; then
+  echo "Please install yq v4."
+  exit 1
+fi
+
 if [ -z "${1-}" ]; then
   help
   exit_error "No stack provided"
