@@ -7,7 +7,10 @@ exit_error() {
 
 help() {
   echo "Usage:" >&2
-  echo "$0 <stack-name>" >&2
+  echo "  $0 <stack-name> [--dryrun]" >&2
+  echo "" >&2
+  echo "Options:" >&2
+  echo "  --dryrun    Generate snapcraft.yaml without building the snap." >&2
 }
 
 if [[ "$(yq --version)" != *v4* ]]; then
