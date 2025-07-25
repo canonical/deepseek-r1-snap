@@ -46,7 +46,7 @@ if [[ ${#components[@]} -eq 0 ]]; then
 fi
 echo "Stack components: ${components[*]}"
 
-# Converts the array into a regex OR by joining with '|'
+# Converts the array into a regex
 printf -v llm_pieces "%s|" "${components[@]}"
 
 echo "Generating new snapcraft.yaml"
