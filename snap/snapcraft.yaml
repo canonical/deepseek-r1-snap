@@ -333,6 +333,15 @@ components:
 apps:
   deepseek-r1:
     command: bin/stack
+    plugs:
+      # For hardware detection
+      - opengl
+      - hardware-observe
+      - intel-npu 
+      - npu-libs  
+      # To download resources
+      # - network
+    
 
   # For testing purposes. Use sudo <snap>.re-install
   # Connecting the hardware-observe interface is required even if installed in dev mode!
