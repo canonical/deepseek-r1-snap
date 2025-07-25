@@ -1,6 +1,6 @@
 name: ampere-altra
 description: Stack for Ampere Altra CPUs
-vendor: Canonical Ltd
+vendor: Ampere Computing
 grade: stable
 devices:
   all:
