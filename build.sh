@@ -37,19 +37,19 @@ fi
 # Creates the components array with the contents of the .components[] list
 readarray -t components < <(yq '.components[]' "$STACK_FILE")
 
-# Check if array lenght is 0
+# Check if array length is 0
 if [[ ${#components[@]} -eq 0 ]]; then
   exit_error "Stack '$STACK_FILE' has no components"
 fi
 echo "Stack components: ${components[*]}"
 
-# Converts the array into a string separated by '|'
+# Converts the array into a regex OR by joining with '|'
 printf -v llm_pieces "%s|" "${components[@]}"
 
 echo "Generating new snapcraft.yaml"
 essentials="app-scripts|stacks|ml-snap-utils|go-chat-client|common-runtime-dependencies"
 
-# Copy snap/snapcraft.yaml to snapcraft.yaml, retaining only the selected parts and components
+# Copy snap/snapcraft.yaml to snapcraft.yaml, retaining only the parts and components that match the regex
 yq "explode(.) |
   .parts |= with_entries(select(.key | test(\"^(${llm_pieces}${essentials})$\"))) |
   .components |= with_entries(select(.key | test(\"^(${llm_pieces})$\")))
@@ -60,5 +60,4 @@ if [[ ${2-} == "--dryrun" ]]; then
 fi
 
 echo "Building snap with stack '$STACK_NAME'"
-snapcraft -v || true
-rm -f snapcraft.yaml
+snapcraft -v pack || rm -f snapcraft.yaml
