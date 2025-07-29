@@ -340,7 +340,7 @@ apps:
       - intel-npu 
       - npu-libs  
       # To download resources
-      # - network
+      - network
     
 
   # For testing purposes. Use sudo <snap>.re-install
