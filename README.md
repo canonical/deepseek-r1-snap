@@ -216,7 +216,12 @@ Build the snap and its component:
 snapcraft -v
 ```
 
+To build the snap with components of one stack:
+```shell
+build.sh <stack>
+```
+
 Install: 
 ```console
-$ ./install-local-build.sh <stack> [op]
+./install-local-build.sh <stack> [op]
 ```
