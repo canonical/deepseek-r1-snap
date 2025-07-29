@@ -16,6 +16,13 @@ if [[ "$(yq --version)" != *v4* ]]; then
     exit 1
 fi
 
+# validate channel
+if [[ ! "$channel" =~ ^[a-z0-9-]+/[a-z0-9-]+(/[a-z0-9-]+)?$ ]]; then
+    echo "Invalid Snap channel: $channel"
+    exit 1
+fi
+
+
 # load snapcraft.yaml into variable, explode to evaluate aliases
 snapcraft_yaml=$(yq '. | explode(.)' snap/snapcraft.yaml)
 
