@@ -43,9 +43,6 @@ hooks:
       # For hardware-info
       - hardware-observe
       - opengl
-  configure:
-    environment: *install-env
-    plugs: *install-plugs
 
 parts:
   app-scripts:
@@ -344,6 +341,9 @@ apps:
       - npu-libs  
       # To download resources
       - network
+    environment:
+      # To load libigdrcl.so, for Intel GPU vRAM
+      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
     
 
   # For testing purposes. Use sudo <snap>.re-install
