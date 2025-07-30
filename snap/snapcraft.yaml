@@ -344,36 +344,12 @@ apps:
     environment:
       # To load libigdrcl.so, for Intel GPU vRAM
       OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
+      CHAT: $SNAP/bin/chat.sh
     
-
-  # For testing purposes. Use sudo <snap>.re-install
-  # Connecting the hardware-observe interface is required even if installed in dev mode!
-  re-install:
-    command: meta/hooks/install
-    plugs: *install-plugs
-
-  hardware-info:
-    command: bin/hardware-info
-    plugs:
-      # For hardware detection
-      - hardware-observe
-      - opengl
-    environment:
-      # To load libigdrcl.so, for Intel GPU vRAM
-      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
-
-  init:
-    command: bin/init.sh
-    plugs:
-      # Needed to download resources
-      - network
-      # For hardware detection
-      - hardware-observe
-      - opengl
-
-  chat: &engine-app
-    command-chain: [bin/wait-for-server.sh]
-    command: bin/chat.sh
+  server:
+    command: bin/server.sh
+    daemon: simple
+    install-mode: disable
     plugs:
       # For inference and hardware detection (via init)
       - opengl
@@ -394,10 +370,3 @@ apps:
       # Needed for shared libraries used by llama.cpp
       # TODO: Should this instead be added in an env file to llamacpp component
       ARCH_TRIPLET: $CRAFT_ARCH_TRIPLET_BUILD_FOR
-
-  server:
-    <<: *engine-app
-    command-chain: []
-    command: bin/server.sh
-    daemon: simple
-    install-mode: disable
