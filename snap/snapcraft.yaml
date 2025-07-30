@@ -39,8 +39,8 @@ hooks:
     environment:
       # To load libigdrcl.so, for Intel GPU vRAM
       OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
-    plugs: &install-plugs
-      # For hardware-info
+    plugs:
+      # For hardware detection
       - hardware-observe
       - opengl
 
