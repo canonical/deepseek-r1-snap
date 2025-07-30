@@ -36,16 +36,13 @@ plugs:
     
 hooks:
   install:
-    environment: &install-env
+    environment:
       # To load libigdrcl.so, for Intel GPU vRAM
       OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
     plugs: &install-plugs
       # For hardware-info
       - hardware-observe
       - opengl
-  configure:
-    environment: *install-env
-    plugs: *install-plugs
 
 parts:
   app-scripts:
@@ -334,6 +331,19 @@ components:
     version: *snap-version
 
 apps:
+  deepseek-r1:
+    command: bin/stack
+    plugs:
+      # For hardware detection
+      - opengl
+      - hardware-observe
+      # To access server over network socket
+      - network
+    environment:
+      # To load libigdrcl.so, for Intel GPU vRAM
+      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
+    
+
   # For testing purposes. Use sudo <snap>.re-install
   # Connecting the hardware-observe interface is required even if installed in dev mode!
   re-install:

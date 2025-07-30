@@ -7,6 +7,13 @@ architecture=$(dpkg --print-architecture)
 stack=$1
 op=$2
 
+# check if stack is provided
+if [[ -z "$stack" ]]; then
+    echo "Error: Stack name is required."
+    echo "Usage: $0 <stack> [clean]"
+    exit 1
+fi
+
 if [[ "$op" == "clean" ]]; then
     sudo snap remove $name
 fi
@@ -34,11 +41,13 @@ sudo snap install --dangerous $name_*_$architecture.snap
 sudo snap connect $name:home
 sudo snap connect $name:hardware-observe
 
-# Set stack name
-sudo snap set $name stack="$stack"
-
 # Install stack components
 cat "./stacks/$stack/stack.yaml" | yq .components[] | while read -r component; do
     sudo snap install --dangerous ./$name+"$component"_*.comp
 done
 
+# Score stacks to populate scoring data
+sudo $name use --auto --assume-yes > /dev/null 2>&1
+
+# Override selected stack
+sudo $name use "$stack" --assume-yes
