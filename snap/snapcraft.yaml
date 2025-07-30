@@ -36,7 +36,7 @@ plugs:
     
 hooks:
   install:
-    environment: &install-env
+    environment:
       # To load libigdrcl.so, for Intel GPU vRAM
       OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
     plugs: &install-plugs
@@ -337,9 +337,7 @@ apps:
       # For hardware detection
       - opengl
       - hardware-observe
-      - intel-npu 
-      - npu-libs  
-      # To download resources
+      # To access server over network socket
       - network
     environment:
       # To load libigdrcl.so, for Intel GPU vRAM
