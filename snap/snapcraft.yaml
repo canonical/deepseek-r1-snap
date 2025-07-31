@@ -238,7 +238,7 @@ parts:
 
   openvino-model-server:
     plugin: dump
-    source: https://github.com/openvinotoolkit/model_server/releases/download/v2025.2/ovms_ubuntu24_python_on.tar.gz
+    source: https://github.com/openvinotoolkit/model_server/releases/download/v2025.2.1/ovms_ubuntu24_python_on.tar.gz
     organize:
       "*": (component/openvino-model-server)
     stage-packages:
@@ -300,7 +300,7 @@ components:
     type: standard
     summary: OpenVINO Model Server
     description: OpenVINO Model Server for serving models
-    version: 2025.2
+    version: v2025.2.1
 
   # 
   # Models
