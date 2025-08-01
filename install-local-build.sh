@@ -51,3 +51,6 @@ sudo $name use --auto --assume-yes > /dev/null 2>&1
 
 # Override selected stack
 sudo $name use "$stack" --assume-yes
+
+# Start failed service or restart if already running
+sudo snap restart $name

@@ -347,7 +347,6 @@ apps:
   server:
     command: bin/server.sh
     daemon: simple
-    install-mode: disable
     plugs:
       # For inference and hardware detection (via init)
       - opengl
