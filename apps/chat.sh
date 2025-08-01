@@ -1,5 +1,7 @@
 #!/bin/bash -eu
 
+$SNAP/bin/wait-for-server.sh
+
 port="$(snapctl get http.port)"
 model_name="$(snapctl get model-name)"
 
@@ -9,4 +11,8 @@ if [ -z "$api_base_path" ]; then
   api_base_path="v1"
 fi
 
-OPENAI_BASE_URL="http://localhost:$port/$api_base_path" MODEL_NAME="$model_name" REASONING_MODEL=true "$SNAP"/bin/go-chat-client
+export OPENAI_BASE_URL="http://localhost:$port/$api_base_path"
+export MODEL_NAME="$model_name"
+export REASONING_MODEL=true
+
+$SNAP/bin/go-chat-client
