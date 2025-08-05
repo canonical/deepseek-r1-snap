@@ -57,13 +57,6 @@ parts:
     organize:
       "*": stacks/
 
-  completer:
-    source: completion.sh
-    source-type: file
-    plugin: dump
-    organize:
-      "*": bin/
-
   ml-snap-utils:
     source: ml-snap-utils
     plugin: go
