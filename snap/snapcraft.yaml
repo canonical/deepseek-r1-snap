@@ -57,6 +57,13 @@ parts:
     organize:
       "*": stacks/
 
+  completer:
+    source: completion.sh
+    source-type: file
+    plugin: dump
+    organize:
+      "*": bin/
+
   ml-snap-utils:
     source: ml-snap-utils
     plugin: go
@@ -333,6 +340,7 @@ components:
 apps:
   deepseek-r1:
     command: bin/stack
+    completer: bin/completion.sh
     plugs:
       # For hardware detection
       - opengl
