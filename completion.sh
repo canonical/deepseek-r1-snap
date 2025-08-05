@@ -10,7 +10,7 @@ _deepseek_r1_completions() {
     opts="chat status info list load use get set unset help system"
 
     if [[ "$cur" == -* ]]; then
-        _deepseek_r1_complete_options "$cur_word"
+        _deepseek_r1_complete_options "$cur"
         return 0
     fi
 
