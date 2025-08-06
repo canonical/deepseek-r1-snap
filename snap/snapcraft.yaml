@@ -66,16 +66,16 @@ parts:
       - pciutils
       - nvidia-utils # for Nvidia vRAM and Cuda Capability detection
       - clinfo # for Intel GPU vRAM detection
-    override-stage: |
+    override-prime: |
       craftctl default
       # Generating the completion script and patching it
-      $CRAFT_STAGE/bin/stack completion bash > $CRAFT_STAGE/bin/completion.sh
+      $CRAFT_PRIME/bin/stack completion bash > $CRAFT_PRIME/bin/completion.sh
 
       # Fix the path for the binary completion request
-      awk '{gsub(/requestComp="\$\{words\[0\]\} __complete \${args\[\*\]}"/, "requestComp=\"$SNAP/bin/stack __complete ${args[*]}\"")} 1' $CRAFT_STAGE/bin/completion.sh > tmp && mv tmp $CRAFT_STAGE/bin/completion.sh
+      awk '{gsub(/requestComp="\$\{words\[0\]\} __complete \${args\[\*\]}"/, "requestComp=\"$SNAP/bin/stack __complete ${args[*]}\"")} 1' $CRAFT_PRIME/bin/completion.sh > tmp && mv tmp $CRAFT_PRIME/bin/completion.sh
 
       # Fix all the occurencies of snapcraft to deepseek-r1
-      awk '{gsub(/snapcraft/, "deepseek-r1")} 1' $CRAFT_STAGE/bin/completion.sh > tmp && mv tmp $CRAFT_STAGE/bin/completion.sh
+      awk '{gsub(/snapcraft/, "deepseek-r1")} 1' $CRAFT_PRIME/bin/completion.sh > tmp && mv tmp $CRAFT_PRIME/bin/completion.sh
 
   go-chat-client:
     source: https://github.com/jpm-canonical/go-chat-client.git
