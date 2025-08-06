@@ -23,7 +23,7 @@ __deepseek-r1_get_completion_results() {
     # Prepare the command to request completions for the program.
     # Calling ${words[0]} instead of directly deepseek-r1 allows handling aliases
     args=("${words[@]:1}")
-    requestComp="${words[0]} __complete ${args[*]}"
+    requestComp="$SNAP/bin/stack __complete ${args[*]}"
 
     lastParam=${words[$((${#words[@]}-1))]}
     lastChar=${lastParam:$((${#lastParam}-1)):1}
