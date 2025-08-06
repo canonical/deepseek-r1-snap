@@ -72,7 +72,7 @@ parts:
       $CRAFT_PRIME/bin/stack completion bash > $CRAFT_PRIME/bin/completion.sh
 
       # Fix the path for the binary completion request
-      awk '{gsub(/requestComp="\$\{words\[0\]\} __complete \${args\[\*\]}"/, "requestComp=\"$SNAP/bin/stack __complete ${args[*]}\"")} 1' $CRAFT_PRIME/bin/completion.sh > tmp && mv tmp $CRAFT_PRIME/bin/completion.sh
+      awk '/__complete/ { print "    requestComp=\"$SNAP/bin/stack __complete ${args[*]}\""; next} 1' $CRAFT_PRIME/bin/completion.sh > tmp && mv tmp $CRAFT_PRIME/bin/completion.sh
 
       # Fix all the occurencies of snapcraft to deepseek-r1
       awk '{gsub(/snapcraft/, "deepseek-r1")} 1' $CRAFT_PRIME/bin/completion.sh > tmp && mv tmp $CRAFT_PRIME/bin/completion.sh
