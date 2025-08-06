@@ -68,7 +68,7 @@ parts:
       - clinfo # for Intel GPU vRAM detection
     override-prime: |
       craftctl default
-      # Generating the completion script and patching it
+      # Generating the completion script
       $CRAFT_PRIME/bin/stack completion bash > $CRAFT_PRIME/bin/completion.sh
 
       # Fix the path for the binary completion request
