@@ -1,5 +1,5 @@
 name: cuda
-description: Generic stack for Nvidia GPUs using CUDA. All major CUDA versions are targeted.
+description: Use CUDA and Nvidia GPUs
 vendor: Canonical Ltd
 grade: stable
 devices:

@@ -1,5 +1,5 @@
 name: cpu
-description: Example stack for CPUs, offering good accuracy with low footprints
+description: Use CPU, good accuracy with low footprints
 vendor: Canonical Ltd
 grade: stable
 devices:

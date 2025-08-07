@@ -1,5 +1,5 @@
 name: cpu-tiny
-description: Example stack for CPUs, offering lower accuracy at higher speed
+description: Use CPU, offering lower accuracy at higher speed
 vendor: Canonical Ltd
 grade: devel
 devices:
