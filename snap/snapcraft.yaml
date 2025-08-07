@@ -68,8 +68,10 @@ parts:
       - clinfo # for Intel GPU vRAM detection
     override-prime: |
       craftctl default
+
       # Generating the completion script
       SNAP_INSTANCE_NAME=deepseek-r1 $CRAFT_PRIME/bin/stack completion bash > $CRAFT_PRIME/bin/completion.sh
+
       # Since the binary name for the completion genration is stack, we symlink deepseek-r1 to it
       pushd $CRAFT_PRIME/bin && ln -s stack deepseek-r1; popd
 
