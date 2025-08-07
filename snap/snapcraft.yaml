@@ -204,38 +204,51 @@ parts:
     organize:
       "*": (component/model-distill-qwen-7b-openvino-int4)
 
-  # Source: https://github.com/canonical/openvino-ai-plugins-gimp-snap/blob/be8968938844436e48a1a94643c8e95b43062653/snap/snapcraft.yaml#L119-L150
   opencl-driver:
-    # Includes all the compute runtime and OpenCL bits needed for Intel GPU support
+    # Includes the OpenCL runtime for Intel GPU support
     plugin: nil
     build-packages:
       - wget
     override-build: |
-      mkdir -p neo
-      cd neo
-      # Install Intel graphics compiler and compute runtime
-      # This is required to enable GPU support for OpenVINO
-      # https://docs.openvino.ai/2024/get-started/configurations/configurations-intel-gpu.html
-      wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb
-      wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-opencl-2_2.5.6+18417_amd64.deb
-      wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-level-zero-gpu_1.6.32224.5_amd64.deb
-      wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd_24.52.32224.5_amd64.deb
-      wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb
-      dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
-      # update paths to the Intel Installable Client Drivers (ICDs) for OpenCL
-      intel_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel.icd
-      intel_icd_so_path=$(cat ${intel_icd})
-      base_path="/snap/${SNAPCRAFT_PROJECT_NAME}/current"
-      echo "${base_path}""${intel_icd_so_path}" > "${intel_icd}"
-      intel_legacy1_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel_legacy1.icd
-      if [ -f ${intel_legacy1_icd} ]; then
+      # Only install intel opencl drivers on amd64
+      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
+        # Download and install legacy and latest Intel OpenCL Runtime
+      
+        mkdir -p $CRAFT_PART_BUILD/opencl-intel-legacy1
+        cd $CRAFT_PART_BUILD/opencl-intel-legacy1
+        wget https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-level-zero-gpu-legacy1_1.5.30872.36_amd64.deb
+        wget https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-opencl-icd-legacy1_24.35.30872.36_amd64.deb
+        dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
+      
+        mkdir -p $CRAFT_PART_BUILD/opencl-intel
+        cd $CRAFT_PART_BUILD/opencl-intel
+        wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb
+        wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-opencl-2_2.5.6+18417_amd64.deb
+        wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-level-zero-gpu_1.6.32224.5_amd64.deb
+        wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd_24.52.32224.5_amd64.deb
+        wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb
+        dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
+      
+        cd $CRAFT_PART_BUILD
+      
+        # Fix paths to the Intel Installable Client Drivers (ICDs) for OpenCL
+        base_path="/snap/${SNAPCRAFT_PROJECT_NAME}/current" # assume project name is snap instance name
+      
+        intel_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel.icd
+        intel_icd_so_path=$(cat ${intel_icd})
+        echo "${base_path}""${intel_icd_so_path}" > "${intel_icd}"
+      
+        intel_legacy1_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel_legacy1.icd
         intel_legacy1_icd_so_path=$(cat ${intel_legacy1_icd})
         echo "${base_path}""${intel_legacy1_icd_so_path}" > "${intel_legacy1_icd}"
-      fi
-      # fix broken sym links
-      cd "${CRAFT_PART_INSTALL}"
-      ln -sf "${base_path}"/usr/bin/ocloc-24.39.1 etc/alternatives/ocloc
-      ln -sf "${base_path}"/etc/alternatives/ocloc usr/bin/ocloc
+      
+        # Fix broken symlinks
+        cd "${CRAFT_PART_INSTALL}"
+        ln -sf "${base_path}"/usr/bin/ocloc-24.39.1 etc/alternatives/ocloc
+        ln -sf "${base_path}"/etc/alternatives/ocloc usr/bin/ocloc
+      
+      fi # End of intel-opencl driver installation
+      
       craftctl default
 
   openvino-model-server:
