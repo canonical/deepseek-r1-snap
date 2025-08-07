@@ -1,5 +1,5 @@
 name: intel-npu
-description: Stack for inference on Intel NPUs
+description: Use Intel NPUs (Core Ultra series)
 vendor: Intel Corporation
 grade: stable
 devices:

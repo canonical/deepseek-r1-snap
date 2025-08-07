@@ -1,5 +1,5 @@
 name: ampere-altra
-description: Stack for Ampere Altra CPUs
+description: Optimized for Ampere Altra CPUs
 vendor: Ampere Computing
 grade: stable
 devices:
