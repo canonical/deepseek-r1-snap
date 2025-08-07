@@ -1,5 +1,5 @@
 name: ampere-one
-description: Stack for Ampere One CPUs
+description: Optimized for Ampere One CPUs
 vendor: Ampere Computing
 grade: devel
 devices:

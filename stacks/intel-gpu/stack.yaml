@@ -1,5 +1,5 @@
 name: intel-gpu
-description: Stack for inference on modern Intel GPUs
+description: Use modern Intel GPUs (integrated and discrete)
 vendor: Intel Corporation
 grade: stable
 devices:
