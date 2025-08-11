@@ -1,0 +1,73 @@
+name: Snap CI
+
+on:
+  push:
+    branches: [ main ]
+  # Allow manual trigger
+  workflow_dispatch:
+
+env:
+  SNAP_NAME: deepseek-r1
+
+jobs:
+  build:
+    name: Build
+    strategy:
+      matrix:
+        runs:
+          - architecture: amd64
+            runner: [ self-hosted, amd64, Linux, noble, xlarge ]
+          - architecture: arm64
+            runner: [ self-hosted, ARM64, Linux, noble, large ]
+    runs-on: ${{ matrix.runs.runner }}
+
+    steps:
+      # Update snapd as we need a recent one to support components
+      - name: Update snapd
+        run: |
+          sudo snap refresh snapd
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.SUBMODULE_PAT }}
+
+      - name: Download models
+        run: |
+          curl -L https://huggingface.co/unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf --output $GITHUB_WORKSPACE/components/model-distill-qwen-1-5b-q8-0-gguf/DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf
+          git clone https://huggingface.co/helenai/DeepSeek-R1-Distill-Qwen-7B-ov-int4 $GITHUB_WORKSPACE/components/model-distill-qwen-7b-openvino-int4/DeepSeek-R1-Distill-Qwen-7B-ov-int4
+          curl -L https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf --output $GITHUB_WORKSPACE/components/model-distill-qwen-7b-q4-k-m-gguf/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf
+
+      - name: Build snap
+        uses: snapcore/action-build@v1
+        id: snapcraft
+
+      # TODO remove upload artifact before merge
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.SNAP_NAME}}_${{github.run_number}}_${{matrix.runs.architecture}}
+          path: |
+            *.snap
+            *.comp
+          if-no-files-found: error
+
+      # Requires STORE_LOGIN secret set. Export with:
+      # snapcraft export-login --snaps qwen-vl --channels latest/edge/* --acls package_access,package_push,package_update,package_release --expires 2026-08-01T00:00:00Z
+#      - name: Publish snap
+#        env:
+#          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
+#        run: |
+#          channel="latest/edge/$(git rev-parse --short HEAD)"
+#          echo "Branch name: ${{ github.ref_name }}"
+#          echo "Event number: ${{ github.event.number }}"
+#
+#          if [ -n "${{ github.event.number }}" ]; then
+#            echo "Triggered from a PR"
+#            channel="latest/edge/pr-${{ github.event.number }}"
+#          fi
+#
+#          echo "Uploading to channel: $channel"
+#
+#          echo "y" | ./upload.sh $channel
