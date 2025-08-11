@@ -1,3 +1,6 @@
 [submodule "ml-snap-utils"]
 	path = ml-snap-utils
 	url = https://github.com/canonical/ml-snap-utils.git
+[submodule "components/model-distill-qwen-7b-openvino-int4/DeepSeek-R1-Distill-Qwen-7B-ov-int4"]
+	path = components/model-distill-qwen-7b-openvino-int4/DeepSeek-R1-Distill-Qwen-7B-ov-int4
+	url = https://huggingface.co/helenai/DeepSeek-R1-Distill-Qwen-7B-ov-int4
