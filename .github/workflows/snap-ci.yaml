@@ -18,9 +18,9 @@ jobs:
       matrix:
         runs:
           - architecture: amd64
-            runner: [ self-hosted, amd64, Linux, noble, xlarge ]
+            runner: [ self-hosted, linux, amd64, xlarge, noble ]
           - architecture: arm64
-            runner: [ self-hosted, ARM64, Linux, noble, xlarge ]
+            runner: [ self-hosted, linux, arm64, xlarge, noble ]
     runs-on: ${{ matrix.runs.runner }}
 
     steps:
@@ -48,31 +48,21 @@ jobs:
         uses: snapcore/action-build@v1
         id: snapcraft
 
-      # TODO remove upload artifact before merge
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{env.SNAP_NAME}}_${{github.run_number}}_${{matrix.runs.architecture}}
-          path: |
-            *.snap
-            *.comp
-          if-no-files-found: error
-
       # Requires STORE_LOGIN secret set. Export with:
-      # snapcraft export-login --snaps qwen-vl --channels latest/edge/* --acls package_access,package_push,package_update,package_release --expires 2026-08-01T00:00:00Z
-#      - name: Publish snap
-#        env:
-#          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
-#        run: |
-#          channel="latest/edge/$(git rev-parse --short HEAD)"
-#          echo "Branch name: ${{ github.ref_name }}"
-#          echo "Event number: ${{ github.event.number }}"
-#
-#          if [ -n "${{ github.event.number }}" ]; then
-#            echo "Triggered from a PR"
-#            channel="latest/edge/pr-${{ github.event.number }}"
-#          fi
-#
-#          echo "Uploading to channel: $channel"
-#
-#          echo "y" | ./upload.sh $channel
+      # snapcraft export-login --snaps deepseek-r1 --channels latest/edge/* --acls package_access,package_push,package_update,package_release --expires 2026-08-01T00:00:00Z
+      - name: Publish snap
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
+        run: |
+          channel="latest/edge/$(git rev-parse --short HEAD)"
+          echo "Branch name: ${{ github.ref_name }}"
+          echo "Event number: ${{ github.event.number }}"
+
+          if [ -n "${{ github.event.number }}" ]; then
+            echo "Triggered from a PR"
+            channel="latest/edge/pr-${{ github.event.number }}"
+          fi
+
+          echo "Uploading to channel: $channel"
+
+          echo "y" | ./upload.sh $channel
