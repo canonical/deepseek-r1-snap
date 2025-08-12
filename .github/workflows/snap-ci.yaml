@@ -15,6 +15,7 @@ jobs:
   build:
     name: Build
     strategy:
+      fail-fast: false
       matrix:
         runs:
           - architecture: amd64
