@@ -153,6 +153,7 @@ parts:
       llama-server: (component/llama-aio)/bin/
       libllama.so: (component/llama-aio)/lib/
       "libggml*.so": (component/llama-aio)/lib/
+      libmtmd.so: (component/llama-aio-ampereone)/lib/
       "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio)/lib/
     prime:
       - -*
@@ -165,6 +166,7 @@ parts:
       llama-server: (component/llama-aio-ampereone)/bin/
       libllama.so: (component/llama-aio-ampereone)/lib/
       "libggml*.so": (component/llama-aio-ampereone)/lib/
+      libmtmd.so: (component/llama-aio-ampereone)/lib/
       "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio-ampereone)/lib/
 
   model-distill-qwen-1-5b-q8-0-gguf:
