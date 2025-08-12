@@ -20,3 +20,4 @@ components:
 configurations:
   engine: *engine
   model: *model
+  http.base-path: v1
