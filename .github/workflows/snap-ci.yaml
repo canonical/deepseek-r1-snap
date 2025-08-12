@@ -3,8 +3,6 @@ name: Snap CI
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   # Allow manual trigger
   workflow_dispatch:
 
@@ -50,7 +48,7 @@ jobs:
         id: snapcraft
 
       # Requires STORE_LOGIN secret set. Export with:
-      # snapcraft export-login --snaps deepseek-r1 --channels latest/edge/* --acls package_access,package_push,package_update,package_release --expires 2026-08-01T00:00:00Z
+      # snapcraft export-login --snaps deepseek-r1 --channels latest/edge/* --acls package_access,package_push,package_update,package_release --expires 2026-08-15T00:00:00Z
       - name: Publish snap
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
