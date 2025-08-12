@@ -1,7 +1,7 @@
 name: ampere-one
 description: Optimized for Ampere One CPUs
 vendor: Ampere Computing
-grade: devel
+grade: stable
 devices:
   any:
     - type: cpu
