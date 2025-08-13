@@ -11,4 +11,4 @@ if [ "${verbose}" = "true" ]; then
   extra_args="$extra_args --verbose"
 fi
 
-exec "$engine/bin/llama-server" --model "$MODEL_FILE" --port "$port" --host "$host" "$extra_args"
+exec "$engine/usr/local/bin/llama-server" --model "$MODEL_FILE" --port "$port" --host "$host" "$extra_args"
