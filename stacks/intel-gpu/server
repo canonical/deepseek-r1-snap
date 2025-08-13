@@ -42,10 +42,9 @@ fi
 port="$(snapctl get http.port)"
 host="$(snapctl get http.host)"
 verbose="$(snapctl get verbose)"
-extra_args=""
-
+extra_args=()
 if [ "${verbose}" = "true" ]; then
-  extra_args="$extra_args --log_level DEBUG"
+  extra_args+=(--log_level DEBUG)
 fi
 
 # The --source_model and --model_repository_path args are pull-related arguments.
@@ -59,4 +58,4 @@ $engine/bin/ovms \
     --source_model "$MODEL_NAME" \
     --model_repository_path "$model" \
     --target_device "$target_device" \
-    --cache_size 2 "$extra_args"
+    --cache_size 2 "${extra_args[@]}"

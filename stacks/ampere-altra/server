@@ -5,10 +5,9 @@ source "$(dirname "$0")/common.sh"
 port="$(snapctl get http.port)"
 host="$(snapctl get http.host)"
 verbose="$(snapctl get verbose)"
-extra_args=""
-
+extra_args=()
 if [ "${verbose}" = "true" ]; then
-  extra_args="$extra_args --verbose"
+  extra_args+=(--verbose)
 fi
 
-exec "$engine/bin/llama-server" --model "$MODEL_FILE" --port "$port" --host "$host" "$extra_args"
+exec "$engine/bin/llama-server" --model "$MODEL_FILE" --port "$port" --host "$host" "${extra_args[@]}"
