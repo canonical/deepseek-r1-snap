@@ -143,7 +143,7 @@ parts:
       "*": (component/llamacpp-cuda)
 
   llama-aio: &llama-aio-part
-    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.2/llama_aio_v3.1.2_e747adc.tar.gz
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.2.0/llama_aio_v3.2.0_3ccc799.tar.gz
     source-type: tar
     plugin: dump
     stage-packages:
@@ -153,18 +153,20 @@ parts:
       llama-server: (component/llama-aio)/bin/
       libllama.so: (component/llama-aio)/lib/
       "libggml*.so": (component/llama-aio)/lib/
+      libmtmd.so: (component/llama-aio)/lib/
       "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio)/lib/
     prime:
       - -*
 
   llama-aio-ampereone:
     <<: *llama-aio-part
-    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.1.2/llama_aio_v3.1.2_e747adc_ampereone.tar.gz
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.2.0/llama_aio_v3.2.0_3ccc799_ampereone.tar.gz
     organize:
       "LICENSE*.txt": usr/share/doc/llama-aio-ampereone/
       llama-server: (component/llama-aio-ampereone)/bin/
       libllama.so: (component/llama-aio-ampereone)/lib/
       "libggml*.so": (component/llama-aio-ampereone)/lib/
+      libmtmd.so: (component/llama-aio-ampereone)/lib/
       "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio-ampereone)/lib/
 
   model-distill-qwen-1-5b-q8-0-gguf:
@@ -288,13 +290,13 @@ components:
     type: standard
     summary: llama-aio Engine for Ampere Altra CPUs
     description: LLM inference in C/C++
-    version: v3.1.2
+    version: v3.2.0
 
   llama-aio-ampereone:
     type: standard
     summary: llama-aio Engine for Ampere One CPUs
     description: LLM inference in C/C++
-    version: v3.1.2
+    version: v3.2.0
 
   openvino-model-server:
     type: standard
