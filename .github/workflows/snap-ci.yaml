@@ -44,6 +44,7 @@ jobs:
         run: |
           curl -L https://huggingface.co/unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf --output $GITHUB_WORKSPACE/components/model-distill-qwen-1-5b-q8-0-gguf/DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf
           curl -L https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf --output $GITHUB_WORKSPACE/components/model-distill-qwen-7b-q4-k-m-gguf/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf
+          git clone https://huggingface.co/helenai/DeepSeek-R1-Distill-Qwen-7B-ov-int4 $GITHUB_WORKSPACE/components/model-distill-qwen-7b-openvino-int4/DeepSeek-R1-Distill-Qwen-7B-ov-int4
 
       - name: Build snap
         uses: snapcore/action-build@v1
