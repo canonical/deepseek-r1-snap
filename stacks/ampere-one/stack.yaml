@@ -12,8 +12,8 @@ devices:
       architecture: arm64
       implementer-id: 0xc0 # Ampere Computing
       part-number: 0xac4   # 1A/OneX/OneM/Banshee
-memory: 4G
-disk-space: 8G
+memory: 5G
+disk-space: 10G
 components:
   - &engine llama-aio-ampereone
   - &model model-distill-qwen-7b-q4-k-m-gguf
