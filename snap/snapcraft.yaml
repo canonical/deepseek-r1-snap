@@ -234,6 +234,12 @@ parts:
         wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb
         dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
       
+        # Two symlinks are created by installing opencl: 
+        # etc/alternatives/ocloc -> /usr/bin/ocloc-24.52.1, usr/bin/ocloc -> /etc/alternatives/ocloc
+        # These point to outside of the snap and fails store review. They are not required, so remove it.
+        rm $CRAFT_PART_INSTALL/etc/alternatives/ocloc
+        rm $CRAFT_PART_INSTALL/usr/bin/ocloc
+      
         cd $CRAFT_PART_BUILD
       fi # End of intel-opencl driver installation
       
