@@ -20,6 +20,14 @@ layout:
   # This is to avoid runtime errors and AppArmor denials
   /etc/wgetrc:
     bind-file: $SNAP/etc/wgetrc
+  # OpenCL looks in /etc/OpenCL/vendors for .icd files containing the paths to shared objects
+  /etc/OpenCL/vendors:
+    bind: $SNAP/etc/OpenCL/vendors
+  # Intel icd files use an absolute path to Intel OpenCL shared objects. Use a layout to mount the so files at the expected location
+  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/intel-opencl:
+    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/intel-opencl
+  # NVIDIA icd specifies only the shared object name: libnvidia-opencl.so.1
+  # libnvidia-opencl.so.1 is inside /snap/stack-utils/x3/usr/lib/x86_64-linux-gnu/, which is already in LD_LIBRARY_PATH
 
 plugs:
   intel-npu:
@@ -36,9 +44,6 @@ plugs:
     
 hooks:
   install:
-    environment:
-      # To load libigdrcl.so, for Intel GPU vRAM
-      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
     plugs:
       # For hardware detection
       - hardware-observe
@@ -212,14 +217,14 @@ parts:
     override-build: |
       # Only install intel opencl drivers on amd64
       if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
-        # Download and install legacy and latest Intel OpenCL Runtime
-      
+        # Legacy Intel OpenCL Runtime
         mkdir -p $CRAFT_PART_BUILD/opencl-intel-legacy1
         cd $CRAFT_PART_BUILD/opencl-intel-legacy1
         wget https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-level-zero-gpu-legacy1_1.5.30872.36_amd64.deb
         wget https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-opencl-icd-legacy1_24.35.30872.36_amd64.deb
         dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
       
+        # Recent Intel OpenCL Runtime
         mkdir -p $CRAFT_PART_BUILD/opencl-intel
         cd $CRAFT_PART_BUILD/opencl-intel
         wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb
@@ -230,23 +235,6 @@ parts:
         dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
       
         cd $CRAFT_PART_BUILD
-      
-        # Fix paths to the Intel Installable Client Drivers (ICDs) for OpenCL
-        base_path="/snap/${SNAPCRAFT_PROJECT_NAME}/current" # assume project name is snap instance name
-      
-        intel_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel.icd
-        intel_icd_so_path=$(cat ${intel_icd})
-        echo "${base_path}""${intel_icd_so_path}" > "${intel_icd}"
-      
-        intel_legacy1_icd="${CRAFT_PART_INSTALL}"/etc/OpenCL/vendors/intel_legacy1.icd
-        intel_legacy1_icd_so_path=$(cat ${intel_legacy1_icd})
-        echo "${base_path}""${intel_legacy1_icd_so_path}" > "${intel_legacy1_icd}"
-      
-        # Fix broken symlinks
-        cd "${CRAFT_PART_INSTALL}"
-        ln -sf "${base_path}"/usr/bin/ocloc-24.39.1 etc/alternatives/ocloc
-        ln -sf "${base_path}"/etc/alternatives/ocloc usr/bin/ocloc
-      
       fi # End of intel-opencl driver installation
       
       craftctl default
@@ -355,8 +343,6 @@ apps:
       # To access server over network socket
       - network
     environment:
-      # To load libigdrcl.so, for Intel GPU vRAM
-      OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
       CHAT: $SNAP/bin/chat.sh
     
   server:
