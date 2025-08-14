@@ -75,7 +75,7 @@ parts:
       SNAP_INSTANCE_NAME=deepseek-r1 $CRAFT_PART_INSTALL/bin/stack completion bash > $CRAFT_PART_INSTALL/bin/completion.sh
 
       # Replace _init_completion with __deepseek-r1_init_completion
-      perl -i -pe 's/ _init_completion/ __deepseek-r1_init_completion/ && $found++; END{ if ($found == 0){ exit 1}}' $CRAFT_PART_INSTALL/bin/completion.sh
+      awk '/ _init_completion/ { print "        __deepseek-r1_init_completion -n =: || return"; found=1; next } 1; END { if (!found) { exit 1 } }' "$CRAFT_PART_INSTALL/bin/completion.sh" > tmp && mv tmp "$CRAFT_PART_INSTALL/bin/completion.sh"
 
   go-chat-client:
     source: https://github.com/jpm-canonical/go-chat-client.git
