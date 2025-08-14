@@ -15,6 +15,9 @@ set +e
 port="$(snapctl get http.port)"
 model_name="$(snapctl get model-name)"
 api_base_path="$(snapctl get http.base-path)"
+if [ -z "$api_base_path" ]; then
+  api_base_path="v3"
+fi
 
 # Checking if server is started with snapctl services produces false negative when running in foreground.
 # Therefore rather check if ovms process is running.
