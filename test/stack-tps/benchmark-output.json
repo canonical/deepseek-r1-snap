@@ -1,0 +1,22 @@
+{
+  "model_name": "myModel",
+  "input_tokens": 37,
+  "max_tokens": 512,
+  "latency": 5.6,
+  "results": [
+    {
+      "concurrency": 1,
+      "generation_speed": 35.487790702441316,
+      "prompt_throughput": 186.8995993559898,
+      "max_ttft": 0.171464454,
+      "min_ttft": 0.171464454
+    },
+    {
+      "concurrency": 2,
+      "generation_speed": 50.599297893768636,
+      "prompt_throughput": 181.6048211838673,
+      "max_ttft": 0.347000628,
+      "min_ttft": 0.311559364
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+job_queue: dell-xps-13-7390
+
+provision_data:
+  distro: noble
+
+test_data:
+  # Copy test scripts to the Testflinger Agent
+  attachments:
+    - local: "agent.sh"
+      agent: "agent.sh"
+    - local: "dut.sh"
+      agent: "dut.sh"
+
+  # Run commands on the Testflinger Agent
+  test_cmds: |
+    #!/usr/bin/env bash
+    set -e
+
+    export SNAP_NAME="deepseek-r1"
+    export SNAP_CHANNEL="latest/edge"
+    export MODEL_NAME="deepseek-r1"
+    export EXPECTED_STACK="cpu"
+    export EXPECTED_TPS=1.5
+
+    ./attachments/test/agent.sh
