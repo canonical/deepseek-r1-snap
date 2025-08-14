@@ -81,9 +81,6 @@ parts:
       # Add $SNAP_INSTANCE_NAME to the list of commands so completion works for parallel install
       awk '/complete -o default/ { $0 = $0 " $SNAP_INSTANCE_NAME" } 1' $CRAFT_PART_INSTALL/bin/completion.sh > tmp && mv tmp $CRAFT_PART_INSTALL/bin/completion.sh
 
-      # Add stack to the list of commands so completion works inside `snap run --shell`
-      awk '/complete -o default/ { $0 = $0 " stack } 1' $CRAFT_PART_INSTALL/bin/completion.sh > tmp && mv tmp $CRAFT_PART_INSTALL/bin/completion.sh
-
   go-chat-client:
     source: https://github.com/jpm-canonical/go-chat-client.git
     source-type: git
