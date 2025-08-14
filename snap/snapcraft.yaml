@@ -66,15 +66,20 @@ parts:
       - pciutils
       - nvidia-utils # for Nvidia vRAM and Cuda Capability detection
       - clinfo # for Intel GPU vRAM detection
-    override-prime: |
+    override-build: |
       craftctl default
 
       # Generating the completion script
-      SNAP_INSTANCE_NAME=deepseek-r1 $CRAFT_PRIME/bin/stack completion bash > $CRAFT_PRIME/bin/completion.sh
+      SNAP_INSTANCE_NAME=deepseek-r1 $CRAFT_PART_INSTALL/bin/stack completion bash > $CRAFT_PART_INSTALL/bin/completion.sh
 
-      # 'deepseek-r1' is the snap app using completions, but 'stack' binary generates them.
-      # Symlink 'deepseek-r1' to 'stack' so completion generation works.
-      pushd $CRAFT_PRIME/bin && ln -s stack deepseek-r1; popd
+      # Fix the path for the binary completion request
+      awk '/__complete/ { print "    requestComp=\"$SNAP/bin/stack __complete ${args[*]}\""; next} 1' $CRAFT_PART_INSTALL/bin/completion.sh > tmp && mv tmp $CRAFT_PART_INSTALL/bin/completion.sh
+
+      # Add $SNAP_INSTANCE_NAME to the list of commands so completion works for parallel install
+      awk '/complete -o default/ { $0 = $0 " $SNAP_INSTANCE_NAME" } 1' $CRAFT_PART_INSTALL/bin/completion.sh > tmp && mv tmp $CRAFT_PART_INSTALL/bin/completion.sh
+
+      # Add stack to the list of commands so completion works inside `snap run --shell`
+      awk '/complete -o default/ { $0 = $0 " stack } 1' $CRAFT_PART_INSTALL/bin/completion.sh > tmp && mv tmp $CRAFT_PART_INSTALL/bin/completion.sh
 
   go-chat-client:
     source: https://github.com/jpm-canonical/go-chat-client.git
