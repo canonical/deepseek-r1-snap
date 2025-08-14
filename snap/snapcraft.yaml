@@ -75,6 +75,9 @@ parts:
       # Fix the path for the binary completion request
       awk '/__complete/ { print "    requestComp=\"$SNAP/bin/stack __complete ${args[*]}\""; next} 1' $CRAFT_PART_INSTALL/bin/completion.sh > tmp && mv tmp $CRAFT_PART_INSTALL/bin/completion.sh
 
+      # Replace _init_completion from bash-completion with builtin function
+      awk '/_init_completion -n/ { print "        __deepseek-r1_init_completion -n =: || return"; next} 1' $CRAFT_PART_INSTALL/bin/completion.sh > tmp && mv tmp $CRAFT_PART_INSTALL/bin/completion.sh
+
       # Add $SNAP_INSTANCE_NAME to the list of commands so completion works for parallel install
       awk '/complete -o default/ { $0 = $0 " $SNAP_INSTANCE_NAME" } 1' $CRAFT_PART_INSTALL/bin/completion.sh > tmp && mv tmp $CRAFT_PART_INSTALL/bin/completion.sh
 
