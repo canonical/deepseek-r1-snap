@@ -1,8 +1,10 @@
 name: Snap CI
 
 on:
-  #pull_request:
-  #  branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types:
+      - ready_for_review
   push:
     branches: [ main ]
   # Allow manual trigger
