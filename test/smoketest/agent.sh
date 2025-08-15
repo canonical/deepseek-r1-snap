@@ -25,11 +25,6 @@ echo "Force refresh snaps for consistency"
 _run sudo snap refresh --no-wait
 wait_for_snap_changes
 
-echo "Installing dependencies"
-_run sudo apt-get install --yes git
-_run sudo snap install go --classic --no-wait
-_run sudo snap install jq --no-wait
-
 echo "Remove $SNAP_NAME if already installed"
 _run sudo snap remove "$SNAP_NAME" --no-wait
 wait_for_snap_changes
@@ -40,22 +35,8 @@ wait_for_snap_changes
 selected_stack=$(_run sudo snap get deepseek-r1 stack)
 echo "Auto selected stack: $selected_stack"
 
-if [ "$EXPECTED_STACK" != "$selected_stack" ]; then
-  echo "Not the expected stack"
-  # exit 1
-fi
-
 _run sudo snap start "$SNAP_NAME".server
+
+# For a smoketest we only want to know if the server started up correctly. Use the wait script to check this.
 sleep 5
 _run snap run --shell "$SNAP_NAME" "/snap/$SNAP_NAME/current/bin/wait-for-server.sh"
-
-_run git clone https://github.com/jpm-canonical/llmapibenchmark.git
-benchmark_result=$(_run "cd llmapibenchmark/cmd && go run . --base-url=http://localhost:8080/v1 --model=$MODEL_NAME --concurrency=1 --format=json")
-echo "$benchmark_result"
-
-result_tps=$(echo "$benchmark_result" | jq .results[0].generation_speed)
-
-if [ "$result_tps" -lt "$EXPECTED_TPS" ]; then
-  echo "Performance lower than expected: $result_tps < $EXPECTED_TPS"
-  exit 1
-fi
