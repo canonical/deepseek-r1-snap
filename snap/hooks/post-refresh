@@ -9,6 +9,6 @@ exec 2> >(logger --stderr --priority error --tag=$tag)
 
 #
 # Set all stacks as snap config
-# 
+#
 
-stack load
+deepseek-r1 load
