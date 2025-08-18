@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eux
 
 echo "Testing:"
 echo "DEVICE_IP = $DEVICE_IP"
@@ -41,21 +41,24 @@ selected_stack=$(_run sudo snap get deepseek-r1 stack)
 echo "Auto selected stack: $selected_stack"
 
 if [ "$EXPECTED_STACK" != "$selected_stack" ]; then
-  echo "Not the expected stack"
+  echo "WARNING: Expected stack not selected"
   # exit 1
 fi
+
+# If the model name option is set, use it when talking to api
+model_name=$(_run sudo snap get deepseek-r1 model-name || echo "")
 
 _run sudo snap start "$SNAP_NAME".server
 sleep 5
 _run snap run --shell "$SNAP_NAME" "/snap/$SNAP_NAME/current/bin/wait-for-server.sh"
 
 _run git clone https://github.com/jpm-canonical/llmapibenchmark.git
-benchmark_result=$(_run "cd llmapibenchmark/cmd && go run . --base-url=http://localhost:8080/v1 --model=$MODEL_NAME --concurrency=1 --format=json")
+benchmark_result=$(_run "cd llmapibenchmark/cmd && DEBUG=true go run . --base-url=http://localhost:8080/v1 --model=$model_name --concurrency=1 --format=json")
 echo "$benchmark_result"
 
 result_tps=$(echo "$benchmark_result" | jq .results[0].generation_speed)
 
-if [ "$result_tps" -lt "$EXPECTED_TPS" ]; then
-  echo "Performance lower than expected: $result_tps < $EXPECTED_TPS"
+if (( $(echo "$result_tps < $EXPECTED_TPS" | bc -l) )); then
+  echo "ERROR: Performance lower than expected: $result_tps < $EXPECTED_TPS"
   exit 1
 fi
