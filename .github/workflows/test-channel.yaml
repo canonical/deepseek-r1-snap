@@ -57,6 +57,10 @@ jobs:
             > $TEST_DIR/testflinger.temp.yaml
           mv $TEST_DIR/testflinger.temp.yaml $TEST_DIR/testflinger.yaml
 
+      - name: Dump job yaml
+        run: |
+          cat ${{ env.TEST_DIR }}/testflinger.yaml
+
       - name: Run testflinger job
         uses: canonical/testflinger/.github/actions/submit@main
         with:
