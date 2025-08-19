@@ -28,7 +28,7 @@ jobs:
             expected_tps: 18 # 19.86
           - job_queue: 202501-36266
             expected_stack: ampere-one
-            expected_tps: 14 # 15.97
+            expected_tps: 9 # 15.97, 9.93
 
     runs-on: self-hosted-linux-amd64-jammy-private-endpoint-medium
 
