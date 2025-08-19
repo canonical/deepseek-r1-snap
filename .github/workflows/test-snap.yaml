@@ -54,12 +54,6 @@ jobs:
           EXPECTED_STACK: ${{ matrix.jobs.expected_stack }}
           EXPECTED_TPS: ${{ matrix.jobs.expected_tps }}
         run: |
-          env
-          echo "snap name: $SNAP_NAME"
-          echo "snap channel: $SNAP_CHANNEL - ${{ inputs.channel }}"
-          echo "job queue: $JOB_QUEUE - ${{ matrix.jobs.job_queue }}"
-          echo "expected stack: $EXPECTED_STACK - ${{ matrix.jobs.expected_stack }}"
-          echo "expected tps: $EXPECTED_TPS - ${{ matrix.jobs.expected_tps }}"
           envsubst \
             < $TEST_DIR/testflinger.yaml \
             > $TEST_DIR/testflinger.temp.yaml
@@ -69,8 +63,8 @@ jobs:
         run: |
           cat ${{ env.TEST_DIR }}/testflinger.yaml
 
-#      - name: Run testflinger job
-#        uses: canonical/testflinger/.github/actions/submit@main
-#        with:
-#          poll: true
-#          job-path: ${{ env.TEST_DIR }}/testflinger.yaml
+      - name: Run testflinger job
+        uses: canonical/testflinger/.github/actions/submit@main
+        with:
+          poll: true
+          job-path: ${{ env.TEST_DIR }}/testflinger.yaml
