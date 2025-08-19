@@ -16,12 +16,12 @@ export EXPECTED_TPS=3.5
 ## Ampere Altra Max
 #export JOB_QUEUE="202303-31419"
 #export EXPECTED_STACK="ampere-altra"
-#export EXPECTED_TPS=15
+#export EXPECTED_TPS=18
 
 ## Ampere One - puniper
 #export JOB_QUEUE="202501-36266"
 #export EXPECTED_STACK="ampere-one"
-#export EXPECTED_TPS=15
+#export EXPECTED_TPS=14
 
 envsubst < testflinger.yaml > testflinger.temp.yaml
 

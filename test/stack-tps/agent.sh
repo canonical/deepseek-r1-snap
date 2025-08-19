@@ -44,7 +44,7 @@ selected_stack=$(_run sudo snap get deepseek-r1 stack)
 echo "Auto selected stack: $selected_stack"
 
 if [ "$EXPECTED_STACK" != "$selected_stack" ]; then
-  echo "Error: incorrect stack selected"
+  echo "::error::Incorrect stack selected: $EXPECTED_STACK != $selected_stack"
   exit 1
 fi
 
@@ -62,6 +62,6 @@ result_tps=$(echo "$benchmark_result" | jq .results[0].generation_speed)
 too_slow=$(echo "$result_tps < $EXPECTED_TPS" | bc -l)
 
 if [ "$too_slow" -eq 1 ]; then
-  echo "ERROR: Performance lower than expected: $result_tps < $EXPECTED_TPS"
+  echo "::error::Performance lower than expected: $result_tps < $EXPECTED_TPS"
   exit 1
 fi

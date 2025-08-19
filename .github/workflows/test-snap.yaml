@@ -17,18 +17,18 @@ jobs:
       fail-fast: false
       matrix:
         jobs:
-#          - job_queue: dell-xps137390-c27366
-#            expected_stack: cpu-avx512
-#            expected_tps: 3.5 # 3.97
-#          - job_queue: 202212-30936 # Ampere Altra
-#            expected_stack: ampere-altra
-#            expected_tps: 9 # 10.39
+          - job_queue: dell-xps137390-c27366
+            expected_stack: cpu-avx512
+            expected_tps: 3.5 # 3.97
+          - job_queue: 202212-30936 # Ampere Altra
+            expected_stack: ampere-altra
+            expected_tps: 9 # 10.39
           - job_queue: 202303-31419 # Ampere Altra Max
             expected_stack: ampere-altra
-            expected_tps: 90 # 19.86
-#          - job_queue: 202501-36266
-#            expected_stack: ampere-one
-#            expected_tps: 80 # 15.97
+            expected_tps: 18 # 19.86
+          - job_queue: 202501-36266
+            expected_stack: ampere-one
+            expected_tps: 14 # 15.97
 
     runs-on: self-hosted-linux-amd64-jammy-private-endpoint-medium
 
