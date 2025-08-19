@@ -13,7 +13,7 @@ source install_tools.sh $TOOLS_PATH
 [ ! "$?" -eq 0 ] && echo "Error: Failed to run installer" && exit 1
 
 # ensure device is available before continuing
-wait_for_ssh || exit 1
+wait_for_ssh --allow-degraded || exit 1
 
 # Don't refresh snaps automatically
 _run sudo snap refresh --hold=3h --no-wait

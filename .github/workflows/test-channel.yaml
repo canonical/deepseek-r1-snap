@@ -1,0 +1,62 @@
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: 'Snap store channel'
+        required: true
+        type: string
+
+jobs:
+  test:
+    name: Test
+    strategy:
+      # Can set max-concurrent / max-parallel, but don't use. Team wants to see/fix scaling. Limits also don't apply to dynamic instances.
+      fail-fast: false
+      matrix:
+        runs:
+          - job_queue: dell-xps-13-7390
+            expected_stack: cpu
+            expected_tps: 1.5
+          - job_queue: 202212-30936
+            expected_stack: ampere-altra
+            expected_tps: 15
+          - job_queue: 202303-31419
+            expected_stack: ampere-altra
+            expected_tps: 15
+          - job_queue: 202501-36266
+            expected_stack: ampere-one
+            expected_tps: 8
+
+    runs-on: self-hosted-linux-amd64-jammy-private-endpoint-medium
+
+    env:
+      TEST_DIR: test/stack-tps
+
+    steps:
+      - name: Event data
+        run: |
+          echo ::notice::Snap channel:   ${{ inputs.channel }}
+          echo ::notice::Job queue:      ${{ matrix.job_queue }}
+          echo ::notice::Expected stack: ${{ matrix.expected_stack }}
+          echo ::notice::Expected TPS:   ${{ matrix.expected_tps }}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Add config to testflinger job
+        env:
+          JOB_QUEUE: ${{ matrix.job_queue }}
+          EXPECTED_STACK: ${{ matrix.expected_stack }}
+          EXPECTED_TPS: ${{ matrix.expected_tps }}
+        run: |
+          envsubst \
+            < $TEST_DIR/testflinger.yaml \
+            > $TEST_DIR/testflinger.temp.yaml
+          mv $TEST_DIR/testflinger.temp.yaml $TEST_DIR/testflinger.yaml
+
+      - name: Run testflinger job
+        uses: canonical/testflinger/.github/actions/submit@main
+        with:
+          poll: true
+          job-path: ${{ env.TEST_DIR }}/testflinger.yaml
