@@ -14,7 +14,7 @@ source install_tools.sh $TOOLS_PATH
 
 echo "Installing agent dependencies"
 sudo apt-get install --yes bc
-sudo snap install jq
+#sudo snap install jq
 
 # ensure device is available before continuing
 wait_for_ssh --allow-degraded || exit 1
