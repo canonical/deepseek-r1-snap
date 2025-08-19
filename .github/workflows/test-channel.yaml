@@ -1,3 +1,5 @@
+name: Testflinger
+
 on:
   # Manual trigger
   workflow_dispatch:
@@ -14,7 +16,7 @@ jobs:
       # Can set max-concurrent / max-parallel, but don't use. Team wants to see/fix scaling. Limits also don't apply to dynamic instances.
       fail-fast: false
       matrix:
-        runs:
+        jobs:
           - job_queue: dell-xps-13-7390
             expected_stack: cpu
             expected_tps: 1.5
@@ -37,9 +39,9 @@ jobs:
       - name: Event data
         run: |
           echo ::notice::Snap channel:   ${{ inputs.channel }}
-          echo ::notice::Job queue:      ${{ matrix.job_queue }}
-          echo ::notice::Expected stack: ${{ matrix.expected_stack }}
-          echo ::notice::Expected TPS:   ${{ matrix.expected_tps }}
+          echo ::notice::Job queue:      ${{ matrix.jobs.job_queue }}
+          echo ::notice::Expected stack: ${{ matrix.jobs.expected_stack }}
+          echo ::notice::Expected TPS:   ${{ matrix.jobs.expected_tps }}
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -47,8 +49,8 @@ jobs:
       - name: Add config to testflinger job
         env:
           JOB_QUEUE: ${{ matrix.job_queue }}
-          EXPECTED_STACK: ${{ matrix.expected_stack }}
-          EXPECTED_TPS: ${{ matrix.expected_tps }}
+          EXPECTED_STACK: ${{ matrix.jobs.expected_stack }}
+          EXPECTED_TPS: ${{ matrix.jobs.expected_tps }}
         run: |
           envsubst \
             < $TEST_DIR/testflinger.yaml \
