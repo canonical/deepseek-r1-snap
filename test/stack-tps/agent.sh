@@ -61,7 +61,7 @@ echo "$benchmark_result"
 result_tps=$(echo "$benchmark_result" | jq .results[0].generation_speed)
 too_slow=$(echo "$result_tps < $EXPECTED_TPS" | bc -l)
 
-if $too_slow; then
+if [ "$too_slow" -eq 1 ]; then
   echo "ERROR: Performance lower than expected: $result_tps < $EXPECTED_TPS"
   exit 1
 fi
