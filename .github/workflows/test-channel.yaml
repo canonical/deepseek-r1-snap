@@ -48,7 +48,7 @@ jobs:
 
       - name: Add config to testflinger job
         env:
-          JOB_QUEUE: ${{ matrix.job_queue }}
+          JOB_QUEUE: ${{ matrix.jobs.job_queue }}
           EXPECTED_STACK: ${{ matrix.jobs.expected_stack }}
           EXPECTED_TPS: ${{ matrix.jobs.expected_tps }}
         run: |
