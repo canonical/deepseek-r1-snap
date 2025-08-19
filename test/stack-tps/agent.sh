@@ -26,7 +26,7 @@ _run sudo snap refresh --no-wait
 wait_for_snap_changes
 
 echo "Installing dependencies"
-_run sudo apt-get install --yes git
+_run sudo apt-get install --yes git bc
 _run sudo snap install go --classic --no-wait
 _run sudo snap install jq --no-wait
 
