@@ -14,7 +14,7 @@ source install_tools.sh $TOOLS_PATH
 
 echo "Installing agent dependencies"
 sudo apt-get install --yes bc
-#sudo snap install jq
+#sudo snap install jq # Can't install snaps on agent, but it is already available.
 
 # ensure device is available before continuing
 wait_for_ssh --allow-degraded || exit 1
@@ -48,12 +48,12 @@ if [ "$EXPECTED_STACK" != "$selected_stack" ]; then
   exit 1
 fi
 
-# Start the server. While we wait clone the benchmark tools. Then check if server has started.
+# Start the server. While we wait, clone the benchmark tools. Then check if server has started.
 _run sudo snap start "$SNAP_NAME".server
 _run git clone https://github.com/jpm-canonical/llmapibenchmark.git
 _run snap run --shell "$SNAP_NAME" "/snap/$SNAP_NAME/current/bin/wait-for-server.sh"
 
-# If the model name option is set, use it when talking to api
+# If the model name option is set, use it when talking to the api
 model_name=$(_run sudo snap get deepseek-r1 model-name || echo "")
 benchmark_result=$(_run "cd llmapibenchmark/cmd && DEBUG=true go run . --base-url=http://localhost:8080/v1 --model=$model_name --concurrency=1 --format=json")
 echo "$benchmark_result"

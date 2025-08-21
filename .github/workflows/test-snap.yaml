@@ -13,7 +13,8 @@ jobs:
   test:
     name: Test
     strategy:
-      # Can set max-concurrent / max-parallel, but don't use. Team wants to see/fix scaling. Limits also don't apply to dynamic instances.
+      # max-parallel: Don't use this as the self-hosted Github runners team wants to see and fix scaling issues.
+      # These limits also do not apply to dynamic instances, like the standard self-hosted runners.
       fail-fast: false
       matrix:
         jobs:

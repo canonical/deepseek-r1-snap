@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+# This script can be used to locally run the stack-tps test on a single tesflinger machine.
+
 export SNAP_NAME="deepseek-r1"
 export SNAP_CHANNEL="latest/edge"
 
