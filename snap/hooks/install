@@ -13,22 +13,23 @@ exec 2> >(logger --stderr --priority error --tag=$tag)
 
 snapctl set http.port="8080"
 snapctl set http.host="127.0.0.1"
+snapctl set verbose="false"
 
 #
 # Set all stacks as snap config
 # 
 
-stack load
+deepseek-r1 load
 
 #
 # Auto stack selection
 #
 
 if snapctl is-connected hardware-observe; then
-    stack use --auto --assume-yes
+    deepseek-r1 use --auto --assume-yes
 elif lscpu -V &> /dev/null; then
     echo "Able to access hardware info without hardware-observe interface connection: assuming dev mode installation."
-    stack use --auto --assume-yes
+    deepseek-r1 use --auto --assume-yes
 else
     echo "hardware-observe interface not auto connected. Skip auto stack selection."
 fi
