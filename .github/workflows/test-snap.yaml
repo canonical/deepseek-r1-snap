@@ -30,11 +30,23 @@ jobs:
           - job_queue: 202501-36266
             expected_stack: ampere-one
             expected_tps: 9 # 15.97, 9.93
+          - job_queue: hp-zbook-studio-156-inch-g8-mobile-workstation-pc
+            select_stack: cuda
+            expected_stack: cuda
+            expected_tps: 50 # 55.82
+            install_nvidia_drivers: true
+            nvidia_drivers_version: 550
+          - job_queue: hp-z4-g4-workstation
+            select_stack: cuda
+            expected_stack: cuda
+            expected_tps: 13 # 14.72
+            install_nvidia_drivers: true
+            nvidia_drivers_version: 550
 
     runs-on: self-hosted-linux-amd64-jammy-private-endpoint-medium
 
     env:
-      TEST_DIR: test/stack-tps
+      TEST_DIR: test
 
     steps:
       - name: Event data
@@ -52,8 +64,12 @@ jobs:
           SNAP_NAME: deepseek-r1
           SNAP_CHANNEL: ${{ inputs.channel }}
           JOB_QUEUE: ${{ matrix.jobs.job_queue }}
+          SELECT_STACK: ${{ matrix.jobs.select_stack }}
           EXPECTED_STACK: ${{ matrix.jobs.expected_stack }}
           EXPECTED_TPS: ${{ matrix.jobs.expected_tps }}
+          INSTALL_NVIDIA_DRIVERS: ${{ matrix.jobs.install_nvidia_drivers }}
+          NVIDIA_DRIVERS_VERSION: ${{ matrix.jobs.nvidia_drivers_version }}
+
         run: |
           envsubst \
             < $TEST_DIR/testflinger.yaml \

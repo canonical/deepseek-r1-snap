@@ -33,12 +33,38 @@ echo "Installing device dependencies"
 _run sudo apt-get install --yes git
 _run sudo snap install go --classic --no-wait
 
+if [[ "${INSTALL_NVIDIA_DRIVERS}" == "true" ]]; then
+  echo "Installing NVIDIA drivers, CUDA and utils on device"
+  _run sudo apt-get update
+  _run sudo apt-get install -y nvidia-driver-$NVIDIA_DRIVERS_VERSION nvidia-cuda-toolkit
+
+  # Reboot the device to load NVIDIA drivers
+  # In background to avoid breaking the SSH connection prematurely
+  echo "Rebooting the device"
+  ssh ubuntu@$DEVICE_IP "(sleep 3 && sudo reboot) &"
+
+  # Wait for shutdown to happen
+  sleep 10
+
+  # Wait for reboot
+  wait_for_ssh --allow-degraded || exit 1
+fi
+
 echo "Remove $SNAP_NAME if already installed"
 _run sudo snap remove "$SNAP_NAME" --no-wait
 wait_for_snap_changes
 echo "Installing $SNAP_NAME from $SNAP_CHANNEL"
 _run sudo snap install "$SNAP_NAME" --channel "$SNAP_CHANNEL" --no-wait
 wait_for_snap_changes
+
+# Do we need to manually change the stack?
+if [[ -n "${SELECT_STACK}" ]]; then
+  _run sudo "$SNAP_NAME" use "$SELECT_STACK"
+  wait_for_snap_changes
+  # Stack might install two large components. If the first one times out, try again to trigger the second one.
+  _run sudo "$SNAP_NAME" use "$SELECT_STACK"
+  wait_for_snap_changes
+fi
 
 selected_stack=$(_run sudo snap get deepseek-r1 stack)
 echo "Auto selected stack: $selected_stack"

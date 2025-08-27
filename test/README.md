@@ -3,9 +3,16 @@
 This snap can be tested using Testflinger.
 The snap and components are downloaded from a specified channel in the Snap Store.
 
-In this directory run:
-```
-testflinger submit --poll testflinger.yaml
-```
+Modify the exported environment variables in `run.sh` to match your test.
 
-To change what is tested, edit the `SNAP_NAME`, `SNAP_CHANNEL`, `NVIDIA_VERSION` and `STACKS` variables inside [testfligner.yaml](testfligner.yaml).
+* JOB_QUEUE: Set to the testflinger job queue that should be used.
+* SELECT_STACK: Optional. Set to the name of the stack that will be manually selected after installation. The auto selected stack will be used if this is unset.
+* EXPECTED_STACK: The selected stack will be checked before running the server to see if it matches this value. The test will fail if the names do not match.
+* EXPECTED_TPS: A minimum number of tokens per second this stack should perform at on this specific job queue. The test will fail if the measured TPS value is below this threshold.
+* INSTALL_NVIDIA_DRIVERS: Optional. Set to true to install the nvidia drivers and cuda toolkit, and restart the machine before installing the snap. 
+* NVIDIA_DRIVERS_VERSION: Required if INSTALL_NVIDIA_DRIVERS is set, otherwise ignored. The version of the nvidia drivers to install in numeric format. E.g. 550.  
+
+After setting the environment variables, run the test:
+```
+./run.sh
+```

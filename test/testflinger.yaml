@@ -18,5 +18,8 @@ test_data:
     export SNAP_CHANNEL=$SNAP_CHANNEL
     export EXPECTED_STACK=$EXPECTED_STACK
     export EXPECTED_TPS=$EXPECTED_TPS
+    export INSTALL_NVIDIA_DRIVERS=$INSTALL_NVIDIA_DRIVERS
+    export NVIDIA_DRIVERS_VERSION=$NVIDIA_DRIVERS_VERSION
+    export SELECT_STACK=$SELECT_STACK
 
-    ./attachments/test/agent.sh
+    exec attachments/test/agent.sh
