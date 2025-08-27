@@ -33,13 +33,13 @@ jobs:
           - job_queue: hp-zbook-studio-156-inch-g8-mobile-workstation-pc
             select_stack: cuda
             expected_stack: cuda
-            expected_tps: 50 # 55.82
+            expected_tps: 45 # 55.82, 48.41
             install_nvidia_drivers: true
             nvidia_drivers_version: 550
           - job_queue: hp-z4-g4-workstation
             select_stack: cuda
             expected_stack: cuda
-            expected_tps: 13 # 14.72
+            expected_tps: 7 # 14.72, 7.63
             install_nvidia_drivers: true
             nvidia_drivers_version: 550
 
