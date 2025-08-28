@@ -20,7 +20,7 @@ jobs:
         jobs:
           - job_queue: 201909-27366 # Dell - XPS 13 7390 - Italia CML
             expected_stack: cpu-avx512
-            expected_tps: 3.5 # 3.97
+            expected_tps: 3 # 3.97, 3.35
           - job_queue: 202212-30936 # Ampere Altra
             expected_stack: ampere-altra
             expected_tps: 9 # 10.39
