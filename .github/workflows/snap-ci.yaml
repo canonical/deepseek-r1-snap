@@ -38,7 +38,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          lfs: true
           submodules: true
           token: ${{ secrets.SUBMODULE_PAT }}
 
@@ -49,24 +48,11 @@ jobs:
           git clone https://huggingface.co/helenai/DeepSeek-R1-Distill-Qwen-7B-ov-int4 $GITHUB_WORKSPACE/components/model-distill-qwen-7b-openvino-int4/DeepSeek-R1-Distill-Qwen-7B-ov-int4
 
       - name: Build snap
-        uses: snapcore/action-build@v1
-        id: snapcraft
+        uses: canonical/action-build@v1
 
       # Requires STORE_LOGIN secret set. Export with:
       # snapcraft export-login --snaps deepseek-r1 --channels latest/edge/* --acls package_access,package_push,package_update,package_release --expires 2026-08-15T00:00:00Z
       - name: Publish snap
-        env:
-          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
-        run: |
-          channel="latest/edge/$(git rev-parse --short HEAD)"
-          echo "Branch name: ${{ github.ref_name }}"
-          echo "Event number: ${{ github.event.number }}"
-
-          if [ -n "${{ github.event.number }}" ]; then
-            echo "Triggered from a PR"
-            channel="latest/edge/pr-${{ github.event.number }}"
-          fi
-
-          echo "Uploading to channel: $channel"
-
-          echo "y" | ./upload.sh $channel
+        uses: canonical/stack-utils/.github/actions/snap-publish@main
+        with:
+          store-credentials: ${{ secrets.STORE_LOGIN }}
