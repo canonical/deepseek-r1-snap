@@ -57,7 +57,7 @@ echo "Installing $SNAP_NAME from $SNAP_CHANNEL"
 _run sudo snap install "$SNAP_NAME" --channel "$SNAP_CHANNEL" --no-wait
 wait_for_snap_changes
 
-# Do we need to manually change the stack?
+# Force select a stack if variable is set
 if [[ -n "${SELECT_STACK}" ]]; then
   _run sudo "$SNAP_NAME" use "$SELECT_STACK"
   wait_for_snap_changes
@@ -76,7 +76,7 @@ fi
 
 # Start the server. While we wait, clone the benchmark tools. Then check if server has started.
 _run sudo snap start "$SNAP_NAME".server
-_run git clone https://github.com/jpm-canonical/llmapibenchmark.git
+_run "git clone https://github.com/jpm-canonical/llmapibenchmark.git && cd llmapibenchmark && git checkout ea5d6bc"
 _run snap run --shell "$SNAP_NAME" "/snap/$SNAP_NAME/current/bin/wait-for-server.sh"
 
 # If the model name option is set, use it when talking to the api

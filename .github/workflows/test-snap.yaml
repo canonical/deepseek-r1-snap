@@ -20,26 +20,26 @@ jobs:
         jobs:
           - job_queue: 201909-27366 # Dell - XPS 13 7390 - Italia CML
             expected_stack: cpu-avx512
-            expected_tps: 3 # 3.97, 3.35
+            expected_tps: 3 # Samples: 3.97, 3.35
           - job_queue: 202212-30936 # Ampere Altra
             expected_stack: ampere-altra
-            expected_tps: 9 # 10.39
+            expected_tps: 9 # Samples: 10.39
           - job_queue: 202303-31419 # Ampere Altra Max
             expected_stack: ampere-altra
-            expected_tps: 18 # 19.86
+            expected_tps: 18 # Samples: 19.86
           - job_queue: 202501-36266
             expected_stack: ampere-one
-            expected_tps: 9 # 15.97, 9.93
+            expected_tps: 9 # Samples: 15.97, 9.93
           - job_queue: hp-zbook-studio-156-inch-g8-mobile-workstation-pc
             select_stack: cuda
             expected_stack: cuda
-            expected_tps: 45 # 55.82, 48.41
+            expected_tps: 45 # Samples: 55.82, 48.41
             install_nvidia_drivers: true
             nvidia_drivers_version: 550
           - job_queue: hp-z4-g4-workstation
             select_stack: cuda
             expected_stack: cuda
-            expected_tps: 7 # 14.72, 7.63
+            expected_tps: 7 # Samples: 14.72, 7.63
             install_nvidia_drivers: true
             nvidia_drivers_version: 550
 
@@ -76,7 +76,7 @@ jobs:
             > $TEST_DIR/testflinger.temp.yaml
           mv $TEST_DIR/testflinger.temp.yaml $TEST_DIR/testflinger.yaml
 
-      - name: Dump job yaml
+      - name: Print testflinger job
         run: |
           cat ${{ env.TEST_DIR }}/testflinger.yaml
 

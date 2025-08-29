@@ -1,37 +1,7 @@
 #!/bin/bash -eux
 
 # This script can be used to locally run the stack-tps test on a single tesflinger machine.
-
-export SNAP_NAME="deepseek-r1"
-export SNAP_CHANNEL="latest/edge"
-
-# Values from matrix
-#export JOB_QUEUE="dell-xps137390-c27366"
-#export EXPECTED_STACK="cpu-avx512"
-#export EXPECTED_TPS=3.5
-
-## Ampere Altra
-#export JOB_QUEUE="202212-30936"
-#export EXPECTED_STACK="ampere-altra"
-#export EXPECTED_TPS=9
-
-## Ampere Altra Max
-#export JOB_QUEUE="202303-31419"
-#export EXPECTED_STACK="ampere-altra"
-#export EXPECTED_TPS=18
-
-## Ampere One - puniper
-#export JOB_QUEUE="202501-36266"
-#export EXPECTED_STACK="ampere-one"
-#export EXPECTED_TPS=14
-
-# On a machine with NVIDIA GPU, install nvidia drivers, set the stack manually to the cuda stack
-export JOB_QUEUE="hp-zbook-studio-156-inch-g8-mobile-workstation-pc" #"hp-z4-g4-workstation"
-export EXPECTED_STACK="cuda"
-export EXPECTED_TPS=1
-export INSTALL_NVIDIA_DRIVERS="true"
-export NVIDIA_DRIVERS_VERSION="550"
-export SELECT_STACK="cuda"
+# Export the environment variables listed in the README, and then run this script.
 
 envsubst < testflinger.yaml > testflinger.temp.yaml
 

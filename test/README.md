@@ -5,6 +5,8 @@ The snap and components are downloaded from a specified channel in the Snap Stor
 
 Modify the exported environment variables in `run.sh` to match your test.
 
+* SNAP_NAME: The name of the snap to be tested.
+* SNAP_CHANNEL: The channel from where to install the snap.
 * JOB_QUEUE: Set to the testflinger job queue that should be used.
 * SELECT_STACK: Optional. Set to the name of the stack that will be manually selected after installation. The auto selected stack will be used if this is unset.
 * EXPECTED_STACK: The selected stack will be checked before running the server to see if it matches this value. The test will fail if the names do not match.
