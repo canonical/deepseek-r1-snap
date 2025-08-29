@@ -47,7 +47,7 @@ cat "./stacks/$stack/stack.yaml" | yq .components[] | while read -r component; d
 done
 
 # Score stacks to populate scoring data
-sudo $name use --auto --assume-yes > /dev/null 2>&1
+sudo $name use-variant --auto --assume-yes > /dev/null 2>&1
 
 # Override selected stack
-sudo $name use "$stack" --assume-yes
+sudo $name use-variant "$stack" --assume-yes
