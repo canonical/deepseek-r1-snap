@@ -57,7 +57,7 @@ jobs:
           echo ::notice::Expected TPS:   ${{ matrix.jobs.expected_tps }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Add config to testflinger job
         env:
