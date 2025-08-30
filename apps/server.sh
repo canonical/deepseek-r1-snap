@@ -4,27 +4,25 @@ stack="$(snapctl get stack)"
 
 if [ -z "$stack" ]; then
     echo "Stack not set!"
-    sleep 5
     exit 1
 fi
 
-engine="$(snapctl get engine)"
-model="$(snapctl get model)"
+stack_file="$SNAP/stacks/$stack/stack.yaml"
+if [ ! -f "$stack_file" ]; then
+    echo "Stack file not found: $stack_file"
+    exit 1
+fi
 
 # Check for missing components
 missing_components=()
-
-if [ ! -d "$SNAP_COMPONENTS/$model" ]; then
-    missing_components+=("$model")
-fi
-
-if [ ! -d "$SNAP_COMPONENTS/$engine" ]; then
-    missing_components+=("$engine")
-fi
+while read -r component; do
+    if [ ! -d "$SNAP_COMPONENTS/$component" ]; then
+        missing_components+=("$component")
+    fi
+done <<< "$(cat "$stack_file" | yq .components[])"
 
 if [ ${#missing_components[@]} -ne 0 ]; then
-    echo "Missing components: ${missing_components[*]}" >&2
-    sleep 10
+    echo "Error: missing required snap components: ${missing_components[*]}"
     exit 1
 fi
 

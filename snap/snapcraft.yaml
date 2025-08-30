@@ -365,6 +365,7 @@ apps:
   server:
     command: bin/server.sh
     daemon: simple
+    restart-delay: 10s
     plugs:
       # For inference and hardware detection (via init)
       - opengl
