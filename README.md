@@ -40,19 +40,9 @@ sudo snap install deepseek-r1 --channel=<channel>
 
 During the installation, the snap detects the hardware and picks a suitable *stack*.
 Each stack consists of an inference **engine** and a **model**. 
+
 The engine is a server application.
-
-> [!NOTE]
-> The **server does not start** by default.
-> This is to allow on-demand use of the computing resources.
-
-### Run server
-Start the server:
-```shell
-sudo snap start deepseek-r1
-```
-
-The server exposes an [OpenAI compatible](https://github.com/openai/openai-openapi) endpoint served via HTTP.
+It exposes an [OpenAI compatible](https://github.com/openai/openai-openapi) endpoint served over HTTP.
 The HTTP server's bind host and port have the following default values:
 ```console
 $ sudo snap get deepseek-r1 http
