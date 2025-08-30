@@ -22,7 +22,7 @@ while read -r component; do
 done <<< "$(cat "$stack_file" | yq .components[])"
 
 if [ ${#missing_components[@]} -ne 0 ]; then
-    echo "Error: missing required snap components: ${missing_components[*]}"
+    echo "Error: missing required snap components: [${missing_components[*]}]"
     exit 1
 fi
 
