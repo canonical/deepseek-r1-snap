@@ -35,6 +35,7 @@ fi
 yq stacks/$stack/stack.yaml > /dev/null
 
 # Install the snap
+# The service will first fail to start because the stack is not selected yet
 sudo snap install --dangerous $name_*_$architecture.snap
 
 # Connect interfaces
@@ -46,8 +47,5 @@ cat "./stacks/$stack/stack.yaml" | yq .components[] | while read -r component; d
     sudo snap install --dangerous ./$name+"$component"_*.comp
 done
 
-# Score stacks to populate scoring data
-sudo $name use --auto --assume-yes > /dev/null 2>&1
-
-# Override selected stack
+# Select a stack
 sudo $name use "$stack" --assume-yes
