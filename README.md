@@ -225,10 +225,3 @@ Install:
 ```console
 ./install-local-build.sh <stack> [op]
 ```
-
-Build and upload:
-```shell
-build.sh <stack> --dryrun
-snapcraft -v
-upload.sh <channel>
-```
