@@ -22,9 +22,14 @@ if [[ ! "$channel" =~ ^[a-z0-9-]+/[a-z0-9-]+(/[a-z0-9-]+)?$ ]]; then
     exit 1
 fi
 
+snapcraft_file="snap/snapcraft.yaml"
+if [ -f "snapcraft.yaml" ]; then
+    echo -e "Warning: Using top level snapcraft.yaml file!\n"
+    snapcraft_file="snapcraft.yaml"
+fi
 
 # load snapcraft.yaml into variable, explode to evaluate aliases
-snapcraft_yaml=$(yq '. | explode(.)' snap/snapcraft.yaml)
+snapcraft_yaml=$(yq '. | explode(.)' "$snapcraft_file")
 
 snap_name=$(echo "$snapcraft_yaml" | yq '.name')
 snap_version=$(echo "$snapcraft_yaml" | yq '.version')
