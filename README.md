@@ -206,4 +206,4 @@ Build the snap and its component:
 snapcraft -v
 ```
 
-Refer to [dev](./dev) explore the additional development tools.
+Refer to [dev](./dev) for additional development tools.

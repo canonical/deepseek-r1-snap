@@ -58,19 +58,19 @@ _run sudo snap install "$SNAP_NAME" --channel "$SNAP_CHANNEL" --no-wait
 wait_for_snap_changes
 
 # Force select an engine if variable is set
-if [[ -n "${SELECT_engine}" ]]; then
-  _run sudo "$SNAP_NAME" use "$SELECT_engine"
+if [[ -n "${SELECT_ENGINE}" ]]; then
+  _run sudo "$SNAP_NAME" use "$SELECT_ENGINE"
   wait_for_snap_changes
   # engine might install two large components. If the first one times out, try again to trigger the second one.
-  _run sudo "$SNAP_NAME" use "$SELECT_engine"
+  _run sudo "$SNAP_NAME" use "$SELECT_ENGINE"
   wait_for_snap_changes
 fi
 
 selected_engine=$(_run sudo snap get deepseek-r1 engine)
 echo "Auto selected engine: $selected_engine"
 
-if [ "$EXPECTED_engine" != "$selected_engine" ]; then
-  echo "::error::Incorrect engine selected: $EXPECTED_engine != $selected_engine"
+if [ "$EXPECTED_ENGINE" != "$selected_engine" ]; then
+  echo "::error::Incorrect engine selected: $EXPECTED_ENGINE != $selected_engine"
   exit 1
 fi
 
