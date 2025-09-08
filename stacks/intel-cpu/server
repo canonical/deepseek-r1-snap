@@ -1,0 +1,4 @@
+#!/bin/bash -eu
+
+# Reuse the Intel GPU stack server script
+source "$SNAP/stacks/intel-gpu/server"

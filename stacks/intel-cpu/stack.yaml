@@ -1,0 +1,21 @@
+name: intel-cpu
+description: Use Intel CPUs
+vendor: Intel Corporation
+grade: stable
+devices:
+  all:
+    - type: cpu
+      architecture: amd64
+      manufacturer-id: GenuineIntel
+
+memory: 8G
+disk-space: 10G
+components:
+  - &e openvino-model-server
+  - &m model-distill-qwen-7b-openvino-int4
+configurations:
+  engine: *e
+  model: *m
+  target-device: CPU
+  model-name: DeepSeek-R1-Distill-Qwen-7B-ov-int4
+  http.base-path: v3
