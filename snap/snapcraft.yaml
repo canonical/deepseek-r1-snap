@@ -56,11 +56,11 @@ parts:
     organize:
       "*": bin/
 
-  stacks:
-    source: stacks
+  engines:
+    source: engines
     plugin: dump
     organize:
-      "*": stacks/
+      "*": engines/
 
   ml-snap-utils:
     source: ml-snap-utils
