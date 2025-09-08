@@ -1,0 +1,18 @@
+name: cpu-avx512
+description: For CPUs with AVX512 support
+vendor: Canonical Ltd
+grade: stable
+devices:
+  any:
+    - type: cpu
+      architecture: amd64
+      flags: [sse4_2, f16c, fma, avx, avx2, avx512f, avx512dq, avx512bw]
+memory: 4G
+disk-space: 8G
+components:
+  - &s llamacpp-avx512
+  - &m model-distill-qwen-7b-q4-k-m-gguf
+configurations:
+  server: *s
+  model: *m
+  http.base-path: v1

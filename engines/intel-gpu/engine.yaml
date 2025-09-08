@@ -1,0 +1,209 @@
+name: intel-gpu
+description: Use modern Intel GPUs (integrated and discrete)
+vendor: Intel Corporation
+grade: stable
+
+devices:
+  all:
+    - type: cpu
+      architecture: amd64
+  any:
+    - &intel-gpu
+      type: gpu
+      vendor-id: 8086 # Intel
+      vram: 7G
+      device-id: 4f80 # DG2 = Arc core [Intel Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 4f81 # DG2 [Intel Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 4f82 # DG2 [Intel Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 4f83 # DG2 [Intel Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 4f84 # DG2 [Intel Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 4f85 # DG2 [Intel Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 4f86 # DG2 [Intel Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 4f87 # DG2 [Intel Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 4f88 # DG2 [Intel Xe Graphics]
+
+    # Arc = 1st generation dGPU
+    - <<: *intel-gpu
+      device-id: 5690 # DG2 [Arc A770M]
+    - <<: *intel-gpu
+      device-id: 5691 # DG2 [Arc A730M]
+    - <<: *intel-gpu
+      device-id: 5692 # DG2 [Arc A550M]
+    - <<: *intel-gpu
+      device-id: 5693 # DG2 [Arc A370M]
+    - <<: *intel-gpu
+      device-id: 5694 # DG2 [Arc A350M]
+    - <<: *intel-gpu
+      device-id: 5695 # DG2 [Iris Xe MAX A200M]
+    - <<: *intel-gpu
+      device-id: 5696 # DG2 [Arc A570M]
+    - <<: *intel-gpu
+      device-id: 5697 # DG2 [Arc A530M]
+    - <<: *intel-gpu
+      device-id: 5698 # DG2 [Arc Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 56a0 # DG2 [Arc A770]
+    - <<: *intel-gpu
+      device-id: 56a1 # DG2 [Arc A750]
+    - <<: *intel-gpu
+      device-id: 56a2 # DG2 [Arc A580]
+    - <<: *intel-gpu
+      device-id: 56a3 # DG2 [Arc Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 56a4 # DG2 [Arc Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 56a5 # DG2 [Arc A380]
+    - <<: *intel-gpu
+      device-id: 56a6 # DG2 [Arc A310]
+    - <<: *intel-gpu
+      device-id: 56a7 # DG2 [Arc Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 56a8 # DG2 [Arc Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 56a9 # DG2 [Arc Xe Graphics]
+    - <<: *intel-gpu
+      device-id: 56b0 # DG2 [Arc Pro A30M]
+    - <<: *intel-gpu
+      device-id: 56b1 # DG2 [Arc Pro A40/A50]
+    - <<: *intel-gpu
+      device-id: 56b2 # DG2 [Arc Pro A60M]
+    - <<: *intel-gpu
+      device-id: 56b3 # DG2 [Arc Pro A60]
+    - <<: *intel-gpu
+      device-id: 56ba # DG2 [Arc A380E]
+    - <<: *intel-gpu
+      device-id: 56bb # DG2 [Arc A310E]
+    - <<: *intel-gpu
+      device-id: 56bc # DG2 [Arc A370E]
+    - <<: *intel-gpu
+      device-id: 56bd # DG2 [Arc A350E]
+    - <<: *intel-gpu
+      device-id: 56be # DG2 [Arc A750E]
+    - <<: *intel-gpu
+      device-id: 56bf # DG2 [Arc A580E]
+
+    # Battlemage = 2nd generation dGPU
+    - <<: *intel-gpu
+      device-id: e202 # Battlemage G21 [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: e20b # Battlemage G21 [Arc B580]
+    - <<: *intel-gpu
+      device-id: e20c # Battlemage G21 [Arc B570]
+    - <<: *intel-gpu
+      device-id: e20d # Battlemage G21 [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: e210 # Battlemage G21 [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: e212 # Battlemage G21 [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: e215 # Battlemage G21 [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: e216 # Battlemage G21 [Intel Graphics]
+
+    # Raptor Lake = 13th and 14th generation CPUs
+    - <<: *intel-gpu
+      device-id: a720 # Raptor Lake-P [UHD Graphics]
+    - <<: *intel-gpu
+      device-id: a721 # Raptor Lake-P [UHD Graphics]
+    - <<: *intel-gpu
+      device-id: a780 # Raptor Lake-S GT1 [UHD Graphics 770]
+    - <<: *intel-gpu
+      device-id: a781 # Raptor Lake-S UHD Graphics
+    - <<: *intel-gpu
+      device-id: a782 # Raptor Lake-S UHD Graphics
+    - <<: *intel-gpu
+      device-id: a783 # Raptor Lake-S UHD Graphics
+    - <<: *intel-gpu
+      device-id: a788 # Raptor Lake-S UHD Graphics
+    - <<: *intel-gpu
+      device-id: a789 # Raptor Lake-S UHD Graphics
+    - <<: *intel-gpu
+      device-id: a78a # Raptor Lake-S UHD Graphics
+    - <<: *intel-gpu
+      device-id: a78b # Raptor Lake-S UHD Graphics
+    - <<: *intel-gpu
+      device-id: a7a0 # Raptor Lake-P [Iris Xe Graphics]
+    - <<: *intel-gpu
+      device-id: a7a1 # Raptor Lake-P [Iris Xe Graphics]
+    - <<: *intel-gpu
+      device-id: a7a8 # Raptor Lake-P [UHD Graphics]
+    - <<: *intel-gpu
+      device-id: a7a9 # Raptor Lake-P [UHD Graphics]
+    - <<: *intel-gpu
+      device-id: a7aa # Raptor Lake-P [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: a7ab # Raptor Lake-P [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: a7ac # Raptor Lake-U [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: a7ad # Raptor Lake-U [Intel Graphics]
+
+    # Meteor Lake = Core Ultra Series 1 mobile processors
+    - <<: *intel-gpu
+      device-id: 7dd5 # Meteor Lake-P [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: 7d40 # Meteor Lake-M [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: 7d55 # Meteor Lake-P [Intel Arc Graphics]
+    - <<: *intel-gpu
+      device-id: 7d60 # Meteor Lake-M [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: 7d45 # Meteor Lake-P [Intel Graphics]
+
+    # Lunar Lake = Intel Core Ultra 2nd generation mobile processors / Core Ultra 200V Series mobile processors
+    - <<: *intel-gpu
+      device-id: 6420 # Lunar Lake [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: 64a0 # Lunar Lake [Intel Arc Graphics 130V / 140V]
+    - <<: *intel-gpu
+      device-id: 64b0 # Lunar Lake [Intel Graphics]
+
+    # Arrow Lake = Core Ultra Series 2 processors / Intel 200S Series CPUs
+    - <<: *intel-gpu
+      device-id: b640 # Arrow Lake-H [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: 7d41 # Arrow Lake-U [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: 7d51 # Arrow Lake-P [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: 7d67 # Arrow Lake-S [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: 7dd1 # Arrow Lake-P [Intel Graphics]
+
+    # Panther Lake = Core Ultra Series 3
+    - <<: *intel-gpu
+      device-id: b080 # Panther Lake [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: b081 # Panther Lake [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: b082 # Panther Lake [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: b083 # Panther Lake [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: b08f # Panther Lake [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: b090 # Panther Lake [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: b0a0 # Panther Lake [Intel Graphics]
+    - <<: *intel-gpu
+      device-id: b0b0 # Panther Lake [Intel Graphics]
+
+memory: 4G
+disk-space: 8G
+components:
+  - &s openvino-model-server
+  - &m model-distill-qwen-7b-openvino-int4
+configurations:
+  server: *s
+  model: *m
+  target-device: GPU
+  model-name: DeepSeek-R1-Distill-Qwen-7B-ov-int4
+  http.base-path: v3

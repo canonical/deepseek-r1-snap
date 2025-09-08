@@ -57,20 +57,20 @@ echo "Installing $SNAP_NAME from $SNAP_CHANNEL"
 _run sudo snap install "$SNAP_NAME" --channel "$SNAP_CHANNEL" --no-wait
 wait_for_snap_changes
 
-# Force select a stack if variable is set
-if [[ -n "${SELECT_STACK}" ]]; then
-  _run sudo "$SNAP_NAME" use "$SELECT_STACK"
+# Force select an engine if variable is set
+if [[ -n "${SELECT_ENGINE}" ]]; then
+  _run sudo "$SNAP_NAME" use "$SELECT_ENGINE"
   wait_for_snap_changes
-  # Stack might install two large components. If the first one times out, try again to trigger the second one.
-  _run sudo "$SNAP_NAME" use "$SELECT_STACK"
+  # engine might install two large components. If the first one times out, try again to trigger the second one.
+  _run sudo "$SNAP_NAME" use "$SELECT_ENGINE"
   wait_for_snap_changes
 fi
 
-selected_stack=$(_run sudo snap get deepseek-r1 stack)
-echo "Auto selected stack: $selected_stack"
+selected_engine=$(_run sudo snap get deepseek-r1 engine)
+echo "Auto selected engine: $selected_engine"
 
-if [ "$EXPECTED_STACK" != "$selected_stack" ]; then
-  echo "::error::Incorrect stack selected: $EXPECTED_STACK != $selected_stack"
+if [ "$EXPECTED_ENGINE" != "$selected_engine" ]; then
+  echo "::error::Incorrect engine selected: $EXPECTED_ENGINE != $selected_engine"
   exit 1
 fi
 

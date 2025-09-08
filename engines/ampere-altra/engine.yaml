@@ -1,0 +1,22 @@
+name: ampere-altra
+description: Optimized for Ampere Altra CPUs
+vendor: Ampere Computing
+grade: stable
+devices:
+  all:
+    - type: cpu
+      architecture: arm64
+      implementer-id: 0x41 # Arm Limited.
+      part-number: 0xd0c   # Neoverse-N1
+    - bus: pci
+      vendor-id: 1def      # Ampere Computing, LLC
+      device-id: e100      # Altra PCI Express Root Complex A
+memory: 5G
+disk-space: 10G
+components:
+  - &s llama-aio
+  - &m model-distill-qwen-7b-q4-k-m-gguf
+configurations:
+  server: *s
+  model: *m
+  http.base-path: v1

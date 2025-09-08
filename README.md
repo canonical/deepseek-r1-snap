@@ -189,7 +189,7 @@ sudo snap connect deepseek-r1:npu-libs intel-npu-driver
 
 ## Build and install from source
 
-Clone this repo with the submodule:
+Clone this repo with its submodules:
 ```shell
 git clone --recurse-submodules https://github.com/canonical/deepseek-r1-snap.git
 ```
@@ -206,12 +206,4 @@ Build the snap and its component:
 snapcraft -v
 ```
 
-To build the snap with components of one stack:
-```shell
-build.sh <stack>
-```
-
-Install: 
-```console
-./install-local-build.sh <stack> [op]
-```
+Refer to [dev](./dev) for additional development tools.

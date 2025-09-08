@@ -1,0 +1,13 @@
+#!/bin/bash -eu
+
+source "$(dirname "$0")/common.sh"
+
+port="$(snapctl get http.port)"
+host="$(snapctl get http.host)"
+verbose="$(snapctl get verbose)"
+extra_args=()
+if [ "${verbose}" = "true" ]; then
+  extra_args+=(--verbose)
+fi
+
+exec "$server/usr/local/bin/llama-server" --model "$MODEL_FILE" --n-gpu-layers $N_GPU_LAYERS --port "$port" --host "$host" "${extra_args[@]}"

@@ -56,13 +56,13 @@ parts:
     organize:
       "*": bin/
 
-  stacks:
-    source: stacks
+  engines:
+    source: engines
     plugin: dump
     organize:
-      "*": stacks/
+      "*": engines/
 
-  ml-snap-utils:
+  stack-utils:
     source: ml-snap-utils
     plugin: go
     build-snaps:
