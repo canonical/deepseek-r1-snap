@@ -26,10 +26,10 @@ deepseek-r1 load
 #
 
 if snapctl is-connected hardware-observe; then
-    deepseek-r1 use --auto --assume-yes
+    deepseek-r1 use-engine --auto --assume-yes
 elif lscpu -V &> /dev/null; then
     echo "Able to access hardware info without hardware-observe interface connection: assuming dev mode installation."
-    deepseek-r1 use --auto --assume-yes
+    deepseek-r1 use-engine --auto --assume-yes
 else
     echo "hardware-observe interface not auto connected. Skip auto engine selection."
 fi

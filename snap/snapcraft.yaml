@@ -62,7 +62,7 @@ parts:
     organize:
       "*": engines/
 
-  ml-snap-utils:
+  stack-utils:
     source: ml-snap-utils
     plugin: go
     build-snaps:
