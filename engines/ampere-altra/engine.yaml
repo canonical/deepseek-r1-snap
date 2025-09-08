@@ -14,9 +14,9 @@ devices:
 memory: 5G
 disk-space: 10G
 components:
-  - &engine llama-aio
-  - &model model-distill-qwen-7b-q4-k-m-gguf
+  - &s llama-aio
+  - &m model-distill-qwen-7b-q4-k-m-gguf
 configurations:
-  engine: *engine
-  model: *model
+  server: *s
+  model: *m
   http.base-path: v1

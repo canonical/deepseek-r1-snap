@@ -13,9 +13,9 @@ devices:
 memory: 2G
 disk-space: 4G
 components:
-  - &engine llamacpp
-  - &model model-distill-qwen-1-5b-q8-0-gguf
+  - &s llamacpp
+  - &m model-distill-qwen-1-5b-q8-0-gguf
 configurations:
-  engine: *engine
-  model: *model
+  server: *s
+  model: *m
   http.base-path: v1

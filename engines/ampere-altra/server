@@ -10,4 +10,4 @@ if [ "${verbose}" = "true" ]; then
   extra_args+=(--verbose)
 fi
 
-exec "$engine/bin/llama-server" --model "$MODEL_FILE" --port "$port" --host "$host" --threads 40 --threads-batch 40 --no-mmap "${extra_args[@]}"
+exec "$server/bin/llama-server" --model "$MODEL_FILE" --port "$port" --host "$host" --threads 40 --threads-batch 40 --no-mmap "${extra_args[@]}"

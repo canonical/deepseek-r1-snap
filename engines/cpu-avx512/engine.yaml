@@ -10,9 +10,9 @@ devices:
 memory: 4G
 disk-space: 8G
 components:
-  - &engine llamacpp-avx512
-  - &model model-distill-qwen-7b-q4-k-m-gguf
+  - &s llamacpp-avx512
+  - &m model-distill-qwen-7b-q4-k-m-gguf
 configurations:
-  engine: *engine
-  model: *model
+  server: *s
+  model: *m
   http.base-path: v1

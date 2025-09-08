@@ -14,9 +14,9 @@ devices:
 memory: 4G
 disk-space: 8G
 components:
-  - &engine llamacpp-cuda
-  - &model model-distill-qwen-7b-q4-k-m-gguf
+  - &s llamacpp-cuda
+  - &m model-distill-qwen-7b-q4-k-m-gguf
 configurations:
-  engine: *engine
-  model: *model
+  server: *s
+  model: *m
   http.base-path: v1

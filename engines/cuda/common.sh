@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-engine="$SNAP_COMPONENTS/$(snapctl get engine)"
+server="$SNAP_COMPONENTS/$(snapctl get server)"
 model="$SNAP_COMPONENTS/$(snapctl get model)"
 
 if [ ! -d "$model" ]; then
@@ -10,13 +10,13 @@ fi
 
 source "$model/init" # exports MODEL_FILE
 
-if [ ! -d "$engine" ]; then
-    echo "Missing component: $engine"
+if [ ! -d "$server" ]; then
+    echo "Missing component: $server"
     exit 1
 fi
 
 # For staged shared objects
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$engine/usr/lib/$ARCH_TRIPLET:$engine/usr/local/lib"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$server/usr/lib/$ARCH_TRIPLET:$server/usr/local/lib"
 
 # Other user changeable configs
 

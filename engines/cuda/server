@@ -10,4 +10,4 @@ if [ "${verbose}" = "true" ]; then
   extra_args+=(--verbose)
 fi
 
-exec "$engine/usr/local/bin/llama-server" --model "$MODEL_FILE" --n-gpu-layers $N_GPU_LAYERS --port "$port" --host "$host" "${extra_args[@]}"
+exec "$server/usr/local/bin/llama-server" --model "$MODEL_FILE" --n-gpu-layers $N_GPU_LAYERS --port "$port" --host "$host" "${extra_args[@]}"
