@@ -8,7 +8,7 @@ exec 1> >(tee >(logger --tag=$tag))
 exec 2> >(logger --stderr --priority error --tag=$tag)
 
 #
-# Set generic config
+# Set generic configurations
 #
 
 snapctl set http.port="8080"
@@ -16,7 +16,7 @@ snapctl set http.host="127.0.0.1"
 snapctl set verbose="false"
 
 #
-# Set all engines as snap config
+# Set all engines as snap configurations
 # 
 
 deepseek-r1 load
