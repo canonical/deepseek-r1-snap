@@ -3,7 +3,7 @@
 # This script waits for the server to start before running the commands in the arguments.
 # The script is expected to be used in the command chain of the chat app.
 
-stack="$(snapctl get stack)"
+engine="$(snapctl get engine)"
 
 TIMEOUT=60
 WAIT_PRINTED=false
@@ -26,7 +26,7 @@ while true; do
     exit 1
   fi
 
-  "$SNAP/stacks/$stack/check-server"
+  "$SNAP/engines/$engine/check-server"
   exit_code=$?
 
   case $exit_code in

@@ -3,5 +3,5 @@
 # NPU libraries
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/npu-libs"
 
-# Reuse the Intel GPU stack server script
-source "$SNAP/stacks/intel-gpu/server"
+# Reuse the Intel GPU engine server script
+source "$SNAP/engines/intel-gpu/server"

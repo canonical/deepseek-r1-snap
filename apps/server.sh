@@ -1,15 +1,15 @@
 #!/bin/bash -u
 
-stack="$(snapctl get stack)"
+engine="$(snapctl get engine)"
 
-if [ -z "$stack" ]; then
-    echo "Stack not set!"
+if [ -z "$engine" ]; then
+    echo "engine not set!"
     exit 1
 fi
 
-stack_file="$SNAP/stacks/$stack/stack.yaml"
-if [ ! -f "$stack_file" ]; then
-    echo "Stack file not found: $stack_file"
+engine_file="$SNAP/engines/$engine/engine.yaml"
+if [ ! -f "$engine_file" ]; then
+    echo "engine manifest not found: $engine_file"
     exit 1
 fi
 
@@ -19,7 +19,7 @@ while read -r component; do
     if [ ! -d "$SNAP_COMPONENTS/$component" ]; then
         missing_components+=("$component")
     fi
-done <<< "$(cat "$stack_file" | yq .components[])"
+done <<< "$(cat "$engine_file" | yq .components[])"
 
 if [ ${#missing_components[@]} -ne 0 ]; then
     echo "Error: missing required snap components: [${missing_components[*]}]"
@@ -27,4 +27,4 @@ if [ ${#missing_components[@]} -ne 0 ]; then
 fi
 
 
-exec "$SNAP/stacks/$stack/server" "$@"
+exec "$SNAP/engines/$engine/server" "$@"

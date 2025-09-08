@@ -8,7 +8,7 @@ exec 1> >(tee >(logger --tag=$tag))
 exec 2> >(logger --stderr --priority error --tag=$tag)
 
 #
-# Set all stacks as snap config
+# Set all engines as snap config
 #
 
 deepseek-r1 load
