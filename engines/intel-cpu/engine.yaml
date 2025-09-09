@@ -11,10 +11,10 @@ devices:
 memory: 8G
 disk-space: 10G
 components:
-  - &e openvino-model-server
+  - &s openvino-model-server
   - &m model-distill-qwen-7b-openvino-int4
 configurations:
-  engine: *e
+  server: *s
   model: *m
   target-device: CPU
   model-name: DeepSeek-R1-Distill-Qwen-7B-ov-int4
