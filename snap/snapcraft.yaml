@@ -199,12 +199,6 @@ parts:
     organize:
       "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
 
-  model-distill-llama-70b-q4-k-m-gguf:
-    source: components/model-distill-llama-70b-q4-k-m-gguf
-    plugin: dump
-    organize:
-      "*": (component/model-distill-llama-70b-q4-k-m-gguf)
-
   model-distill-qwen-7b-openvino-int4:
     source: components/model-distill-qwen-7b-openvino-int4
     plugin: dump
@@ -338,12 +332,6 @@ components:
     type: standard
     summary: DeepSeek R1 Distill Qwen 7B Q4
     description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
-    version: *snap-version
-
-  model-distill-llama-70b-q4-k-m-gguf:
-    type: standard
-    summary: DeepSeek R1 Llama 70B Q4
-    description: Quantized model with 70B parameters in gguf format with Q4_K_M weight encoding
     version: *snap-version
 
   model-distill-qwen-7b-openvino-int4:
