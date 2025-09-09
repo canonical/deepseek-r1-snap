@@ -9,10 +9,8 @@ description: |
 grade: devel
 confinement: strict
 
-# According to https://snapcraft.io/docs/components
-# Components requires snapd 2.67+
 assumes:
-  - snapd2.68
+  - snapd2.68 # for components support
 
 compression: lzo
 
