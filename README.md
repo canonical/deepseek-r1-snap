@@ -197,7 +197,6 @@ git clone --recurse-submodules https://github.com/canonical/deepseek-r1-snap.git
 Prepare the models that are required from the following list:
 - [model-distill-qwen-1-5b-q8-0-gguf](./components/model-distill-qwen-1-5b-q8-0-gguf)
 - [model-distill-qwen-7b-q4-k-m-gguf](./components/model-distill-qwen-7b-q4-k-m-gguf)
-- [model-distill-llama-70b-q4-k-m-gguf](./components/model-distill-llama-70b-q4-k-m-gguf)
 - [model-distill-qwen-7b-openvino-int4](./components/model-distill-qwen-7b-openvino-int4)
 
 
