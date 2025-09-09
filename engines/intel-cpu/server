@@ -1,0 +1,4 @@
+#!/bin/bash -eu
+
+# Reuse the Intel GPU engine server script
+source "$SNAP/engines/intel-gpu/server"
