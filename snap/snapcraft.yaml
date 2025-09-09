@@ -9,6 +9,9 @@ description: |
 grade: devel
 confinement: strict
 
+assumes:
+  - snapd2.68 # for components support
+
 compression: lzo
 
 environment:
