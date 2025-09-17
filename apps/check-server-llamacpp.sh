@@ -34,7 +34,7 @@ if ! (nc -z "$host" "$port" 2>/dev/null); then
 fi
 
 # Not checking model, as completions API has better status reporting
-#served_model=$(wget http://"$host":8080/$api_base_path/models -O- 2>/dev/null | jq .data[0].id)
+#served_model=$(wget http://"$host":"$port"/$api_base_path/models -O- 2>/dev/null | jq .data[0].id)
 #if [[ "$served_model" != *"$model_name"* ]]; then
 #  exit 1
 #fi
