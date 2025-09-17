@@ -13,6 +13,7 @@ function debug_echo {
 set +e
 
 port="$(snapctl get http.port)"
+host="$(snapctl get http.host)"
 model_name="$(snapctl get model-name)"
 api_base_path="$(snapctl get http.base-path)"
 if [ -z "$api_base_path" ]; then
@@ -28,12 +29,12 @@ fi
 
 
 # Check if port is open and we can connect over TCP
-if ! (nc -z localhost "$port" 2>/dev/null); then
+if ! (nc -z "$host" "$port" 2>/dev/null); then
   debug_echo "ovms is not listening on the configured port"
   exit 1
 fi
 
-api_config=$(wget http://localhost:"$port"/v1/config --header "Content-Type: application/json" --timeout=10 --tries=1 -O- 2>/dev/null)
+api_config=$(wget http://"$host":"$port"/v1/config --header "Content-Type: application/json" --timeout=10 --tries=1 -O- 2>/dev/null)
 # Starting up: {}
 empty_json=$(echo "$api_config" | jq '. == {}')
 if $empty_json; then
@@ -51,7 +52,7 @@ system_message="You are a helpful assistant."
 prompt="Hello!"
 post_json=$(printf '{"model":"%s","messages":[{"role":"developer","content":"%s"},{"role":"user","content":"%s"}],"temperature":0,"max_tokens":1}' "$model_name" "$system_message" "$prompt")
 api_response=$(\
-  wget http://localhost:"$port"/"$api_base_path"/chat/completions \
+  wget http://"$host":"$port"/"$api_base_path"/chat/completions \
   --header "Content-Type: application/json" \
   --timeout=30 \
   --tries=1 \
