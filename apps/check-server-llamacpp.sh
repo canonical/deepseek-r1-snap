@@ -33,14 +33,14 @@ if ! (nc -z localhost "$port" 2>/dev/null); then
 fi
 
 # Not checking model, as completions API has better status reporting
-#served_model=$(wget http://localhost:8080/$api_base_path/models -O- 2>/dev/null | jq .data[0].id)
+#served_model=$(wget http://localhost:"$port"/$api_base_path/models -O- 2>/dev/null | jq .data[0].id)
 #if [[ "$served_model" != *"$model_name"* ]]; then
 #  exit 1
 #fi
 
 request=$(printf '{"model": "%s", "prompt": "Say this is a test", "temperature": 0, "max_tokens": 1}' "$model_name")
 api_response=$(\
-  wget http://localhost:8080/"$api_base_path"/completions \
+  wget http://localhost:"$port"/"$api_base_path"/completions \
   --timeout=30 \
   --tries=1 \
   --post-data="$request" \
