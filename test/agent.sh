@@ -57,6 +57,10 @@ echo "Installing $SNAP_NAME from $SNAP_CHANNEL"
 _run sudo snap install "$SNAP_NAME" --channel "$SNAP_CHANNEL" --no-wait
 wait_for_snap_changes
 
+# Race condition? Forcing auto selection
+_run sudo "$SNAP_NAME" use-engine --auto --assume-yes
+wait_for_snap_changes
+
 # Force select an engine if variable is set
 if [[ -n "${SELECT_ENGINE}" ]]; then
   _run sudo "$SNAP_NAME" use-engine "$SELECT_ENGINE"
@@ -76,7 +80,7 @@ fi
 
 # Start the server. While we wait, clone the benchmark tools. Then check if server has started.
 _run sudo snap start "$SNAP_NAME".server
-_run "git clone https://github.com/jpm-canonical/llmapibenchmark.git && cd llmapibenchmark && git checkout ea5d6bc"
+_run "git clone --depth 1 --branch v1.0.5 https://github.com/jpm-canonical/llmapibenchmark.git"
 _run snap run --shell "$SNAP_NAME" "/snap/$SNAP_NAME/current/bin/wait-for-server.sh"
 
 # If the model name option is set, use it when talking to the api

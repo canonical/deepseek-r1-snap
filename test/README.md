@@ -14,7 +14,13 @@ Modify the exported environment variables in `run.sh` to match your test.
 * INSTALL_NVIDIA_DRIVERS: Optional. Set to true to install the nvidia drivers and cuda toolkit, and restart the machine before installing the snap. 
 * NVIDIA_DRIVERS_VERSION: Required if INSTALL_NVIDIA_DRIVERS is set, otherwise ignored. The version of the nvidia drivers to install in numeric format. E.g. 550.  
 
-After setting the environment variables, run the test:
+After setting the environment variables, you can execute `run.sh`.
+Example:
 ```
+export SNAP_NAME=deepseek-r1
+export SNAP_CHANNEL=latest/edge
+export JOB_QUEUE=201909-27366
+export EXPECTED_ENGINE=cpu-avx512
+export EXPECTED_TPS=3
 ./run.sh
 ```
