@@ -2,8 +2,8 @@
 
 # TODO: should most of this script move to the ovms component?
 
-server="$SNAP_COMPONENTS/$(snapctl get server)"
-model="$SNAP_COMPONENTS/$(snapctl get model)"
+server="$SNAP_COMPONENTS/$($SNAP_NAME get server)"
+model="$SNAP_COMPONENTS/$($SNAP_NAME get model)"
 
 if [ ! -d "$model" ]; then
     echo "Missing component: $model"
@@ -33,15 +33,15 @@ export OCL_ICD_VENDORS=$SNAP/etc/OpenCL/vendors
 export PYTHONPATH="$server/lib/python:$server/lib/python3.12/site-packages"
 echo "PYTHONPATH: $PYTHONPATH"
 
-target_device="$(snapctl get target-device)"
+target_device="$($SNAP_NAME get target-device)"
 if [ -z "$target_device" ]; then
     echo "target-device configuration not set!"
     exit 1
 fi
 
-port="$(snapctl get http.port)"
-host="$(snapctl get http.host)"
-verbose="$(snapctl get verbose)"
+port="$($SNAP_NAME get http.port)"
+host="$($SNAP_NAME get http.host)"
+verbose="$($SNAP_NAME get verbose)"
 extra_args=()
 if [ "${verbose}" = "true" ]; then
   extra_args+=(--log_level DEBUG)

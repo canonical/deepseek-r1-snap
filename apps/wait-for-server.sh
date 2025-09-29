@@ -3,7 +3,7 @@
 # This script waits for the server to start before running the commands in the arguments.
 # The script is expected to be used in the command chain of the chat app.
 
-engine="$(snapctl get engine)"
+engine="$($SNAP_NAME get engine)"
 
 TIMEOUT=60
 WAIT_PRINTED=false

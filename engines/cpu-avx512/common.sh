@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
-server="$SNAP_COMPONENTS/$(snapctl get server)"
-model="$SNAP_COMPONENTS/$(snapctl get model)"
+server="$SNAP_COMPONENTS/$($SNAP_NAME get server)"
+model="$SNAP_COMPONENTS/$($SNAP_NAME get model)"
 
 if [ ! -d "$model" ]; then
     echo "Missing component: $model"

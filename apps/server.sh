@@ -1,25 +1,17 @@
-#!/bin/bash -u
+#!/bin/bash -eu
 
-engine="$(snapctl get engine)"
-
-if [ -z "$engine" ]; then
-    echo "engine not set!"
-    exit 1
-fi
-
-engine_file="$SNAP/engines/$engine/engine.yaml"
-if [ ! -f "$engine_file" ]; then
-    echo "engine manifest not found: $engine_file"
-    exit 1
-fi
+engine_manifest=$($SNAP_NAME show-engine)
+engine="$(echo "$engine_manifest" | yq .name)"
+required_components="$(echo "$engine_manifest" | yq .components[])"
+unset engine_manifest
 
 # Check for missing components
 missing_components=()
-while read -r component; do
+for component in $required_components; do
     if [ ! -d "$SNAP_COMPONENTS/$component" ]; then
         missing_components+=("$component")
     fi
-done <<< "$(cat "$engine_file" | yq .components[])"
+done
 
 if [ ${#missing_components[@]} -ne 0 ]; then
     echo "Error: missing required snap components: [${missing_components[*]}]"

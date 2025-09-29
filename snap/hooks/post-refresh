@@ -7,8 +7,3 @@ exec 1> >(tee >(logger --tag=$tag))
 # Redirect stderr to stderr+syslog
 exec 2> >(logger --stderr --priority error --tag=$tag)
 
-#
-# Set all engines as snap config
-#
-
-deepseek-r1 load
