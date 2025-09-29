@@ -75,7 +75,7 @@ parts:
       - nvidia-utils # for Nvidia vRAM and Cuda Capability detection
       - clinfo # for Intel GPU vRAM detection
     organize:
-      bin/stack: bin/deepseek-r1
+      bin/cli: bin/deepseek-r1
     override-build: |
       craftctl default
 
