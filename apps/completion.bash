@@ -5,4 +5,4 @@
 # Issue: https://github.com/canonical/stack-utils/issues/115
 unset -f _init_completion
 
-source <($SNAP/bin/$SNAP_NAME completion bash)
+source <("$SNAP"/bin/"$SNAP_NAME" completion bash)
