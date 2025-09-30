@@ -2,26 +2,30 @@
 
 # TODO: should most of this script move to the ovms component?
 
-server="$SNAP_COMPONENTS/$(snapctl get server)"
-model="$SNAP_COMPONENTS/$(snapctl get model)"
-
-if [ ! -d "$model" ]; then
-    echo "Missing component: $model"
+server_path="$SNAP_COMPONENTS/$(deepseek-r1 get server)"
+if [ ! -d "$server_path" ]; then
+    echo "Missing component: $server_path"
     exit 1
 fi
 
-source "$model/init" # imports model config
-
-if [ ! -d "$server" ]; then
-    echo "Missing component: $server"
+model_path="$SNAP_COMPONENTS/$(deepseek-r1 get model)"
+if [ ! -d "$model_path" ]; then
+    echo "Missing component: $model_path"
     exit 1
 fi
 
+"$model_path/init"
+
+model_name="$(deepseek-r1 get model-name)"
+if [ -z "$model_name" ]; then
+    echo "model_name configuration not set"
+    exit 1
+fi
 
 # Add staged shared objects
-LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$server/lib"
-LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$server/lib/python"
-LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$server/usr/lib/$ARCH_TRIPLET"
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$server_path/lib"
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$server_path/lib/python"
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$server_path/usr/lib/$ARCH_TRIPLET"
 LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/usr/local/lib"
 export LD_LIBRARY_PATH
 echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
@@ -30,19 +34,21 @@ echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 export OCL_ICD_VENDORS=$SNAP/etc/OpenCL/vendors
 
 # Add Python dependencies
-export PYTHONPATH="$server/lib/python:$server/lib/python3.12/site-packages"
+export PYTHONPATH="$server_path/lib/python:$server_path/lib/python3.12/site-packages"
 echo "PYTHONPATH: $PYTHONPATH"
 
-target_device="$(snapctl get target-device)"
+target_device="$(deepseek-r1 get target-device)"
 if [ -z "$target_device" ]; then
     echo "target-device configuration not set!"
     exit 1
 fi
 
-port="$(snapctl get http.port)"
-host="$(snapctl get http.host)"
-verbose="$(snapctl get verbose)"
+port="$(deepseek-r1 get http.port)"
+host="$(deepseek-r1 get http.host)"
+
 extra_args=()
+
+verbose="$(deepseek-r1 get verbose)"
 if [ "${verbose}" = "true" ]; then
   extra_args+=(--log_level DEBUG)
 fi
@@ -52,10 +58,13 @@ fi
 # Issue: https://github.com/openvinotoolkit/model_server/issues/3492
 
 set -x
-$server/bin/ovms \
+"$server_path/bin/ovms" \
     --rest_port "$port" \
     --rest_bind_address "$host" \
-    --source_model "$MODEL_NAME" \
-    --model_repository_path "$model" \
+    --source_model "$model_name" \
+    --model_repository_path "$model_path" \
     --target_device "$target_device" \
-    --cache_size 2 "${extra_args[@]}"
+    --task text_generation \
+    --cache_size 2 \
+    "${extra_args[@]}" \
+    "$@"
