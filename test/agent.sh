@@ -80,7 +80,7 @@ fi
 
 # Start the server. While we wait, clone the benchmark tools. Then check if server has started.
 _run sudo snap start "$SNAP_NAME".server
-_run "git clone --depth 1 --branch v1.0.5 https://github.com/jpm-canonical/llmapibenchmark.git"
+_run "git clone --depth 1 --branch v1.0.5 https://github.com/Yoosu-L/llmapibenchmark.git"
 _run snap run --shell "$SNAP_NAME" "/snap/$SNAP_NAME/current/bin/wait-for-server.sh"
 
 # If the model name option is set, use it when talking to the api
