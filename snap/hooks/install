@@ -11,25 +11,25 @@ exec 2> >(logger --stderr --priority error --tag=$tag)
 # Set generic configurations
 #
 
-$SNAP_NAME set http.port="8080"
-$SNAP_NAME set http.host="127.0.0.1"
-$SNAP_NAME set verbose="false"
+deepseek-r1 set http.port="8080"
+deepseek-r1 set http.host="127.0.0.1"
+deepseek-r1 set verbose="false"
 
 #
 # Set all engines as snap configurations
 #
 
-$SNAP_NAME load
+deepseek-r1 load
 
 #
 # Auto engine selection
 #
 
 if snapctl is-connected hardware-observe; then
-  $SNAP_NAME use-engine --auto --assume-yes
+  deepseek-r1 use-engine --auto --assume-yes
 elif lscpu -V &>/dev/null; then
   echo "Able to access hardware info without hardware-observe interface connection: assuming dev mode installation."
-  $SNAP_NAME use-engine --auto --assume-yes
+  deepseek-r1 use-engine --auto --assume-yes
 else
   echo "hardware-observe interface not auto connected. Skip auto engine selection."
 fi

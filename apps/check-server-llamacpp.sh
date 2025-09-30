@@ -12,9 +12,9 @@ function debug_echo {
 
 set +e
 
-port="$($SNAP_NAME get http.port)"
-model_name="$($SNAP_NAME get model-name 2>/dev/null || true)" # model name is optional
-api_base_path="$($SNAP_NAME get http.base-path)"
+port="$(deepseek-r1 get http.port)"
+model_name="$(deepseek-r1 get model-name 2>/dev/null || true)" # model name is optional
+api_base_path="$(deepseek-r1 get http.base-path)"
 if [ -z "$api_base_path" ]; then
   api_base_path="v1"
 fi

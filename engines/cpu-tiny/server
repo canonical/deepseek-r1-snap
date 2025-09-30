@@ -2,9 +2,9 @@
 
 source "$(dirname "$0")/common.sh"
 
-port="$($SNAP_NAME get http.port)"
-host="$($SNAP_NAME get http.host)"
-verbose="$($SNAP_NAME get verbose)"
+port="$(deepseek-r1 get http.port)"
+host="$(deepseek-r1 get http.host)"
+verbose="$(deepseek-r1 get verbose)"
 extra_args=()
 if [ "${verbose}" = "true" ]; then
   extra_args+=(--verbose)

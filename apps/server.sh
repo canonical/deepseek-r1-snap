@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-engine_manifest=$($SNAP_NAME show-engine)
+engine_manifest=$(deepseek-r1 show-engine)
 engine="$(echo "$engine_manifest" | yq .name)"
 required_components="$(echo "$engine_manifest" | yq .components[])"
 unset engine_manifest
