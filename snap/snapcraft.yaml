@@ -76,14 +76,6 @@ parts:
       - clinfo # for Intel GPU vRAM detection
     organize:
       bin/cli: bin/deepseek-r1
-    override-build: |
-      craftctl default
-
-      # Generating the completion script
-      SNAP_INSTANCE_NAME=deepseek-r1 $CRAFT_PART_INSTALL/bin/stack completion bash > $CRAFT_PART_INSTALL/bin/completion.sh
-
-      # Replace _init_completion with __deepseek-r1_init_completion
-      grep ' _init_completion -n =: || return' $CRAFT_PART_INSTALL/bin/completion.sh && sed -i 's/ _init_completion -n =: || return/ __deepseek-r1_init_completion -n =: || return/' $CRAFT_PART_INSTALL/bin/completion.sh
 
   go-chat-client:
     source: https://github.com/jpm-canonical/go-chat-client.git
@@ -343,7 +335,7 @@ components:
 apps:
   deepseek-r1:
     command: bin/deepseek-r1
-    completer: bin/completion.sh
+    completer: bin/completion.bash
     plugs:
       # For hardware detection
       - opengl
