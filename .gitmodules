@@ -1,6 +1,6 @@
 [submodule "ml-snap-utils"]
-	path = ml-snap-utils
-	url = https://github.com/canonical/ml-snap-utils.git
+	path = cli
+	url = https://github.com/canonical/stack-utils.git
 [submodule "famous-models-dev"]
 	path = dev
 	url = https://github.com/canonical/famous-models-dev

@@ -65,8 +65,8 @@ parts:
     organize:
       "*": engines/
 
-  stack-utils:
-    source: ml-snap-utils
+  cli:
+    source: cli # this is a private git submodule which must be cloned separately
     plugin: go
     build-snaps:
       - go/1.24/stable
