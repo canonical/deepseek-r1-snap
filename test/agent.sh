@@ -57,10 +57,6 @@ echo "Installing $SNAP_NAME from $SNAP_CHANNEL"
 _run sudo snap install "$SNAP_NAME" --channel "$SNAP_CHANNEL" --no-wait
 wait_for_snap_changes
 
-# Race condition? Forcing auto selection
-_run sudo "$SNAP_NAME" use-engine --auto --assume-yes
-wait_for_snap_changes
-
 # Force select an engine if variable is set
 if [[ -n "${SELECT_ENGINE}" ]]; then
   _run sudo "$SNAP_NAME" use-engine "$SELECT_ENGINE"
