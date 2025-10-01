@@ -51,10 +51,11 @@ jobs:
     steps:
       - name: Event data
         run: |
-          echo ::notice::Snap channel:   ${{ inputs.channel }}
-          echo ::notice::Job queue:      ${{ matrix.jobs.job_queue }}
-          echo ::notice::Expected engine: ${{ matrix.jobs.expected_engine }}
-          echo ::notice::Expected TPS:   ${{ matrix.jobs.expected_tps }}
+          echo ::notice::Snap channel:    ${{ inputs.channel }}
+          echo Job queue:       ${{ matrix.jobs.job_queue }}
+          echo Expected engine: ${{ matrix.jobs.expected_engine }}
+          echo Expected TPS:    ${{ matrix.jobs.expected_tps }}
+          exit 1
 
       - name: Checkout code
         uses: actions/checkout@v5
