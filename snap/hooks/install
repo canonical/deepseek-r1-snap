@@ -11,9 +11,9 @@ exec 2> >(logger --stderr --priority error --tag=$tag)
 # Set generic configurations
 #
 
-deepseek-r1 set http.port="8080"
-deepseek-r1 set http.host="127.0.0.1"
-deepseek-r1 set verbose="false"
+deepseek-r1 set --package http.port="8080"
+deepseek-r1 set --package http.host="127.0.0.1"
+deepseek-r1 set --package verbose="false"
 
 #
 # Auto engine selection
