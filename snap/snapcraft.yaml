@@ -199,8 +199,8 @@ parts:
     organize:
       "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
 
-  model-distill-qwen-7b-openvino-int4:
-    source: components/model-distill-qwen-7b-openvino-int4
+  model-distill-qwen-7b-ov-int4:
+    source: components/model-distill-qwen-7b-ov-int4
     plugin: dump
     override-build: |
       # At startup OVMS (single model mode) creates the mediapipe graph file inside the model directory.
@@ -214,7 +214,20 @@ parts:
 
       craftctl default
     organize:
-      "*": (component/model-distill-qwen-7b-openvino-int4)
+      "*": (component/model-distill-qwen-7b-ov-int4)
+
+  model-distill-qwen-7b-ov-int4-npu:
+    source: components/model-distill-qwen-7b-ov-int4-npu
+    plugin: dump
+    override-build: |
+      mediapipe_graph_path="DeepSeek-R1-Distill-Qwen-7B-ov-int4-npu/graph.pbtxt"
+      if [ ! -L "$mediapipe_graph_path" ]; then
+        ln -s /tmp/graph.pbtxt "$mediapipe_graph_path"
+      fi
+
+      craftctl default
+    organize:
+      "*": (component/model-distill-qwen-7b-ov-int4-npu)
 
   opencl-driver:
     # Includes the OpenCL runtime for Intel GPU support
@@ -334,10 +347,16 @@ components:
     description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
     version: *snap-version
 
-  model-distill-qwen-7b-openvino-int4:
+  model-distill-qwen-7b-ov-int4:
     type: standard
-    summary: DeepSeek R1 Qwen 7B GPU OpenVINO
-    description: Model with 7B parameters in OpenVINO format
+    summary: DeepSeek R1 Qwen 7B for Intel CPU and Intel GPU
+    description: Model with 7B parameters in OpenVINO IR format, quantized with INT4
+    version: *snap-version
+
+  model-distill-qwen-7b-ov-int4-npu:
+    type: standard
+    summary: DeepSeek R1 Qwen 7B for Intel NPU
+    description: Model with 7B parameters in OpenVINO IR format, quantized with INT4 and symmetric channel wise quantization to run on Intel NPU
     version: *snap-version
 
 apps:
