@@ -2,17 +2,12 @@ name: Validate engine manifests
 on: [pull_request]
 
 jobs:
-  verify-manifests:
+  validate-manifests:
     runs-on: [ self-hosted, linux, amd64, medium, noble ]
     steps:
-
-      - name: Install Git LFS
-        run: sudo apt-get update && sudo apt-get install -y git-lfs
-
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          lfs: true
           submodules: true
           token: ${{ secrets.SUBMODULE_PAT }}
 
@@ -23,5 +18,5 @@ jobs:
 
       - name: Validate
         run: |
-          cd cli/cmd/cli
+          cd cli/cmd/stack
           go run . debug validate-engines ../../../engines/**/*.yaml
