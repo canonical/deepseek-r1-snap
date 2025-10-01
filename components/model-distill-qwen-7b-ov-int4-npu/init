@@ -1,0 +1,10 @@
+#!/bin/bash -eu
+
+# For OVMS, the model is specified by passing the outer directory path, along with the model name.
+# e.g:
+#   --model_repository_path "$model_component_path"
+#   --source_model "$model_name"
+# The model name is used to open a subdirectory with the same name.
+# Therefore the model name should be the name of the subdirectory containing the model files.
+
+snapctl set model-name="DeepSeek-R1-Distill-Qwen-7B-ov-int4-npu"

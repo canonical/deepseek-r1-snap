@@ -43,9 +43,16 @@ jobs:
 
       - name: Download models
         run: |
+          # 1.5B model for llamacpp
           curl -L https://huggingface.co/unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf --output $GITHUB_WORKSPACE/components/model-distill-qwen-1-5b-q8-0-gguf/DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf
+          # 7B model for llamacpp
           curl -L https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf --output $GITHUB_WORKSPACE/components/model-distill-qwen-7b-q4-k-m-gguf/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf
-          git clone https://huggingface.co/helenai/DeepSeek-R1-Distill-Qwen-7B-ov-int4 $GITHUB_WORKSPACE/components/model-distill-qwen-7b-openvino-int4/DeepSeek-R1-Distill-Qwen-7B-ov-int4
+          # 7B model for OpenVINO on CPU or GPU
+          git clone --depth 1 https://huggingface.co/helenai/DeepSeek-R1-Distill-Qwen-7B-ov-int4 $GITHUB_WORKSPACE/components/model-distill-qwen-7b-ov-int4/DeepSeek-R1-Distill-Qwen-7B-ov-int4
+          git -C $GITHUB_WORKSPACE/components/model-distill-qwen-7b-ov-int4/DeepSeek-R1-Distill-Qwen-7B-ov-int4 lfs prune --force
+          # 7B model for OpenVINO on NPU
+          git clone --depth 1 https://huggingface.co/helenai/DeepSeek-R1-Distill-Qwen-7B-ov-int4-npu $GITHUB_WORKSPACE/components/model-distill-qwen-7b-ov-int4-npu/DeepSeek-R1-Distill-Qwen-7B-ov-int4-npu
+          git -C $GITHUB_WORKSPACE/components/model-distill-qwen-7b-ov-int4-npu/DeepSeek-R1-Distill-Qwen-7B-ov-int4-npu lfs prune --force
 
       - name: Build snap
         uses: canonical/action-build@v1

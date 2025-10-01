@@ -200,10 +200,9 @@ memory: 4G
 disk-space: 8G
 components:
   - &s openvino-model-server
-  - &m model-distill-qwen-7b-openvino-int4
+  - &m model-distill-qwen-7b-ov-int4
 configurations:
   server: *s
   model: *m
   target-device: GPU
-  model-name: DeepSeek-R1-Distill-Qwen-7B-ov-int4
   http.base-path: v3
