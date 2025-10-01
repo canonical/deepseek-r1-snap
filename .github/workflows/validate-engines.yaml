@@ -1,0 +1,22 @@
+name: Validate engine manifests
+on: [pull_request]
+
+jobs:
+  validate-manifests:
+    runs-on: [ self-hosted, linux, amd64, medium, noble ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          submodules: true
+          token: ${{ secrets.SUBMODULE_PAT }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.x'
+
+      - name: Validate
+        run: |
+          cd cli/cmd/stack
+          go run . debug validate-engines ../../../engines/**/*.yaml
