@@ -3,7 +3,7 @@ on: [pull_request]
 
 jobs:
   verify-manifests:
-    runs-on: [ self-hosted, linux, amd64, small, noble ]
+    runs-on: [ self-hosted, linux, amd64, medium, noble ]
     steps:
 
       - name: Install Git LFS
@@ -23,5 +23,5 @@ jobs:
 
       - name: Validate
         run: |
-          cd ml-snap-utils/cmd/cli # rename to cli/cmd/cli after https://github.com/canonical/deepseek-r1-snap/pull/113
+          cd cli/cmd/cli
           go run . debug validate-engines ../../../engines/**/*.yaml
