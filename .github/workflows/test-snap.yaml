@@ -49,12 +49,12 @@ jobs:
       TEST_DIR: test
 
     steps:
-      - name: Event data
+      - name: Show configuration
         run: |
-          echo ::notice::Snap channel:    ${{ inputs.channel }}%0A\
-          Job queue:       ${{ matrix.jobs.job_queue }}%0A\
-          Expected engine: ${{ matrix.jobs.expected_stack }}%0A\
-          Expected TPS:    ${{ matrix.jobs.expected_tps }}
+          echo ::notice::Channel: ${{ inputs.channel }}, \
+          Queue: ${{ matrix.jobs.job_queue }}, \
+          Engine: ${{ matrix.jobs.expected_engine }}, \
+          TPS: ${{ matrix.jobs.expected_tps }}
 
       - name: Checkout code
         uses: actions/checkout@v5

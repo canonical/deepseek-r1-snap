@@ -10,7 +10,7 @@ curl -Ls -o install_tools.sh https://raw.githubusercontent.com/canonical/hwcert-
 # install the scriptlets and other tools on the agent and the device, as necessary
 export TOOLS_PATH=tools
 source install_tools.sh $TOOLS_PATH
-[ ! "$?" -eq 0 ] && echo "Error: Failed to run installer" && exit 1
+[ ! "$?" -eq 0 ] && echo "::error::Failed to run tools installer" && exit 1
 
 echo "Installing agent dependencies"
 sudo apt-get install --yes bc
