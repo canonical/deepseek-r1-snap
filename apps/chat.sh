@@ -3,7 +3,7 @@
 "$SNAP"/bin/wait-for-server.sh
 
 port="$(deepseek-r1 get http.port)"
-model_name="$(qwen-vl get model-name 2>/dev/null || true)" # model name isn't always set
+model_name="$(deepseek-r1 get model-name 2>/dev/null || true)" # model name isn't always set
 
 # Normally the OpenAI API is hosted under http://server:port/v1. In some cases like with OpenVINO Model Server it is under http://server:port/v3
 api_base_path="$(deepseek-r1 get http.base-path)"
