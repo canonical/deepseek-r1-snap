@@ -66,7 +66,7 @@ if [[ -n "${SELECT_ENGINE}" ]]; then
   wait_for_snap_changes
 fi
 
-selected_engine=$(_run sudo snap get deepseek-r1 engine)
+selected_engine=$(_run "$SNAP_NAME" status --format=json | jq -r .engine)
 echo "Auto selected engine: $selected_engine"
 
 if [ "$EXPECTED_ENGINE" != "$selected_engine" ]; then
@@ -79,9 +79,7 @@ _run sudo snap start "$SNAP_NAME".server
 _run "git clone --depth 1 --branch v1.0.5 https://github.com/Yoosu-L/llmapibenchmark.git"
 _run snap run --shell "$SNAP_NAME" "/snap/$SNAP_NAME/current/bin/wait-for-server.sh"
 
-# If the model name option is set, use it when talking to the api
-model_name=$(_run sudo snap get deepseek-r1 model-name || echo "")
-benchmark_result=$(_run "cd llmapibenchmark/cmd && DEBUG=true go run . --base-url=http://localhost:8080/v1 --model=$model_name --concurrency=1 --format=json")
+benchmark_result=$(_run "cd llmapibenchmark/cmd && DEBUG=true go run . --base-url=http://localhost:8080/v1 --concurrency=1 --format=json")
 echo "$benchmark_result"
 
 result_tps=$(echo "$benchmark_result" | jq .results[0].generation_speed)
