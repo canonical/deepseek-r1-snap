@@ -20,3 +20,4 @@ configurations:
   server: *s
   model: *m
   http.base-path: v1
+  gpu-layers: 29

@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
-server="$SNAP_COMPONENTS/$(snapctl get server)"
-model="$SNAP_COMPONENTS/$(snapctl get model)"
+server="$SNAP_COMPONENTS/$(deepseek-r1 get server)"
+model="$SNAP_COMPONENTS/$(deepseek-r1 get model)"
 
 if [ ! -d "$model" ]; then
     echo "Missing component: $model"
@@ -20,7 +20,8 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$server/usr/lib/$ARCH_TRIPLET:$server/u
 
 # Other user changeable configs
 
-N_GPU_LAYERS="$(snapctl get n-gpu-layers)"
-if [ -z "$N_GPU_LAYERS" ]; then
-    N_GPU_LAYERS=33 # By default load all 33 layers on to GPU
+GPU_LAYERS="$(deepseek-r1 get gpu-layers)"
+if [[ -z "$GPU_LAYERS" ]]; then
+  echo "gpu-layers snap option is not set"
+  exit 1
 fi

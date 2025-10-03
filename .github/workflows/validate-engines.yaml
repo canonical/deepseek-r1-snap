@@ -18,5 +18,5 @@ jobs:
 
       - name: Validate
         run: |
-          cd cli/cmd/stack
+          cd cli/cmd/cli
           go run . debug validate-engines ../../../engines/**/*.yaml
