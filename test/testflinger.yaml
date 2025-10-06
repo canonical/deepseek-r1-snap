@@ -2,7 +2,6 @@ job_queue: $JOB_QUEUE
 
 provision_data:
   distro: noble
-  timeout_min: 20 # Normally takes around 10 minutes
 
 test_data:
   # Copy test scripts to the Testflinger Agent
