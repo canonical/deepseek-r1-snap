@@ -19,6 +19,10 @@ sudo apt-get install --yes bc
 # ensure device is available before continuing
 wait_for_ssh --allow-degraded || exit 1
 
+# Store machine hostname for logging
+dut_hostname=$(_run hostname)
+echo "Test machine: $dut_hostname"
+
 # Don't refresh snaps automatically
 _run sudo snap refresh --hold=3h --no-wait
 
@@ -69,7 +73,7 @@ fi
 selected_engine=$(_run "$SNAP_NAME" status --format=json | jq -r .engine)
 
 if [ "$EXPECTED_ENGINE" != "$selected_engine" ]; then
-  echo "::error::Incorrect engine selected: $EXPECTED_ENGINE != $selected_engine"
+  echo "::error::Machine: $dut_hostname, incorrect engine selected: $selected_engine"
   exit 1
 fi
 
@@ -82,11 +86,11 @@ benchmark_result=$(_run "cd llmapibenchmark/cmd && DEBUG=true go run . --base-ur
 echo "$benchmark_result"
 
 result_tps=$(echo "$benchmark_result" | jq .results[0].generation_speed)
-too_slow=$(echo "$result_tps < $EXPECTED_TPS" | bc -l)
+too_low=$(echo "$result_tps < $EXPECTED_TPS" | bc -l)
 
-echo "::notice::Machine: $HOSTNAME, Engine: $selected_engine, TPS: $result_tps"
+echo "::notice::Machine: $dut_hostname, Engine: $selected_engine, TPS: $result_tps"
 
-if [ "$too_slow" -eq 1 ]; then
-  echo "::error::Performance lower than expected: $result_tps < $EXPECTED_TPS"
+if [ "$too_low" -eq 1 ]; then
+  echo "::error::Machine: $dut_hostname, TPS too low: $result_tps"
   exit 1
 fi
