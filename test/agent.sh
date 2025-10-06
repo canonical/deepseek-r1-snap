@@ -67,7 +67,6 @@ if [[ -n "${SELECT_ENGINE}" ]]; then
 fi
 
 selected_engine=$(_run "$SNAP_NAME" status --format=json | jq -r .engine)
-echo "::notice::Selected engine: $selected_engine"
 
 if [ "$EXPECTED_ENGINE" != "$selected_engine" ]; then
   echo "::error::Incorrect engine selected: $EXPECTED_ENGINE != $selected_engine"
@@ -83,9 +82,9 @@ benchmark_result=$(_run "cd llmapibenchmark/cmd && DEBUG=true go run . --base-ur
 echo "$benchmark_result"
 
 result_tps=$(echo "$benchmark_result" | jq .results[0].generation_speed)
-echo "::notice::Measured TPS: $result_tps"
-
 too_slow=$(echo "$result_tps < $EXPECTED_TPS" | bc -l)
+
+echo "::notice::Machine: $HOSTNAME, Engine: $selected_engine, TPS: $result_tps"
 
 if [ "$too_slow" -eq 1 ]; then
   echo "::error::Performance lower than expected: $result_tps < $EXPECTED_TPS"
