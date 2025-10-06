@@ -18,9 +18,6 @@ jobs:
       fail-fast: false
       matrix:
         jobs:
-          - job_queue: 201909-27366 # Dell - XPS 13 7390 - Italia CML
-            expected_engine: cpu-avx512
-            expected_tps: 3 # Samples: 3.97, 3.35
           - job_queue: ampere-altra
             expected_engine: ampere-altra
             expected_tps: 9 # Samples: 10.39
@@ -30,15 +27,9 @@ jobs:
           - job_queue: ampere-one
             expected_engine: ampere-one
             expected_tps: 9 # Samples: 15.97, 9.93
-          - job_queue: hp-zbook-studio-156-inch-g8-mobile-workstation-pc
+          - job_queue: docker-nvidia
             expected_engine: cuda
-            expected_tps: 45 # Samples: 55.82, 48.41
-            install_nvidia_drivers: true
-            nvidia_drivers_version: 550
-            select_engine: cuda
-          - job_queue: hp-z4-g4-workstation
-            expected_engine: cuda
-            expected_tps: 7 # Samples: 14.72, 7.63
+            expected_tps: 10
             install_nvidia_drivers: true
             nvidia_drivers_version: 550
             select_engine: cuda
