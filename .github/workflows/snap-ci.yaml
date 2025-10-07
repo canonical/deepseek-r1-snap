@@ -60,6 +60,6 @@ jobs:
       # Requires STORE_LOGIN secret set. Export with:
       # snapcraft export-login --snaps deepseek-r1 --channels latest/edge/* --acls package_access,package_push,package_update,package_release --expires 2026-08-15T00:00:00Z
       - name: Publish snap
-        uses: canonical/stack-utils/.github/actions/snap-publish@main
+        uses: canonical/famous-models-dev/actions/publish@main
         with:
           store-credentials: ${{ secrets.STORE_LOGIN }}
