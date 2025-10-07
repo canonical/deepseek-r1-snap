@@ -1,6 +1,6 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 
-# The outer testflinger action uses groups for logging. Close its exisitng one, so we can use our own.
+# The outer testflinger action uses groups for logging. Close its existing one, so we can use our own.
 echo "::endgroup::"
 
 echo "::group::Installing hwcert tools"
