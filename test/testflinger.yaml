@@ -12,6 +12,7 @@ test_data:
   # Run commands on the Testflinger Agent
   test_cmds: |
     #!/bin/bash -eu
+    set +x
 
     # These vars are replaced by envsubst in the caller. Either in run.sh or the Github workflow.
     export SNAP_NAME=$SNAP_NAME

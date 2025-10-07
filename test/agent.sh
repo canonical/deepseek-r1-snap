@@ -78,7 +78,7 @@ if [[ -n "${SELECT_ENGINE}" ]]; then
   echo "::endgroup::"
 fi
 
-echo "::Checking selected engine"
+echo "::group::Checking selected engine"
 selected_engine=$(_run "$SNAP_NAME" status --format=json | jq -r .engine)
 
 if [ "$EXPECTED_ENGINE" != "$selected_engine" ]; then
