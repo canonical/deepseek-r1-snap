@@ -1,4 +1,4 @@
-name: Test snap
+name: Testflinger tests
 
 on:
   # Manual trigger
@@ -42,9 +42,6 @@ jobs:
     steps:
       - name: Show configuration
         run: |
-          # Disable tracing on the runner
-          set +x
-          
           echo ::notice::Channel: ${{ inputs.channel }}, \
           Queue: ${{ matrix.jobs.job_queue }}, \
           Engine: ${{ matrix.jobs.expected_engine }}, \
