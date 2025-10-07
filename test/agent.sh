@@ -80,6 +80,7 @@ fi
 
 echo "::group::Checking selected engine"
 selected_engine=$(_run "$SNAP_NAME" status --format=json | jq -r .engine)
+echo "Selected engine: $selected_engine"
 
 if [ "$EXPECTED_ENGINE" != "$selected_engine" ]; then
   echo "::error::Machine: $dut_hostname, incorrect engine selected: $selected_engine"
