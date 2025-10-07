@@ -1,4 +1,4 @@
-[submodule "cli"]
+[submodule "famous-models-cli"]
 	path = cli
 	url = https://github.com/canonical/famous-models-cli
 [submodule "famous-models-dev"]
