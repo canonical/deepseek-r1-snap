@@ -52,6 +52,9 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          submodules: true
+          token: ${{ secrets.SUBMODULE_PAT }}
 
       - name: Add config to testflinger job
         env:
