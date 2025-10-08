@@ -1,21 +1,46 @@
 name: Snap CI
 
 on:
-  pull_request:
-    branches: [ main ]
-    types:
-      - ready_for_review
+  # Use pull_request_target to grant write access to the PR
+  # This event runs from the context of the base of the PR rather than its head, affecting the default checkout behavior
+  pull_request_target:
+    types: [ labeled ]
+
   push:
     branches: [ main ]
+
   # Allow manual trigger
   workflow_dispatch:
 
-env:
-  SNAP_NAME: deepseek-r1
-
 jobs:
+  trigger:
+    name: Comment & trigger build
+    if: github.event_name == 'push' || 
+      (github.event_name == 'pull_request_target' && github.event.label.name == 'needs-build') 
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # needed to comment on PR
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Comment on the PR
+        if: github.event_name == 'pull_request_target'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          COMMIT_SHA="${{ github.event.pull_request.head.sha }}"
+          COMMIT_URL="${{ github.server_url }}/${{ github.repository }}/commit/$COMMIT_SHA"
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          
+          gh pr comment $PR_NUMBER --body "Snap build: [workflow run]($RUN_URL) | $COMMIT_URL"
+  
   build:
-    name: Build
+    name: Build & publish
+    needs: [trigger]
     strategy:
       fail-fast: false
       matrix:
@@ -40,6 +65,8 @@ jobs:
         with:
           submodules: true
           token: ${{ secrets.SUBMODULE_PAT }}
+          # When triggered by pull_request_target, checkout PR's HEAD (rather than base), otherwise use github.sha
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Download models
         run: |
@@ -63,3 +90,22 @@ jobs:
         uses: canonical/famous-models-dev/actions/publish@main
         with:
           store-credentials: ${{ secrets.STORE_LOGIN }}
+
+  clean:
+    name: Remove label
+    needs: [trigger, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # needed to remove the label
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        
+      - name: Remove 'needs-build' label
+        if: github.event_name == 'pull_request_target'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          gh pr edit $PR_NUMBER --remove-label "needs-build"
