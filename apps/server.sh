@@ -20,7 +20,7 @@ wait_for_components() {
     missing_components=()
     check_missing_components missing_components "$required_components"
 
-    max=20 # seconds
+    max=3600 # seconds
     interval=10
     elapsed=0
     while [ ${#missing_components[@]} -ne 0 ] && [ "$elapsed" -lt $max ]; do
