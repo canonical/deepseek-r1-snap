@@ -4,10 +4,10 @@ vendor: Intel Corporation
 grade: stable
 
 devices:
-  all:
+  allof:
     - type: cpu
       architecture: amd64
-  any:
+  anyof:
     - &intel-gpu
       type: gpu
       vendor-id: 8086 # Intel

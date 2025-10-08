@@ -3,7 +3,7 @@ description: Optimized for Ampere Altra CPUs
 vendor: Ampere Computing
 grade: stable
 devices:
-  all:
+  allof:
     - type: cpu
       architecture: arm64
       implementer-id: 0x41 # Arm Limited.

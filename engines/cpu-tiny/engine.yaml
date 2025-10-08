@@ -3,7 +3,7 @@ description: Use CPU, offering lower accuracy at higher speed
 vendor: Canonical Ltd
 grade: devel
 devices:
-  any:
+  anyof:
     - type: cpu
       architecture: amd64
       flags: [sse4_2, f16c, fma, avx, avx2]
