@@ -1,4 +1,4 @@
-name: Test snap
+name: Testflinger tests
 
 on:
   # Manual trigger
@@ -18,57 +18,51 @@ jobs:
       fail-fast: false
       matrix:
         jobs:
-          - job_queue: 201909-27366 # Dell - XPS 13 7390 - Italia CML
-            expected_stack: cpu-avx512
-            expected_tps: 3 # Samples: 3.97, 3.35
-          - job_queue: 202212-30936 # Ampere Altra
-            expected_stack: ampere-altra
+          - job_queue: ampere-altra
+            expected_engine: ampere-altra
             expected_tps: 9 # Samples: 10.39
-          - job_queue: 202303-31419 # Ampere Altra Max
-            expected_stack: ampere-altra
+          - job_queue: ampere-altra-max
+            expected_engine: ampere-altra
             expected_tps: 18 # Samples: 19.86
-          - job_queue: 202501-36266
-            expected_stack: ampere-one
+          - job_queue: ampere-one
+            expected_engine: ampere-one
             expected_tps: 9 # Samples: 15.97, 9.93
-          - job_queue: hp-zbook-studio-156-inch-g8-mobile-workstation-pc
-            select_stack: cuda
-            expected_stack: cuda
-            expected_tps: 45 # Samples: 55.82, 48.41
+          - job_queue: docker-nvidia
+            expected_engine: cuda
+            expected_tps: 10 # Samples: 32.6
             install_nvidia_drivers: true
             nvidia_drivers_version: 550
-          - job_queue: hp-z4-g4-workstation
-            select_stack: cuda
-            expected_stack: cuda
-            expected_tps: 7 # Samples: 14.72, 7.63
-            install_nvidia_drivers: true
-            nvidia_drivers_version: 550
+            select_engine: cuda
 
     runs-on: self-hosted-linux-amd64-jammy-private-endpoint-medium
 
     env:
-      TEST_DIR: test
+      TEST_DIR: dev/tests/testflinger
 
     steps:
-      - name: Event data
+      - name: Show configuration
         run: |
-          echo ::notice::Snap channel:   ${{ inputs.channel }}
-          echo ::notice::Job queue:      ${{ matrix.jobs.job_queue }}
-          echo ::notice::Expected stack: ${{ matrix.jobs.expected_stack }}
-          echo ::notice::Expected TPS:   ${{ matrix.jobs.expected_tps }}
+          echo ::notice::Channel: ${{ inputs.channel }}, \
+          Queue: ${{ matrix.jobs.job_queue }}, \
+          Engine: ${{ matrix.jobs.expected_engine }}, \
+          TPS: ${{ matrix.jobs.expected_tps }}
 
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          submodules: true
+          token: ${{ secrets.SUBMODULE_PAT }}
 
       - name: Add config to testflinger job
         env:
           SNAP_NAME: deepseek-r1
           SNAP_CHANNEL: ${{ inputs.channel }}
           JOB_QUEUE: ${{ matrix.jobs.job_queue }}
-          SELECT_STACK: ${{ matrix.jobs.select_stack }}
-          EXPECTED_STACK: ${{ matrix.jobs.expected_stack }}
+          EXPECTED_ENGINE: ${{ matrix.jobs.expected_engine }}
           EXPECTED_TPS: ${{ matrix.jobs.expected_tps }}
           INSTALL_NVIDIA_DRIVERS: ${{ matrix.jobs.install_nvidia_drivers }}
           NVIDIA_DRIVERS_VERSION: ${{ matrix.jobs.nvidia_drivers_version }}
+          SELECT_ENGINE: ${{ matrix.jobs.select_engine }}
 
         run: |
           envsubst \
