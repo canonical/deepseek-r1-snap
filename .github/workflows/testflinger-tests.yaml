@@ -75,7 +75,7 @@ jobs:
           cat ${{ env.TEST_DIR }}/testflinger.yaml
 
       - name: Run testflinger job
-        uses: jpm-canonical/testflinger/.github/actions/submit@action-exit-reasons
+        uses: canonical/testflinger/.github/actions/submit@main
         with:
           poll: true
           job-path: ${{ env.TEST_DIR }}/testflinger.yaml
