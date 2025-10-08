@@ -1,4 +1,4 @@
-#!/bin/bash -ue
+#!/bin/bash -eu
 
 check_missing_components() {
     local -n missing=$1 # nameref for output array
@@ -25,7 +25,7 @@ wait_for_components() {
     elapsed=0
     while [ ${#missing_components[@]} -ne 0 ] && [ "$elapsed" -lt $max ]; do
         ((elapsed+=interval))
-        echo "Missing required snap components: [${missing_components[*]}] ($elapsed/${max}s)"
+        echo "Waiting for required snap components: [${missing_components[*]}] ($elapsed/${max}s)"
         sleep "$interval"
         
         check_missing_components missing_components "$required_components"
