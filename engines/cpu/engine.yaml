@@ -3,7 +3,7 @@ description: Use CPU, good accuracy with low footprints
 vendor: Canonical Ltd
 grade: stable
 devices:
-  any:
+  anyof:
     - type: cpu
       architecture: amd64
       flags: [sse4_2, f16c, fma, avx, avx2]

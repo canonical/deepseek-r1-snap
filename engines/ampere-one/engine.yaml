@@ -3,7 +3,7 @@ description: Optimized for Ampere One CPUs
 vendor: Ampere Computing
 grade: stable
 devices:
-  any:
+  anyof:
     - type: cpu
       architecture: arm64
       implementer-id: 0xc0 # Ampere Computing

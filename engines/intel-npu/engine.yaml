@@ -3,10 +3,10 @@ description: Use Intel NPUs (Core Ultra series)
 vendor: Intel Corporation
 grade: stable
 devices:
-  all:
+  allof:
     - type: cpu
       architecture: amd64
-  any:    
+  anyof:
     # Lunar Lake NPU
     - type: npu
       vendor-id: 0x8086 # Intel Corporation
