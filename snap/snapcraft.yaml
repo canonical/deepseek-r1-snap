@@ -44,7 +44,14 @@ plugs:
   # Also, it works around https://github.com/canonical/deepseek-r1-snap/issues/23
   home:
     read: all
-    
+
+slots:
+  socket-provider:
+    interface: content
+    source:
+      read:
+       - $SNAP_DATA/share/connection.json
+
 hooks:
   install:
     plugs:
