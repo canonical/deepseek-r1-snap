@@ -50,7 +50,7 @@ slots:
     interface: content
     source:
       read:
-       - $SNAP_DATA/share/connection.json
+       - $SNAP_DATA/share
 
 hooks:
   install:
