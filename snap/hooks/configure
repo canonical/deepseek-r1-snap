@@ -3,4 +3,4 @@
 #
 # Update connection.json for content interface
 #
-deepseek-r1 status --format=json >$SNAP_DATA/share/connection.json
+deepseek-r1 status --format=json >$SNAP_DATA/connection.json
