@@ -1,6 +1,6 @@
 [submodule "famous-models-cli"]
 	path = cli
-	url = https://github.com/canonical/famous-models-cli
+	url = https://github.com/canonical/inference-snaps-cli.git
 [submodule "famous-models-dev"]
 	path = dev
-	url = https://github.com/canonical/famous-models-dev
+	url = https://github.com/canonical/inference-snaps-dev.git
