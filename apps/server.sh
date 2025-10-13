@@ -44,5 +44,6 @@ wait_for_components() {
 
 wait_for_components
 
+deepseek-r1 status --format=json >$SNAP_DATA/share/connection.json || true
 engine="$(deepseek-r1 show-engine | yq .name)"
 exec "$SNAP/engines/$engine/server" "$@"
