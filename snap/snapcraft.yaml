@@ -1,6 +1,6 @@
 name: deepseek-r1
 base: core24
-version: &snap-version "v3" # Refers to DeepSeek V3 base
+version: &snap-version "v1.0.0" # DeepSeek-R1 Github repo release version
 summary: DeepSeek R1
 description: |
   This snap installs an optimized environment for inference with the
