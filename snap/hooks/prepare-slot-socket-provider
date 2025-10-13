@@ -1,0 +1,6 @@
+#!/bin/bash -eu
+#
+# Update connection.json for content interface
+#
+mkdir -p $SNAP_DATA/share
+deepseek-r1 status --format=json >$SNAP_DATA/share/connection.json || true

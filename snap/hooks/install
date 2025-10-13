@@ -27,9 +27,3 @@ elif lscpu -V &>/dev/null; then
 else
   echo "hardware-observe interface not auto connected. Skip auto engine selection."
 fi
-
-#
-# Generate connection.json for content interface
-#
-mkdir -p $SNAP_DATA/share
-deepseek-r1 status --format=json >$SNAP_DATA/share/connection.json || true
