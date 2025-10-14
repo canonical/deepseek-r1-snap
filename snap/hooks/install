@@ -11,7 +11,7 @@ exec 2> >(logger --stderr --priority error --tag=$tag)
 # Set generic configurations
 #
 
-deepseek-r1 set --package http.port="8080"
+deepseek-r1 set --package http.port="8324"
 deepseek-r1 set --package http.host="127.0.0.1"
 deepseek-r1 set --package verbose="false"
 
