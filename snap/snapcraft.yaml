@@ -80,7 +80,7 @@ parts:
   go-chat-client:
     source: https://github.com/jpm-canonical/go-chat-client.git
     source-type: git
-    source-tag: v1.0.0-beta
+    source-tag: v1.0.0-beta.1
     plugin: go
     build-snaps:
       - go/1.24/stable
