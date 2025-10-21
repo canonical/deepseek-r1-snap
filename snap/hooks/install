@@ -7,6 +7,11 @@ exec 1> >(tee >(logger --tag=$tag))
 # Redirect stderr to stderr+syslog
 exec 2> >(logger --stderr --priority error --tag=$tag)
 
+# Clear the cached machine info
+# This can exist even on a fresh install if the snap was previously installed
+# and the system hasn't been rebooted ever since.
+rm --force /tmp/machine-info.json
+
 #
 # Set generic configurations
 #

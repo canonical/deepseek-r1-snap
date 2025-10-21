@@ -7,3 +7,5 @@ exec 1> >(tee >(logger --tag=$tag))
 # Redirect stderr to stderr+syslog
 exec 2> >(logger --stderr --priority error --tag=$tag)
 
+# Clear the cached machine info to avoid data model incompatibilities
+rm --force /tmp/machine-info.json
