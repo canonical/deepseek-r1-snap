@@ -50,6 +50,7 @@ hooks:
     plugs:
       # For hardware detection
       - hardware-observe
+      - kernel-module-observe
       - opengl
 
 parts:
@@ -358,8 +359,9 @@ apps:
     completer: bin/completion.bash
     plugs:
       # For hardware detection
-      - opengl
       - hardware-observe
+      - kernel-module-observe
+      - opengl
       # To access server over network socket
       - network
     environment:
