@@ -107,6 +107,16 @@ parts:
       # move everything, including the staged packages
       "*": (component/llamacpp)
 
+  llamacpp-license:
+    plugin: nil
+    source: https://github.com/ggerganov/llama.cpp.git
+    source-tag: *llamacpp-tag
+    source-depth: 1
+    override-build: |
+      mkdir -p $CRAFT_PART_INSTALL/usr/share/doc/llama-cpp/
+      cp $CRAFT_PART_SRC/LICENSE $CRAFT_PART_INSTALL/usr/share/doc/llama-cpp/
+      cp -r $CRAFT_PART_SRC/licenses/* $CRAFT_PART_INSTALL/usr/share/doc/llama-cpp/
+
   llamacpp-legacy:
     <<: *llamacpp-part
     cmake-parameters:
