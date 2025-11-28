@@ -259,8 +259,8 @@ parts:
 
   openvino-model-server:
     plugin: dump
-    source: &ovms-url https://github.com/openvinotoolkit/model_server/releases/download/v2025.3/ovms_ubuntu24_python_on.tar.gz
-    source-checksum: &ovms-checksum sha256/64e9c3f4b3bdfcd9e33e7319d17cd2a30c110bb8e33991413b6f51921cafe845
+    source: https://github.com/openvinotoolkit/model_server/releases/download/v2025.3/ovms_ubuntu24_python_on.tar.gz
+    source-checksum: sha256/64e9c3f4b3bdfcd9e33e7319d17cd2a30c110bb8e33991413b6f51921cafe845
     organize:
       "*": (component/openvino-model-server)
     stage-packages:
@@ -269,12 +269,13 @@ parts:
       - libpython3.12
 
   openvino-model-server-license:
-    plugin: nil
-    source: *ovms-url
-    source-checksum: *ovms-checksum
+    plugin: dump
+    source: https://github.com/openvinotoolkit/model_server.git
+    source-depth: 1
     override-build: |
-      mkdir -p $CRAFT_PART_INSTALL/usr/share/doc/openvino-model-server
-      cp $CRAFT_PART_SRC/LICENSE $CRAFT_PART_INSTALL/usr/share/doc/openvino-model-server/
+      license_dir=$CRAFT_PART_INSTALL/usr/share/doc/openvino-model-server/
+      mkdir -p $license_dir
+      cp LICENSE $license_dir
 
   openvino-model-server-python-dependencies:
     plugin: python
