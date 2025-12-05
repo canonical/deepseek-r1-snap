@@ -72,7 +72,7 @@ parts:
       - go/1.24/stable
     stage-packages:
       - pciutils
-      - nvidia-utils # for Nvidia vRAM and Cuda Capability detection
+      - nvidia-utils-580 # for Nvidia vRAM and Cuda Capability detection
       - clinfo # for Intel GPU vRAM detection
     organize:
       bin/cli: bin/deepseek-r1
@@ -143,10 +143,11 @@ parts:
     build-packages:
       - to amd64: # see also the overrides
         - nvidia-cuda-toolkit
-    # stage-packages:
-    #   - libgomp1
-    #   - libcudart12
-    #   - libcublas12
+    stage-packages:
+      - libgomp1
+      # This needs to match the CUDA version in the build environment
+      - libcudart12
+      - libcublas12
     cmake-parameters:
       - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
