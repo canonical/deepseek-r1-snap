@@ -23,7 +23,7 @@ jobs:
       pull-requests: write # needed to comment on PR
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Comment on the PR
         if: github.event_name == 'pull_request_target'
@@ -61,7 +61,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y git-lfs
 
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: true
           token: ${{ secrets.SUBMODULE_PAT }}
@@ -100,7 +100,7 @@ jobs:
       pull-requests: write # needed to remove the label
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         
       - name: Remove 'needs-build' label
         if: github.event_name == 'pull_request_target'
