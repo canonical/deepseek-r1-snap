@@ -87,7 +87,7 @@ jobs:
       # Requires STORE_LOGIN secret set. Export with:
       # snapcraft export-login --snaps deepseek-r1 --channels latest/edge/* --acls package_access,package_push,package_update,package_release --expires 2026-08-15T00:00:00Z
       - name: Publish snap
-        uses: canonical/inference-snaps-dev/actions/publish@legacy/v1
+        uses: canonical/inference-snaps-dev/actions/publish@v1
         with:
           store-credentials: ${{ secrets.STORE_LOGIN }}
 
