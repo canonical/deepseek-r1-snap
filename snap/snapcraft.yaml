@@ -29,8 +29,6 @@ layout:
   # Intel icd files use an absolute path to Intel OpenCL shared objects. Use a layout to mount the so files at the expected location
   /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/intel-opencl:
     bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/intel-opencl
-  # NVIDIA icd specifies only the shared object name: libnvidia-opencl.so.1
-  # libnvidia-opencl.so.1 is inside /snap/stack-utils/x3/usr/lib/x86_64-linux-gnu/, which is already in LD_LIBRARY_PATH
 
 plugs:
   intel-npu:
@@ -76,6 +74,10 @@ parts:
       - clinfo # for Intel GPU vRAM detection
     organize:
       bin/cli: bin/deepseek-r1
+    prime:
+      # Exclude nvidia icd to avoid clinfo from looking up properties for nvidia GPUs.
+      # See: https://github.com/canonical/inference-snaps/issues/148
+      - -etc/OpenCL/vendors/nvidia.icd
 
   go-chat-client:
     source: https://github.com/jpm-canonical/go-chat-client.git
