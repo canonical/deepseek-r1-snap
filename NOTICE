@@ -1,0 +1,7 @@
+This snap package contains multiple software components, each governed by its own license.
+
+DeepSeek R1 model is provided under the MIT License. See LICENSE-deepseek-r1 for details.
+
+The snap packaging code is licensed separately under the terms specified in the LICENSE file.
+
+All artifacts and dependencies included within this snap package are subject to their respective licenses. License documentation for dependencies is available at /snap/<snap-name>/current/usr/share/doc within the installed snap package.
