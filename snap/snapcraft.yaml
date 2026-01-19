@@ -92,6 +92,26 @@ parts:
     stage-snaps:
       - yq # install hook
 
+  component-local-files:
+    plugin: dump
+    source: components
+    organize:
+      "llamacpp/*": (component/llamacpp)
+      "llamacpp-aio/*": (component/llamacpp-aio)
+      "llamacpp-aio-ampereone/*": (component/llamacpp-aio-ampereone)
+      "llamacpp-avx512/*": (component/llamacpp-avx512)
+      "llamacpp-cuda/*": (component/llamacpp-cuda)
+      "llamacpp-legacy/*": (component/llamacpp-legacy)
+      "model-distill-qwen-1-5b-q8-0-gguf/*": (component/model-distill-qwen-1-5b-q8-0-gguf)
+      "model-distill-qwen-7b-ov-int4/*": (component/model-distill-qwen-7b-ov-int4)
+      "model-distill-qwen-7b-ov-int4-npu/*": (component/model-distill-qwen-7b-ov-int4-npu)
+      "model-distill-qwen-7b-q4-k-m-gguf/*": (component/model-distill-qwen-7b-q4-k-m-gguf)
+      "openvino-model-server/*": (component/openvino-model-server)
+      # Add other components here
+    prime:
+      # Exclude everything not explicitly organized
+      - -*
+
   llamacpp: &llamacpp-part
     source: https://github.com/ggerganov/llama.cpp.git
     source-tag: &llamacpp-tag b5794

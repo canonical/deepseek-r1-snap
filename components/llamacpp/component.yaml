@@ -1,0 +1,2 @@
+environment:
+  - OPENAI_BASE_PATH=/v1
