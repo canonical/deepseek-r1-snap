@@ -11,19 +11,19 @@ exec 2> >(logger --stderr --priority error --tag=$tag)
 # Set generic configurations
 #
 
-deepseek-r1 set --package http.port="8324"
-deepseek-r1 set --package http.host="127.0.0.1"
-deepseek-r1 set --package verbose="false"
+modelctl set --package http.port="8324"
+modelctl set --package http.host="127.0.0.1"
+modelctl set --package verbose="false"
 
 #
 # Auto engine selection
 #
 
 if snapctl is-connected hardware-observe; then
-  deepseek-r1 use-engine --auto --assume-yes
+  modelctl use-engine --auto --assume-yes
 elif lscpu -V &>/dev/null; then
   echo "Able to access hardware info without hardware-observe interface connection: assuming dev mode installation."
-  deepseek-r1 use-engine --auto --assume-yes
+  modelctl use-engine --auto --assume-yes
 else
   echo "hardware-observe interface not auto connected. Skip auto engine selection."
 fi

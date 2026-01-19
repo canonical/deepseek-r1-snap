@@ -64,7 +64,8 @@ parts:
       "*": engines/
 
   cli:
-    source: cli # this is a private git submodule which must be cloned separately
+    source: https://github.com/canonical/inference-snaps-cli.git
+    source-tag: v1.0.0-beta.27
     plugin: go
     build-snaps:
       - go/1.24/stable
@@ -72,20 +73,16 @@ parts:
       - pciutils
       - nvidia-utils-580 # for Nvidia vRAM and Cuda Capability detection
       - clinfo # for Intel GPU vRAM detection
+    override-build: |
+      craftctl default
+      # For tab completion
+      ln --symbolic ./modelctl $CRAFT_PART_INSTALL/bin/deepseek-r1
     organize:
-      bin/cli: bin/deepseek-r1
+      bin/cli: bin/modelctl
     prime:
       # Exclude nvidia icd to avoid clinfo from looking up properties for nvidia GPUs.
       # See: https://github.com/canonical/inference-snaps/issues/148
       - -etc/OpenCL/vendors/nvidia.icd
-
-  go-chat-client:
-    source: https://github.com/jpm-canonical/go-chat-client.git
-    source-type: git
-    source-tag: v1.0.0-beta.1
-    plugin: go
-    build-snaps:
-      - go/1.24/stable
 
   common-runtime-dependencies:
     plugin: nil
@@ -394,12 +391,10 @@ apps:
     completer: bin/completion.bash
     plugs:
       # For hardware detection
-      - opengl
       - hardware-observe
+      - opengl
       # To access server over network socket
       - network
-    environment:
-      CHAT: $SNAP/bin/chat.sh
     
   server:
     command: bin/server.sh
