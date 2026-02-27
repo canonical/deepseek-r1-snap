@@ -96,12 +96,11 @@ parts:
       - yq # install hook
 
   llamacpp: &llamacpp-part
-    source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: &llamacpp-tag b5794
+    source: https://github.com/ggml-org/llama.cpp.git
+    source-tag: &llamacpp-tag b8173
     source-depth: 1
     plugin: cmake
     cmake-parameters:
-      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
     stage-packages:
       - libgomp1
@@ -112,7 +111,6 @@ parts:
   llamacpp-legacy:
     <<: *llamacpp-part
     cmake-parameters:
-      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
       - -DGGML_F16C=OFF
       - -DGGML_FMA=OFF
@@ -124,7 +122,6 @@ parts:
   llamacpp-avx512:
     <<: *llamacpp-part
     cmake-parameters:
-      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
       - -DGGML_AVX512=ON
     organize:
@@ -141,7 +138,6 @@ parts:
       - libcudart12
       - libcublas12
     cmake-parameters:
-      - -DLLAMA_CURL=OFF
       - -DGGML_NATIVE=OFF
       - -DGGML_CUDA=ON
       - -DCMAKE_CUDA_ARCHITECTURES=all-major
@@ -262,8 +258,8 @@ parts:
 
   openvino-model-server:
     plugin: dump
-    source: https://github.com/openvinotoolkit/model_server/releases/download/v2025.3/ovms_ubuntu24_python_on.tar.gz
-    source-checksum: sha256/64e9c3f4b3bdfcd9e33e7319d17cd2a30c110bb8e33991413b6f51921cafe845
+    source: https://github.com/openvinotoolkit/model_server/releases/download/v2026.0/ovms_ubuntu24_python_on.tar.gz
+    source-checksum: sha256/264a58794e9ead355156ebf55f43e19e6de71bab07b5b19fa9c23e4ee83d9faf
     organize:
       "*": (component/openvino-model-server)
     stage-packages:
@@ -358,7 +354,7 @@ components:
     type: standard
     summary: OpenVINO Model Server
     description: OpenVINO Model Server for serving models
-    version: v2025.3
+    version: v2026.0
 
   # 
   # Models
