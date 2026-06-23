@@ -8,4 +8,4 @@ prime/
 squashfs-root
 
 # Weights (fetched by download-models.sh)
-components/model*/*.gguf
+components/
