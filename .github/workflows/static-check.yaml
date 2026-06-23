@@ -1,0 +1,30 @@
+name: Static check
+on: [pull_request]
+
+jobs:
+  validate:
+    runs-on: [ ubuntu-latest ]
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          # Prevent usage of simulated merge commit of PR
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Checkout inference-snap-cli 
+        uses: actions/checkout@v6
+        with:
+          repository: canonical/inference-snaps-cli
+          path: inference-snaps-cli
+          ref: v2.0.0-beta.2
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.x'
+
+      - name: Validate engines
+        run: |
+          cd inference-snaps-cli/cmd/cli
+          go run . debug validate-engines ../../../engines/**/*.yaml

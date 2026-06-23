@@ -1,7 +1,13 @@
 name: cpu-tiny
-description: Use CPU, offering lower accuracy at higher speed
+summary: CPU-optimized for workstations, offering lower accuracy at higher speed
+description: |
+  This engine uses llama.cpp with a smaller model.
+  
+  It is optimized for both amd64 and arm64 CPU architectures, for a wide range
+  of architecture variants.
 vendor: Canonical Ltd
-grade: devel
+experimental: true
+
 devices:
   anyof:
     - type: cpu
@@ -9,13 +15,14 @@ devices:
       flags: [sse4_2, f16c, fma, avx, avx2]
     - type: cpu
       architecture: arm64
-      features: [asimd] # for ARMv8 ASIMD includes NEON instruction set
-memory: 2G
-disk-space: 4G
-components:
-  - &s llamacpp
-  - &m model-distill-qwen-1-5b-q8-0-gguf
+      features: [asimd]  # for ARMv8 ASIMD includes NEON instruction set
+
+runtime: llama-cpp-cpu
+
+model:
+  default: distill-qwen-1-5b-q8-0-gguf
+  options:
+    - distill-qwen-1-5b-q8-0-gguf
+
 configurations:
-  server: *s
-  model: *m
-  http.base-path: v1
+  sleep-idle-seconds: 600

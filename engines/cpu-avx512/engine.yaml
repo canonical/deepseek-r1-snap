@@ -1,18 +1,24 @@
 name: cpu-avx512
-description: For CPUs with AVX512 support
+summary: CPU-optimized for workstations with AVX512 support
+description: |
+  This engine uses llama.cpp.
+  
+  It is optimized for amd64 CPUs with AVX512 instruction set support.
 vendor: Canonical Ltd
-grade: stable
+
 devices:
   anyof:
     - type: cpu
       architecture: amd64
       flags: [sse4_2, f16c, fma, avx, avx2, avx512f, avx512dq, avx512bw]
-memory: 4G
-disk-space: 8G
-components:
-  - &s llamacpp-avx512
-  - &m model-distill-qwen-7b-q4-k-m-gguf
+
+runtime: llama-cpp-cpu
+
+model:
+  default: distill-qwen-7b-q4-k-m-gguf
+  options:
+    - distill-qwen-7b-q4-k-m-gguf
+    - distill-qwen-1-5b-q8-0-gguf
+
 configurations:
-  server: *s
-  model: *m
-  http.base-path: v1
+  sleep-idle-seconds: 600

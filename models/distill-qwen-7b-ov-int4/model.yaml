@@ -1,0 +1,21 @@
+id: distill-qwen-7b-ov-int4
+name: 7b
+
+description: DeepSeek R1 Distill Qwen 7B, a reasoning model distilled from DeepSeek R1, optimized for OpenVINO
+model-card-url: https://huggingface.co/llmware/DeepSeek-R1-Distill-Qwen-7B-ov-int4
+quantization: INT4
+
+disk-size: 4500M
+
+capabilities:
+  - text
+  - thinking
+
+components:
+  - model-distill-qwen-7b-ov-int4
+
+environment:
+  # For OVMS single-model mode, the model is referenced by name and the path to
+  # the directory containing the OpenVINO IR files.
+  - MODEL_NAME=DeepSeek-R1-Distill-Qwen-7B-ov-int4
+  - MODEL_PATH=$SNAP_COMPONENTS/model-distill-qwen-7b-ov-int4/DeepSeek-R1-Distill-Qwen-7B-ov-int4

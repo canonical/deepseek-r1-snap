@@ -1,0 +1,22 @@
+servers:
+  tensorflow-serving:
+    protocol: http
+    base-path: /v1
+  kserve:
+    protocol: http
+    base-path: /v2
+  openai:
+    protocol: http
+    base-path: /v3
+
+environment:
+  # Add OVMS binaries
+  - PATH=$PATH:$SNAP_COMPONENTS/openvino-model-server/bin
+  # Add staged shared objects
+  - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SNAP_COMPONENTS/openvino-model-server/lib
+  - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SNAP_COMPONENTS/openvino-model-server/usr/lib/$ARCH_TRIPLET
+  - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SNAP_COMPONENTS/openvino-model-server/usr/local/lib
+  - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SNAP/usr/local/lib
+
+components:
+  - openvino-model-server

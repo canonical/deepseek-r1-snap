@@ -7,3 +7,14 @@ exec 1> >(tee >(logger --tag=$tag))
 # Redirect stderr to stderr+syslog
 exec 2> >(logger --stderr --priority error --tag=$tag)
 
+#
+# WSL workaround
+#
+# When refreshing, these symlinks might already exist, so force create.
+ln -sfn /var/lib/snapd/hostfs/usr/lib/wsl/lib $SNAP_COMMON/usr/lib/wsl/lib
+ln -sfn /var/lib/snapd/hostfs/usr/lib/wsl/drivers $SNAP_COMMON/usr/lib/wsl/drivers
+
+#
+# Refresh the active engine
+#
+modelctl use-engine --fix --assume-yes --fallback=cpu

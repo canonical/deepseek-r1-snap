@@ -1,18 +1,25 @@
 name: cpu-legacy
-description: For legacy CPUs with only SSE4.2 (2008) and AVX (2011) support
+summary: CPU-optimized for legacy workstations
+description: |
+  This engine uses llama.cpp.
+  
+  It is optimized for legacy amd64 CPUs with only SSE4.2 (2008) and AVX (2011)
+  instruction set support.
 vendor: Canonical Ltd
-grade: stable
+
 devices:
   anyof:
     - type: cpu
       architecture: amd64
       flags: [sse4_2, avx]
-memory: 4G
-disk-space: 8G
-components:
-  - &s llamacpp-legacy
-  - &m model-distill-qwen-7b-q4-k-m-gguf
+
+runtime: llama-cpp-cpu
+
+model:
+  default: distill-qwen-7b-q4-k-m-gguf
+  options:
+    - distill-qwen-7b-q4-k-m-gguf
+    - distill-qwen-1-5b-q8-0-gguf
+
 configurations:
-  server: *s
-  model: *m
-  http.base-path: v1
+  sleep-idle-seconds: 600

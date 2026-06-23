@@ -1,6 +1,4 @@
-[submodule "inference-snaps-cli"]
-	path = cli
-	url = https://github.com/canonical/inference-snaps-cli.git
 [submodule "inference-snaps-dev"]
-	path = dev
-	url = https://github.com/canonical/inference-snaps-dev.git
+        path = dev
+        url = https://github.com/canonical/inference-snaps-dev.git
+        branch = v2

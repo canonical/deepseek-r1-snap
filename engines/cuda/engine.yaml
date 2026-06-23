@@ -1,7 +1,11 @@
 name: cuda
-description: Use CUDA and Nvidia GPUs
+summary: CUDA-optimized for NVIDIA GPUs
+description: |
+  This engine uses llama.cpp with the CUDA backend.
+  
+  It is optimized for NVIDIA GPUs.
 vendor: Canonical Ltd
-grade: stable
+
 devices:
   allof:
     - type: cpu
@@ -10,14 +14,14 @@ devices:
     - type: gpu
       vendor-id: 0x10de # Nvidia Corporation
       vram: 5G
-      # compute-capability: 5.0
-memory: 4G
-disk-space: 8G
-components:
-  - &s llamacpp-cuda
-  - &m model-distill-qwen-7b-q4-k-m-gguf
+
+runtime: llama-cpp-cuda
+
+model:
+  default: distill-qwen-7b-q4-k-m-gguf
+  options:
+    - distill-qwen-7b-q4-k-m-gguf
+    - distill-qwen-1-5b-q8-0-gguf
+
 configurations:
-  server: *s
-  model: *m
-  http.base-path: v1
-  gpu-layers: 29
+  sleep-idle-seconds: 600
