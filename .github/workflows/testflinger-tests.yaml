@@ -45,6 +45,21 @@ jobs:
             select-engine: cuda
             test-chat-tps: true
             expected-tps: 9.4
+          
+          - job-queue: maas-systemtests-amd64
+            provision-data: "distro: noble"
+            select-engine: cpu
+            test-chat-tps: true
+
+          - job-queue: 202111-29603 # Alder Lake, GPU 8086:4680
+            provision-data: "distro: noble"
+            select-engine: intel-gpu
+            test-chat-tps: true
+          
+          - job-queue: 202111-29603 # Alder Lake, GPU 8086:4680
+            provision-data: "distro: noble"
+            select-engine: intel-cpu
+            test-chat-tps: true
 
     uses: canonical/inference-snaps-testing/.github/workflows/test-snap.yaml@v1
     secrets: inherit
