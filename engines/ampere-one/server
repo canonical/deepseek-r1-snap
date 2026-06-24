@@ -2,7 +2,6 @@
 
 port="$(modelctl get http.port)"
 host="$(modelctl get http.host)"
-sleep_idle_seconds="$(modelctl get sleep-idle-seconds)"
 
 set -x
 # --threads/--threads-batch 40 and --no-mmap are tuned for Ampere One CPUs.
@@ -17,5 +16,4 @@ exec llama-server \
   --port "$port" \
   --host "$host" \
   --no-warmup \
-  --sleep-idle-seconds "$sleep_idle_seconds" \
   "$@"
