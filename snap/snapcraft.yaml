@@ -231,6 +231,12 @@ parts:
     source:
       - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-amd64.tar.gz
       - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-arm64.tar.gz
+    override-build: |
+      # Move license files to be included in the snap, not the component
+      mkdir -p $CRAFT_PRIME/usr/share/doc/
+      mv licenses $CRAFT_PRIME/usr/share/doc/llama.cpp
+
+      craftctl default
     stage-packages:
       - libgomp1
     organize:
@@ -241,6 +247,12 @@ parts:
     source:
       - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-amd64+cuda12.9.tar.gz
       - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-arm64+cuda12.9.tar.gz
+    override-build: |
+      # Move license files to be included in the snap, not the component
+      mkdir -p $CRAFT_PRIME/usr/share/doc/
+      mv licenses $CRAFT_PRIME/usr/share/doc/llama.cpp-cuda
+
+      craftctl default
     stage-packages:
       - libgomp1
     organize:
@@ -276,6 +288,15 @@ parts:
   openvino-model-server:
     plugin: dump
     source: https://github.com/openvinotoolkit/model_server/releases/download/v2026.2/ovms_ubuntu24_2026.2.0_python_off.tar.gz
+    override-build: |
+      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
+        license_dir=$CRAFT_PRIME/usr/share/doc/openvino-model-server
+        mkdir -p $license_dir
+        mv LICENSE $license_dir/
+        mv thirdparty-licenses $license_dir/
+
+        craftctl default
+      fi
     stage-packages:
       - libxml2
       - libcurl4
@@ -285,7 +306,6 @@ parts:
     # This part is only for amd64
     override-pull: &amd64-only |
       [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ] && craftctl default || exit 0
-    override-build: *amd64-only
     override-stage: *amd64-only
     override-prime: *amd64-only
 
@@ -336,28 +356,6 @@ parts:
       cp NOTICE $license_dir/
       cp $SNAPCRAFT_PROJECT_DIR/LICENSE $license_dir/
       cp $SNAPCRAFT_PROJECT_DIR/LICENSE-deepseek-r1 $license_dir/
-
-  # Engine licenses are added via dedicated parts so the catch-all organize
-  # rules of the engine parts do not move them into their components.
-  llamacpp-license:
-    plugin: nil
-    source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: b9611
-    source-depth: 1
-    override-build: |
-      license_dir=$CRAFT_PART_INSTALL/usr/share/doc/llama.cpp
-      mkdir -p $license_dir
-      cp $CRAFT_PART_SRC/LICENSE $license_dir/
-      cp -r $CRAFT_PART_SRC/licenses/* $license_dir/
-
-  openvino-model-server-license:
-    plugin: nil
-    source: https://github.com/openvinotoolkit/model_server.git
-    source-depth: 1
-    override-build: |
-      license_dir=$CRAFT_PART_INSTALL/usr/share/doc/openvino-model-server
-      mkdir -p $license_dir
-      cp LICENSE $license_dir/
 
 components:
   model-distill-qwen-1-5b-q8-0-gguf:
