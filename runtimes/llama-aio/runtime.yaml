@@ -1,0 +1,13 @@
+servers:
+  openai:
+    protocol: http
+    base-path: /v1
+
+environment:
+  # Add llama-aio binaries
+  - PATH=$PATH:$SNAP_COMPONENTS/llama-aio/bin
+  # Add llama-aio-built shared libraries
+  - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SNAP_COMPONENTS/llama-aio/lib
+
+components:
+  - llama-aio

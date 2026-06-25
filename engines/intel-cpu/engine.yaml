@@ -1,20 +1,20 @@
 name: intel-cpu
-description: Use Intel CPUs
+summary: Optimized for Intel CPUs
+description: |
+  This engine uses OpenVINO Model Server.
+  
+  It is optimized for a range of Intel CPUs.
 vendor: Intel Corporation
-grade: stable
+
 devices:
   allof:
     - type: cpu
       architecture: amd64
       manufacturer-id: GenuineIntel
 
-memory: 8G
-disk-space: 10G
-components:
-  - &s openvino-model-server
-  - &m model-distill-qwen-7b-ov-int4
-configurations:
-  server: *s
-  model: *m
-  target-device: CPU
-  http.base-path: v3
+runtime: openvino-model-server
+
+model:
+  default: distill-qwen-7b-ov-int4
+  options:
+    - distill-qwen-7b-ov-int4

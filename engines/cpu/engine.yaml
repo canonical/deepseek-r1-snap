@@ -1,21 +1,26 @@
 name: cpu
-description: Use CPU, good accuracy with low footprints
+summary: Optimized for various CPUs
+description: |
+  This engine uses llama.cpp.
+  
+  It is optimized for both amd64 and arm64 CPU architectures, for a wide range
+  of architecture variants.
 vendor: Canonical Ltd
-grade: stable
+
 devices:
   anyof:
     - type: cpu
       architecture: amd64
-      flags: [sse4_2, f16c, fma, avx, avx2]
     - type: cpu
       architecture: arm64
-      features: [asimd]  # for ARMv8 ASIMD includes NEON instruction set
-memory: 4G
-disk-space: 8G
-components:
-  - &s llamacpp
-  - &m model-distill-qwen-7b-q4-k-m-gguf
+
+runtime: llama-cpp-cpu
+
+model:
+  default: distill-qwen-7b-q4-k-m-gguf
+  options:
+    - distill-qwen-7b-q4-k-m-gguf
+    - distill-qwen-1-5b-q8-0-gguf
+
 configurations:
-  server: *s
-  model: *m
-  http.base-path: v1
+  sleep-idle-seconds: 600

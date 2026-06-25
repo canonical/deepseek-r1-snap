@@ -1,7 +1,11 @@
 name: intel-npu
-description: Use Intel NPUs (Core Ultra series)
+summary: Optimized for Intel NPUs
+description: |
+  This engine uses OpenVINO Model Server.
+  
+  It is optimized for Intel NPUs (Core Ultra series).
 vendor: Intel Corporation
-grade: stable
+
 devices:
   allof:
     - type: cpu
@@ -19,17 +23,13 @@ devices:
       snap-connections: [ intel-npu, npu-libs ]
     # Meteor / Arrow Lake NPUs
     - type: npu
-      vendor-id: 0x8086
+      vendor-id: 0x8086 # Intel Corporation
       device-id: 0x7d1d
       snap-connections: [ intel-npu, npu-libs ]
 
-memory: 4G
-disk-space: 8G
-components:
-  - &s openvino-model-server
-  - &m model-distill-qwen-7b-ov-int4-npu
-configurations:
-  server: *s
-  model: *m
-  target-device: NPU
-  http.base-path: v3
+runtime: openvino-model-server
+
+model:
+  default: distill-qwen-7b-ov-int4-npu
+  options:
+    - distill-qwen-7b-ov-int4-npu

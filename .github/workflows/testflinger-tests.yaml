@@ -1,81 +1,83 @@
 name: Testflinger tests
 
 on:
-  # Manual trigger
+  workflow_call:
+    inputs:
+      snap-channel:
+        description: Snap channel to test
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
-      channel:
-        description: 'Snap store channel'
+      snap-channel:
+        description: Snap channel to test
         required: true
         type: string
 
 jobs:
-  test:
-    name: Test
+  test-snap:
+    name: ${{ matrix.jobs.select-engine }} engine
     strategy:
-      # max-parallel: Don't use this as the self-hosted Github runners team wants to see and fix scaling issues.
-      # These limits also do not apply to dynamic instances, like the standard self-hosted runners.
       fail-fast: false
       matrix:
         jobs:
-          - job_queue: ampere-altra
-            expected_engine: ampere-altra
-            expected_tps: 9 # Samples: 10.39
-          - job_queue: ampere-altra-max
-            expected_engine: ampere-altra
-            expected_tps: 18 # Samples: 19.86
-          - job_queue: ampere-one
-            expected_engine: ampere-one
-            expected_tps: 9 # Samples: 15.97, 9.93
-          - job_queue: docker-nvidia
-            expected_engine: cuda
-            expected_tps: 10 # Samples: 32.6
-            install_nvidia_drivers: true
-            nvidia_drivers_version: 550
-            select_engine: cuda
+          - job-queue: ampere-altra
+            provision-data: "distro: noble"
+            select-engine: ampere-altra
+            test-chat-tps: true
+            expected-tps: 9
 
-    runs-on: self-hosted-linux-amd64-jammy-private-endpoint-medium
+          - job-queue: ampere-altra-max
+            provision-data: "distro: noble"
+            select-engine: ampere-altra
+            test-chat-tps: true
+            expected-tps: 18
 
-    env:
-      TEST_DIR: dev/tests/testflinger
+          - job-queue: ampere-one
+            provision-data: "distro: noble"
+            select-engine: ampere-one
+            test-chat-tps: true
+            expected-tps: 9
+            
+          - job-queue: docker-nvidia
+            provision-data: "distro: noble"
+            install-nvidia-driver-version: 595
+            select-engine: cuda
+            test-chat-tps: true
+            expected-tps: 9.4
+          
+          - job-queue: maas-systemtests-amd64
+            provision-data: "distro: noble"
+            select-engine: cpu
+            test-chat-tps: true
 
-    steps:
-      - name: Show configuration
-        run: |
-          echo ::notice::Channel: ${{ inputs.channel }}, \
-          Queue: ${{ matrix.jobs.job_queue }}, \
-          Engine: ${{ matrix.jobs.expected_engine }}, \
-          TPS: ${{ matrix.jobs.expected_tps }}
+          - job-queue: 202111-29603 # Alder Lake, GPU 8086:4680
+            provision-data: "distro: noble"
+            select-engine: intel-gpu
+            test-chat-tps: true
+          
+          - job-queue: 202111-29603 # Alder Lake, GPU 8086:4680
+            provision-data: "distro: noble"
+            select-engine: intel-cpu
+            test-chat-tps: true
 
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          submodules: true
-          token: ${{ secrets.SUBMODULE_PAT }}
+    uses: canonical/inference-snaps-testing/.github/workflows/test-snap.yaml@v1
+    secrets: inherit
+    with:
+      job-queue: ${{ matrix.jobs.job-queue }}
+      provision-data: ${{ matrix.jobs.provision-data }}
 
-      - name: Add config to testflinger job
-        env:
-          SNAP_NAME: deepseek-r1
-          SNAP_CHANNEL: ${{ inputs.channel }}
-          JOB_QUEUE: ${{ matrix.jobs.job_queue }}
-          EXPECTED_ENGINE: ${{ matrix.jobs.expected_engine }}
-          EXPECTED_TPS: ${{ matrix.jobs.expected_tps }}
-          INSTALL_NVIDIA_DRIVERS: ${{ matrix.jobs.install_nvidia_drivers }}
-          NVIDIA_DRIVERS_VERSION: ${{ matrix.jobs.nvidia_drivers_version }}
-          SELECT_ENGINE: ${{ matrix.jobs.select_engine }}
+      snap-name: deepseek-r1
+      snap-channel: ${{ inputs.snap-channel }}
 
-        run: |
-          envsubst \
-            < $TEST_DIR/testflinger.yaml \
-            > $TEST_DIR/testflinger.temp.yaml
-          mv $TEST_DIR/testflinger.temp.yaml $TEST_DIR/testflinger.yaml
+      install-nvidia-driver-version: ${{ matrix.jobs.install-nvidia-driver-version }}
+      install-intel-npu-driver: ${{ matrix.jobs.install-intel-npu-driver == true }}
+      snap-connections: ${{ matrix.jobs.snap-connections }}
 
-      - name: Print testflinger job
-        run: |
-          cat ${{ env.TEST_DIR }}/testflinger.yaml
+      expected-engine: ${{ matrix.jobs.expected-engine }}
+      select-engine: ${{ matrix.jobs.select-engine }}
 
-      - name: Run testflinger job
-        uses: canonical/testflinger/.github/actions/submit@main
-        with:
-          poll: true
-          job-path: ${{ env.TEST_DIR }}/testflinger.yaml
+      test-chat-tps: ${{ matrix.jobs.test-chat-tps == true }}
+      expected-tps: ${{ matrix.jobs.expected-tps }}
+
+      devmode: ${{ matrix.jobs.devmode == true }}

@@ -1,61 +1,158 @@
 name: deepseek-r1
 base: core24
-version: &snap-version "v1.0.0" # DeepSeek-R1 Github repo release version
 summary: DeepSeek R1
 description: |
   This snap installs an optimized environment for inference with the
   DeepSeek R1 LLM.
 
+adopt-info: version
+
 grade: devel
 confinement: strict
+compression: lzo
 
 assumes:
   - snapd2.68 # for components support
 
-compression: lzo
+platforms:
+  amd64:
+  arm64:
+
+slots:
+  status:
+    interface: content
+    source:
+      read:
+        - &status-share $SNAP_DATA/share/status
+  open-webui:
+    interface: content
+    content: open-webui-config
+    source:
+      read:
+        - &owui-share $SNAP_DATA/share/open-webui
+
+plugs:
+  # For Intel NPU access
+  intel-npu:
+    interface: custom-device
+    custom-device: intel-npu-device
+  # NPU user-space libraries provided by the host through a content interface
+  npu-libs:
+    interface: content
+    content: npu-libs-2404
+    target: $SNAP/npu-libs
+  # To allow side-loading models into server (root daemon) from user home directory
+  home:
+    read: all
 
 environment:
-  # Workaround until it gets set by snapd
   SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
+  ARCH_TRIPLET: $CRAFT_ARCH_TRIPLET_BUILD_FOR
+  STATUS_SHARE: *status-share # Status directory shared via content interface
+  OWUI_SHARE: *owui-share # Open WebUI config directory shared via content interface
+  # This is to find the intel.icd file, containing the path to libigdrcl.so
+  # Required for Intel GPU detection and communication
+  OCL_ICD_VENDORS: $SNAP/etc/OpenCL/vendors
 
 layout:
-  # Wget's default config file
-  # This is to avoid runtime errors and AppArmor denials
-  /etc/wgetrc:
-    bind-file: $SNAP/etc/wgetrc
   # OpenCL looks in /etc/OpenCL/vendors for .icd files containing the paths to shared objects
   /etc/OpenCL/vendors:
     bind: $SNAP/etc/OpenCL/vendors
   # Intel icd files use an absolute path to Intel OpenCL shared objects. Use a layout to mount the so files at the expected location
   /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/intel-opencl:
     bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/intel-opencl
+  # Under wsl the libraries are expected in /usr/lib/wsl
+  /usr/lib/wsl:
+    bind: $SNAP_COMMON/usr/lib/wsl
 
-plugs:
-  intel-npu:
-    interface: custom-device
-    custom-device: intel-npu-device
-  npu-libs:
-    interface: content
-    content: npu-libs-2404
-    target: $SNAP/npu-libs
-  # To allow sideloading models by root
-  # Also, it works around https://github.com/canonical/deepseek-r1-snap/issues/23
-  home:
-    read: all
-    
 hooks:
   install:
-    plugs:
+    plugs: &install-plugs
       # For hardware detection
       - hardware-observe
       - opengl
+  post-refresh:
+    plugs: *install-plugs
 
 parts:
-  app-scripts:
-    source: apps
+  version:
+    after: [cli]
+    plugin: nil
+    source: . # To regenerate the git hash on every change
+    build-packages:
+      - jq
+      - git
+    override-pull: |
+      # Do nothing. This significantly reduces build time when sourcing large files.
+    override-build: |
+      set -eo pipefail
+      cli_version=$($CRAFT_STAGE/bin/modelctl version --format=json | jq .cli --raw-output)
+      git_hash=$(git -C "$SNAPCRAFT_PROJECT_DIR" describe --always)
+      craftctl set version="${cli_version#v}+${git_hash}"
+
+  cli:
+    source:
+      - on amd64: https://github.com/canonical/inference-snaps-cli/releases/download/v2.0.0-beta.4/inference-snaps-cli-linux-amd64.tar.xz
+      - on arm64: https://github.com/canonical/inference-snaps-cli/releases/download/v2.0.0-beta.4/inference-snaps-cli-linux-arm64.tar.xz
     plugin: dump
+    override-build: |
+
+      # For tab completion
+      ln --symbolic ./modelctl bin/deepseek-r1
+
+      craftctl default
+
+  cli-dependencies:
+    plugin: nil
+    stage-packages:
+      - pciutils # lspci
+      - clinfo # used for Intel GPU vRAM detection. It depends on intel-opencl-icd
+
+  # Used for NVIDIA vRAM and CUDA Capability detection.
+  # Only the binary is included to avoid staging libraries, which should instead be provided by the host through the opengl interface.
+  cli-nvidia-smi:
+    plugin: nil
+    build-packages:
+      - nvidia-utils-580
+    override-build: |
+      mkdir -p $CRAFT_PART_INSTALL/usr/bin
+      cp /usr/bin/nvidia-smi $CRAFT_PART_INSTALL/usr/bin/
+
+      license_dir=$CRAFT_PART_INSTALL/usr/share/doc/nvidia-utils-580/
+      mkdir -p $license_dir
+      cp /usr/share/doc/nvidia-utils-580/copyright $license_dir/
+
+  # OpenCL ICD and libigdgmm are required for Intel GPU vRAM lookup with clinfo
+  cli-intel-opencl-icd:
+    plugin: nil
+    build-packages:
+      - wget
+    override-build: |
+      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
+        # Legacy
+        wget -nv https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-opencl-icd-legacy1_24.35.30872.36_amd64.deb
+        wget -nv https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/libigdgmm12_22.5.0_amd64.deb
+
+        # Latest
+        wget -nv https://github.com/intel/compute-runtime/releases/download/26.01.36711.4/intel-opencl-icd_26.01.36711.4-0_amd64.deb
+        wget -nv https://github.com/intel/compute-runtime/releases/download/26.01.36711.4/libigdgmm12_22.9.0_amd64.deb
+
+        dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
+
+        # Two symlinks are created when installing intel-opencl-icd-legacy:
+        # etc/alternatives/ocloc -> /usr/bin/ocloc-24.35.0, usr/bin/ocloc -> /etc/alternatives/ocloc
+        # These point to outside of the snap and fails store review. They are not required, so remove it.
+        rm $CRAFT_PART_INSTALL/etc/alternatives/ocloc
+        rm $CRAFT_PART_INSTALL/usr/bin/ocloc
+      fi
+
+      craftctl default
+
+  webui:
+    plugin: dump
+    source: https://github.com/canonical/inference-snaps-webui/releases/download/v1.0.0/inference-snaps-webui.tar.xz
     organize:
-      "*": bin/
+      "*": webui/
 
   engines:
     source: engines
@@ -63,132 +160,41 @@ parts:
     organize:
       "*": engines/
 
-  cli:
-    source: cli # this is a private git submodule which must be cloned separately
-    plugin: go
-    build-snaps:
-      - go/1.24/stable
-    stage-packages:
-      - pciutils
-      - nvidia-utils-580 # for Nvidia vRAM and Cuda Capability detection
-      - clinfo # for Intel GPU vRAM detection
+  models:
+    source: models
+    plugin: dump
     organize:
-      bin/cli: bin/deepseek-r1
-    prime:
-      # Exclude nvidia icd to avoid clinfo from looking up properties for nvidia GPUs.
-      # See: https://github.com/canonical/inference-snaps/issues/148
-      - -etc/OpenCL/vendors/nvidia.icd
+      "*": models/
 
-  go-chat-client:
-    source: https://github.com/jpm-canonical/go-chat-client.git
-    source-type: git
-    source-tag: v1.0.0-beta.1
-    plugin: go
-    build-snaps:
-      - go/1.24/stable
+  runtimes:
+    source: runtimes
+    plugin: dump
+    organize:
+      "*": runtimes/
 
-  common-runtime-dependencies:
-    plugin: nil
+  scripts:
+    source: scripts
+    plugin: dump
     stage-packages:
-      - wget # model init
-      - jq # install hook
-    stage-snaps:
-      - yq # install hook
+      - jq
+    organize:
+      "server.sh": bin/
+      "server-webui.sh": bin/
+      "export-shared-configs.sh": bin/
 
-  llamacpp: &llamacpp-part
-    source: https://github.com/ggml-org/llama.cpp.git
-    source-tag: &llamacpp-tag b8173
-    source-depth: 1
+  local-component-files:
+    # Use the cmake plugin instead of "dump" to prevent unwanted copies
+    # See https://github.com/canonical/craft-parts/issues/1609
     plugin: cmake
-    cmake-parameters:
-      - -DGGML_NATIVE=OFF
-    stage-packages:
-      - libgomp1
+    source: components
+    override-build:
+      cp -rf --archive --link --no-dereference ${CRAFT_PART_SRC}/* ${CRAFT_PART_INSTALL}
     organize:
-      # move everything, including the staged packages
-      "*": (component/llamacpp)
-
-  llamacpp-legacy:
-    <<: *llamacpp-part
-    cmake-parameters:
-      - -DGGML_NATIVE=OFF
-      - -DGGML_F16C=OFF
-      - -DGGML_FMA=OFF
-      - -DGGML_BMI2=OFF
-      - -DGGML_AVX2=OFF
-    organize:
-      "*": (component/llamacpp-legacy)
-
-  llamacpp-avx512:
-    <<: *llamacpp-part
-    cmake-parameters:
-      - -DGGML_NATIVE=OFF
-      - -DGGML_AVX512=ON
-    organize:
-      "*": (component/llamacpp-avx512)
-
-  llamacpp-cuda:
-    <<: *llamacpp-part
-    build-packages:
-      - to amd64: # see also the overrides
-        - nvidia-cuda-toolkit
-    stage-packages:
-      - libgomp1
-      # This needs to match the CUDA version in the build environment
-      - libcudart12
-      - libcublas12
-    cmake-parameters:
-      - -DGGML_NATIVE=OFF
-      - -DGGML_CUDA=ON
-      - -DCMAKE_CUDA_ARCHITECTURES=all-major
-    override-pull: &amd64-only |
-      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
-        craftctl default
-      fi
-    override-build: *amd64-only
-    override-stage: *amd64-only
-    override-prime: *amd64-only
-    organize:
-      "*": (component/llamacpp-cuda)
-
-  llama-aio: &llama-aio-part
-    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.2.0/llama_aio_v3.2.0_3ccc799.tar.gz
-    source-type: tar
-    plugin: dump
-    stage-packages:
-      - libcurl4
-    organize:
-      "LICENSE*.txt": usr/share/doc/llama-aio/
-      llama-server: (component/llama-aio)/bin/
-      libllama.so: (component/llama-aio)/lib/
-      "libggml*.so": (component/llama-aio)/lib/
-      libmtmd.so: (component/llama-aio)/lib/
-      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio)/lib/
+      "model-distill-qwen-1-5b-q8-0-gguf/*": (component/model-distill-qwen-1-5b-q8-0-gguf)
+      "model-distill-qwen-7b-q4-k-m-gguf/*": (component/model-distill-qwen-7b-q4-k-m-gguf)
     prime:
+      # Exclude everything not explicitly organized
       - -*
-
-  llama-aio-ampereone:
-    <<: *llama-aio-part
-    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.2.0/llama_aio_v3.2.0_3ccc799_ampereone.tar.gz
-    organize:
-      "LICENSE*.txt": usr/share/doc/llama-aio-ampereone/
-      llama-server: (component/llama-aio-ampereone)/bin/
-      libllama.so: (component/llama-aio-ampereone)/lib/
-      "libggml*.so": (component/llama-aio-ampereone)/lib/
-      libmtmd.so: (component/llama-aio-ampereone)/lib/
-      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio-ampereone)/lib/
-
-  model-distill-qwen-1-5b-q8-0-gguf:
-    source: components/model-distill-qwen-1-5b-q8-0-gguf
-    plugin: dump
-    organize:
-      "*": (component/model-distill-qwen-1-5b-q8-0-gguf)
-
-  model-distill-qwen-7b-q4-k-m-gguf:
-    source: components/model-distill-qwen-7b-q4-k-m-gguf
-    plugin: dump
-    organize:
-      "*": (component/model-distill-qwen-7b-q4-k-m-gguf)
 
   model-distill-qwen-7b-ov-int4:
     source: components/model-distill-qwen-7b-ov-int4
@@ -220,65 +226,126 @@ parts:
     organize:
       "*": (component/model-distill-qwen-7b-ov-int4-npu)
 
-  opencl-driver:
-    # Includes the OpenCL runtime for Intel GPU support
-    plugin: nil
-    build-packages:
-      - wget
+  llamacpp:
+    plugin: dump
+    source:
+      - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-amd64.tar.gz
+      - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-arm64.tar.gz
     override-build: |
-      # Only install intel opencl drivers on amd64
-      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
-        # Legacy Intel OpenCL Runtime
-        mkdir -p $CRAFT_PART_BUILD/opencl-intel-legacy1
-        cd $CRAFT_PART_BUILD/opencl-intel-legacy1
-        wget https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-level-zero-gpu-legacy1_1.5.30872.36_amd64.deb
-        wget https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-opencl-icd-legacy1_24.35.30872.36_amd64.deb
-        dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
-      
-        # Recent Intel OpenCL Runtime
-        mkdir -p $CRAFT_PART_BUILD/opencl-intel
-        cd $CRAFT_PART_BUILD/opencl-intel
-        wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb
-        wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-opencl-2_2.5.6+18417_amd64.deb
-        wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-level-zero-gpu_1.6.32224.5_amd64.deb
-        wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd_24.52.32224.5_amd64.deb
-        wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb
-        dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
-      
-        # Two symlinks are created by installing opencl: 
-        # etc/alternatives/ocloc -> /usr/bin/ocloc-24.52.1, usr/bin/ocloc -> /etc/alternatives/ocloc
-        # These point to outside of the snap and fails store review. They are not required, so remove it.
-        rm $CRAFT_PART_INSTALL/etc/alternatives/ocloc
-        rm $CRAFT_PART_INSTALL/usr/bin/ocloc
-      
-        cd $CRAFT_PART_BUILD
-      fi # End of intel-opencl driver installation
-      
+      # Move license files to be included in the snap, not the component
+      mkdir -p $CRAFT_PRIME/usr/share/doc/
+      mv licenses $CRAFT_PRIME/usr/share/doc/llama.cpp
+
       craftctl default
+    stage-packages:
+      - libgomp1
+    organize:
+      "*": (component/llamacpp)
+
+  llamacpp-cuda:
+    plugin: dump
+    source:
+      - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-amd64+cuda12.9.tar.gz
+      - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-arm64+cuda12.9.tar.gz
+    override-build: |
+      # Move license files to be included in the snap, not the component
+      mkdir -p $CRAFT_PRIME/usr/share/doc/
+      mv licenses $CRAFT_PRIME/usr/share/doc/llama.cpp-cuda
+
+      craftctl default
+    stage-packages:
+      - libgomp1
+    organize:
+      "*": (component/llamacpp-cuda)
+
+  llama-aio: &llama-aio-part
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.2.0/llama_aio_v3.2.0_3ccc799.tar.gz
+    source-type: tar
+    plugin: dump
+    stage-packages:
+      - libcurl4
+    organize:
+      "LICENSE*.txt": usr/share/doc/llama-aio/
+      llama-server: (component/llama-aio)/bin/
+      libllama.so: (component/llama-aio)/lib/
+      "libggml*.so": (component/llama-aio)/lib/
+      libmtmd.so: (component/llama-aio)/lib/
+      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio)/lib/
+    prime:
+      - -*
+
+  llama-aio-ampereone:
+    <<: *llama-aio-part
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.2.0/llama_aio_v3.2.0_3ccc799_ampereone.tar.gz
+    organize:
+      "LICENSE*.txt": usr/share/doc/llama-aio-ampereone/
+      llama-server: (component/llama-aio-ampereone)/bin/
+      libllama.so: (component/llama-aio-ampereone)/lib/
+      "libggml*.so": (component/llama-aio-ampereone)/lib/
+      libmtmd.so: (component/llama-aio-ampereone)/lib/
+      "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio-ampereone)/lib/
 
   openvino-model-server:
     plugin: dump
-    source: https://github.com/openvinotoolkit/model_server/releases/download/v2026.0/ovms_ubuntu24_python_on.tar.gz
-    source-checksum: sha256/264a58794e9ead355156ebf55f43e19e6de71bab07b5b19fa9c23e4ee83d9faf
-    organize:
-      "*": (component/openvino-model-server)
+    source: https://github.com/openvinotoolkit/model_server/releases/download/v2026.2/ovms_ubuntu24_2026.2.0_python_off.tar.gz
+    override-build: |
+      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
+        license_dir=$CRAFT_PRIME/usr/share/doc/openvino-model-server
+        mkdir -p $license_dir
+        mv LICENSE $license_dir/
+        mv thirdparty-licenses $license_dir/
+
+        craftctl default
+      fi
     stage-packages:
       - libxml2
-      - curl
-      - libpython3.12
-
-  openvino-model-server-python-dependencies:
-    plugin: python
-    source: components/openvino-model-server
-    python-packages:
-     - Jinja2==3.1.6
-     - MarkupSafe==3.0.2
+      - libcurl4
     organize:
+      # move everything, including the staged packages
+      "*": (component/openvino-model-server)
+    # This part is only for amd64
+    override-pull: &amd64-only |
+      [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ] && craftctl default || exit 0
+    override-stage: *amd64-only
+    override-prime: *amd64-only
+
+  # For Intel GPU usage, amd64 only
+  intel-compute-runtime:
+    plugin: nil
+    build-packages:
+      - wget
+    stage-packages:
+      - on amd64:
+          - ocl-icd-libopencl1
+    override-build: |
+      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
+        # First install the legacy support version. Then install the latest, so that latest can override any old libraries.
+
+        # Legacy: https://github.com/intel/compute-runtime/releases/tag/24.35.30872.36
+        mkdir -p $CRAFT_PART_BUILD/opencl-intel-legacy1
+        cd $CRAFT_PART_BUILD/opencl-intel-legacy1
+        wget -nv https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.24/intel-igc-core_1.0.17537.24_amd64.deb
+        wget -nv https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.24/intel-igc-opencl_1.0.17537.24_amd64.deb
+        wget -nv https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-level-zero-gpu-legacy1_1.5.30872.36_amd64.deb
+        dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
+
+        # Latest: https://github.com/intel/compute-runtime/releases/tag/26.01.36711.4
+        mkdir -p $CRAFT_PART_BUILD/opencl-intel
+        cd $CRAFT_PART_BUILD/opencl-intel
+        wget -nv https://github.com/intel/intel-graphics-compiler/releases/download/v2.27.10/intel-igc-core-2_2.27.10+20617_amd64.deb
+        wget -nv https://github.com/intel/intel-graphics-compiler/releases/download/v2.27.10/intel-igc-opencl-2_2.27.10+20617_amd64.deb
+        wget -nv https://github.com/intel/compute-runtime/releases/download/26.01.36711.4/intel-ocloc_26.01.36711.4-0_amd64.deb
+        wget -nv https://github.com/intel/compute-runtime/releases/download/26.01.36711.4/libze-intel-gpu1_26.01.36711.4-0_amd64.deb
+        dpkg --root=$CRAFT_PART_INSTALL --force-all -i *.deb
+
+        cd $CRAFT_PART_BUILD
+      fi # End of Intel Compute Runtime installation
+
+      craftctl default
+    organize:
+      # move everything, including the staged packages
       "*": (component/openvino-model-server)
 
-  # Licenses
-  # The licenses of staged packages are automatically included in the snap at $SNAP/usr/share/doc/
-  # Additional licenses:
   notice:
     plugin: nil
     source: NOTICE
@@ -287,136 +354,81 @@ parts:
       license_dir=$CRAFT_PART_INSTALL/usr/share/doc
       mkdir -p $license_dir
       cp NOTICE $license_dir/
-      # Add license files referenced in NOTICE
       cp $SNAPCRAFT_PROJECT_DIR/LICENSE $license_dir/
       cp $SNAPCRAFT_PROJECT_DIR/LICENSE-deepseek-r1 $license_dir/
-  llamacpp-license:
-    plugin: nil
-    source: https://github.com/ggerganov/llama.cpp.git
-    source-tag: *llamacpp-tag
-    source-depth: 1
-    override-build: |
-      license_dir=$CRAFT_PART_INSTALL/usr/share/doc/llama.cpp
-      mkdir -p $license_dir
-      cp $CRAFT_PART_SRC/LICENSE $license_dir/
-      cp -r $CRAFT_PART_SRC/licenses/* $license_dir/
-  openvino-model-server-license:
-    plugin: dump
-    source: https://github.com/openvinotoolkit/model_server.git
-    source-depth: 1
-    override-build: |
-      license_dir=$CRAFT_PART_INSTALL/usr/share/doc/openvino-model-server
-      mkdir -p $license_dir/
-      cp LICENSE $license_dir/
 
 components:
-  #
-  # Engines
-  #
+  model-distill-qwen-1-5b-q8-0-gguf:
+    type: standard
+    summary: DeepSeek R1 Distill Qwen 1.5B Q8_0 GGUF
+    description: Quantized model with 1.5B parameters in GGUF format with Q8_0 weight encoding
+
+  model-distill-qwen-7b-q4-k-m-gguf:
+    type: standard
+    summary: DeepSeek R1 Distill Qwen 7B Q4_K_M GGUF
+    description: Quantized model with 7B parameters in GGUF format with Q4_K_M weight encoding
+
+  model-distill-qwen-7b-ov-int4:
+    type: standard
+    summary: DeepSeek R1 Distill Qwen 7B INT4 OpenVINO
+    description: Model with 7B parameters in OpenVINO IR format, quantized to INT4
+
+  model-distill-qwen-7b-ov-int4-npu:
+    type: standard
+    summary: DeepSeek R1 Distill Qwen 7B INT4 OpenVINO for Intel NPU
+    description: Model with 7B parameters in OpenVINO IR format, quantized to INT4 for Intel NPU
 
   llamacpp:
     type: standard
-    summary: llama.cpp Engine using default CPU instruction sets
+    summary: llama.cpp using default CPU instruction sets
     description: LLM inference in C/C++
-    version: *llamacpp-tag
-
-  llamacpp-legacy:
-    type: standard
-    summary: llama.cpp Engine using only SSE4.2 and AVX CPU instruction sets
-    description: LLM inference in C/C++
-    version: *llamacpp-tag
-
-  llamacpp-avx512:
-    type: standard
-    summary: llama.cpp Engine using default and AVX512 CPU instruction sets
-    description: LLM inference in C/C++
-    version: *llamacpp-tag
 
   llamacpp-cuda:
     type: standard
-    summary: llama.cpp Engine for NVIDIA GPUs using CUDA
+    summary: llama.cpp with CUDA backend
     description: LLM inference in C/C++
-    version: *llamacpp-tag
 
   llama-aio:
     type: standard
     summary: llama-aio Engine for Ampere Altra CPUs
-    description: LLM inference in C/C++
-    version: v3.2.0
+    description: LLM inference in C/C++ built by Ampere for Ampere Altra CPUs
 
   llama-aio-ampereone:
     type: standard
     summary: llama-aio Engine for Ampere One CPUs
-    description: LLM inference in C/C++
-    version: v3.2.0
+    description: LLM inference in C/C++ built by Ampere for Ampere One CPUs
 
   openvino-model-server:
     type: standard
     summary: OpenVINO Model Server
     description: OpenVINO Model Server for serving models
-    version: v2026.0
-
-  # 
-  # Models
-  #
-
-  model-distill-qwen-1-5b-q8-0-gguf:
-    type: standard
-    summary: DeepSeek R1 Distill Qwen 1.5B Q8
-    description: Quantized model with 1.5B parameters in gguf format with Q8_0 weight encoding
-    version: *snap-version
-
-  model-distill-qwen-7b-q4-k-m-gguf:
-    type: standard
-    summary: DeepSeek R1 Distill Qwen 7B Q4
-    description: Quantized model with 7B parameters in gguf format with Q4_K_M weight encoding
-    version: *snap-version
-
-  model-distill-qwen-7b-ov-int4:
-    type: standard
-    summary: DeepSeek R1 Qwen 7B for Intel CPU and Intel GPU
-    description: Model with 7B parameters in OpenVINO IR format, quantized with INT4
-    version: *snap-version
-
-  model-distill-qwen-7b-ov-int4-npu:
-    type: standard
-    summary: DeepSeek R1 Qwen 7B for Intel NPU
-    description: Model with 7B parameters in OpenVINO IR format, quantized with INT4 and symmetric channel wise quantization to run on Intel NPU
-    version: *snap-version
 
 apps:
   deepseek-r1:
-    command: bin/deepseek-r1
-    completer: bin/completion.bash
+    command: bin/modelctl
+    completer: bin/snap-completer.bash
     plugs:
-      # For hardware detection
-      - opengl
       - hardware-observe
-      # To access server over network socket
+      - opengl
       - network
+      - desktop # To open the webui in the browser
     environment:
-      CHAT: $SNAP/bin/chat.sh
-    
+      ADDITIONAL_FEATURES: chat, webui
+
   server:
     command: bin/server.sh
     daemon: simple
     plugs:
-      # For inference and hardware detection (via init)
-      - opengl
-      # Needed by for cuda-uvmfd to listen on a unix socket?
-      # Needed for server app by inheritance
       - network-bind
-      # Needed to download resources
       - network
-      # For hardware detection (via init)
       - hardware-observe
-      # For sideloading models
-      - home 
-      # Intel NPU access (device node)
-      - intel-npu 
-      # Intel NPU access (libs) 
-      - npu-libs  
-    environment:
-      # Needed for shared libraries used by llama.cpp
-      # TODO: Should this instead be added in an env file to llamacpp component
-      ARCH_TRIPLET: $CRAFT_ARCH_TRIPLET_BUILD_FOR
+      - opengl
+      - home
+      - intel-npu
+      - npu-libs
+
+  server-webui:
+    command: bin/server-webui.sh
+    daemon: simple
+    plugs:
+      - network-bind

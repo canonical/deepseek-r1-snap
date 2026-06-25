@@ -1,13 +1,27 @@
 #!/bin/bash -eu
 
-source "$(dirname "$0")/common.sh"
+port="$(modelctl get http.port)"
+host="$(modelctl get http.host)"
 
-port="$(deepseek-r1 get http.port)"
-host="$(deepseek-r1 get http.host)"
-verbose="$(deepseek-r1 get verbose)"
 extra_args=()
+
+verbose="$(modelctl get verbose)"
 if [ "${verbose}" = "true" ]; then
   extra_args+=(--verbose)
 fi
 
-exec "$server/bin/llama-server" --model "$MODEL_FILE" --port "$port" --host "$host" --threads 40 --threads-batch 40 --no-mmap "${extra_args[@]}"
+set -x
+# --threads/--threads-batch 40 and --no-mmap are tuned for Ampere One CPUs.
+# Adding --no-warmup to skip the model warmup phase during server startup in order
+# to reduce resource usage if not needed.
+exec llama-server \
+  --model "$MODEL_FILE" \
+  --alias "$MODEL_NAME" \
+  --threads 40 \
+  --threads-batch 40 \
+  --no-mmap \
+  --port "$port" \
+  --host "$host" \
+  --no-warmup \
+  "${extra_args[@]}" \
+  "$@"
