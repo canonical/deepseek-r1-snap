@@ -86,7 +86,7 @@ parts:
       # Do nothing. This significantly reduces build time when sourcing large files.
     override-build: |
       set -eo pipefail
-      cli_version=$($CRAFT_STAGE/bin/deepseek-r1 version --format=json | jq .cli --raw-output)
+      cli_version=$($CRAFT_STAGE/bin/modelctl version --format=json | jq .cli --raw-output)
       git_hash=$(git -C "$SNAPCRAFT_PROJECT_DIR" describe --always)
       craftctl set version="${cli_version#v}+${git_hash}"
 
@@ -234,7 +234,6 @@ parts:
     stage-packages:
       - libgomp1
     organize:
-      "licenses": usr/share/doc/llama.cpp # Add licenses to the snap
       "*": (component/llamacpp)
 
   llamacpp-cuda:
@@ -245,7 +244,6 @@ parts:
     stage-packages:
       - libgomp1
     organize:
-      "licenses": usr/share/doc/llama.cpp+cuda # Add licenses to the snap
       "*": (component/llamacpp-cuda)
 
   llama-aio: &llama-aio-part
@@ -283,7 +281,6 @@ parts:
       - libcurl4
     organize:
       # move everything, including the staged packages
-      "LICENSE": usr/share/doc/openvino-model-server
       "*": (component/openvino-model-server)
     # This part is only for amd64
     override-pull: &amd64-only |
@@ -340,6 +337,28 @@ parts:
       cp $SNAPCRAFT_PROJECT_DIR/LICENSE $license_dir/
       cp $SNAPCRAFT_PROJECT_DIR/LICENSE-deepseek-r1 $license_dir/
 
+  # Engine licenses are added via dedicated parts so the catch-all organize
+  # rules of the engine parts do not move them into their components.
+  llamacpp-license:
+    plugin: nil
+    source: https://github.com/ggerganov/llama.cpp.git
+    source-tag: b9611
+    source-depth: 1
+    override-build: |
+      license_dir=$CRAFT_PART_INSTALL/usr/share/doc/llama.cpp
+      mkdir -p $license_dir
+      cp $CRAFT_PART_SRC/LICENSE $license_dir/
+      cp -r $CRAFT_PART_SRC/licenses/* $license_dir/
+
+  openvino-model-server-license:
+    plugin: nil
+    source: https://github.com/openvinotoolkit/model_server.git
+    source-depth: 1
+    override-build: |
+      license_dir=$CRAFT_PART_INSTALL/usr/share/doc/openvino-model-server
+      mkdir -p $license_dir
+      cp LICENSE $license_dir/
+
 components:
   model-distill-qwen-1-5b-q8-0-gguf:
     type: standard
@@ -388,7 +407,7 @@ components:
 
 apps:
   deepseek-r1:
-    command: bin/deepseek-r1
+    command: bin/modelctl
     completer: bin/snap-completer.bash
     plugs:
       - hardware-observe
@@ -406,7 +425,6 @@ apps:
       - network
       - hardware-observe
       - opengl
-      - process-control
       - home
       - intel-npu
       - npu-libs

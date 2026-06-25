@@ -1,7 +1,7 @@
 name: ampere-one
 summary: Optimized for Ampere One CPUs
 description: |
-  This engine uses llama.cpp built by Ampere (llama-aio).
+  This engine uses llama-aio (Ampere® optimized llama.cpp).
   
   It is optimized for Ampere One CPUs.
 vendor: Ampere Computing

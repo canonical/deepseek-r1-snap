@@ -3,6 +3,13 @@
 port="$(modelctl get http.port)"
 host="$(modelctl get http.host)"
 
+extra_args=()
+
+verbose="$(modelctl get verbose)"
+if [ "${verbose}" = "true" ]; then
+  extra_args+=(--verbose)
+fi
+
 set -x
 # --threads/--threads-batch 40 and --no-mmap are tuned for Ampere One CPUs.
 # Adding --no-warmup to skip the model warmup phase during server startup in order
@@ -16,4 +23,5 @@ exec llama-server \
   --port "$port" \
   --host "$host" \
   --no-warmup \
+  "${extra_args[@]}" \
   "$@"

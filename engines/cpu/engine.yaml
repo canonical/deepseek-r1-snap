@@ -1,5 +1,5 @@
 name: cpu
-summary: CPU-optimized for workstations
+summary: Optimized for various CPUs
 description: |
   This engine uses llama.cpp.
   
