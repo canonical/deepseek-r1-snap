@@ -1,4 +1,4 @@
-name: llama-cpp-cuda
+name: llamacpp-cuda
 
 servers:
   openai:

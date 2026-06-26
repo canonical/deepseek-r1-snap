@@ -14,7 +14,7 @@ devices:
     - type: cpu
       architecture: arm64
 
-runtime: llama-cpp-cpu
+runtime: llamacpp
 
 model:
   default: distill-qwen-7b-q4-k-m-gguf
