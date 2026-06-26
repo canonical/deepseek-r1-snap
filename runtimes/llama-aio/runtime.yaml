@@ -1,3 +1,5 @@
+name: llama-aio
+
 servers:
   openai:
     protocol: http
