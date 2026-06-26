@@ -42,7 +42,7 @@ jobs:
           - job-queue: docker-nvidia
             provision-data: "distro: noble"
             install-nvidia-driver-version: 595
-            select-engine: cuda
+            select-engine: nvidia-gpu
             test-chat-tps: true
             expected-tps: 9.4
           
