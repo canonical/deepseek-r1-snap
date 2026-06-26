@@ -8,6 +8,15 @@ exec 1> >(tee >(logger --tag=$tag))
 exec 2> >(logger --stderr --priority error --tag=$tag)
 
 #
+# New default configurations
+#
+# Set default configurations for new options added after the initial release.
+# This ensures that default values are present in upgraded snaps.
+if ! modelctl get webui &> /dev/null; then
+    modelctl set --package webui.http.port="8325"
+    modelctl set --package webui.http.host="127.0.0.1"
+fi
+#
 # WSL workaround
 #
 # When refreshing, these symlinks might already exist, so force create.
