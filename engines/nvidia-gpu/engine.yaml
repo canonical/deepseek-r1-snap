@@ -15,7 +15,7 @@ devices:
       vendor-id: 0x10de # Nvidia Corporation
       vram: 5G
 
-runtime: llama-cpp-cuda
+runtime: llamacpp-cuda
 
 model:
   default: distill-qwen-7b-q4-k-m-gguf
