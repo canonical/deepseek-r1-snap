@@ -7,7 +7,7 @@ description: |
 
 adopt-info: version
 
-grade: devel
+grade: stable
 confinement: strict
 compression: lzo
 
