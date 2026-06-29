@@ -4,16 +4,19 @@ description: |
   This engine uses llama.cpp with the CUDA backend.
   
   It is optimized for NVIDIA GPUs.
+  
+  This engine supports both amd64 and arm64 CPU architectures.
 vendor: Canonical Ltd
 
 devices:
   allof:
-    - type: cpu
-      architecture: amd64
-      flags: [sse4_2, f16c, fma, avx, avx2]
     - type: gpu
       vendor-id: 0x10de # Nvidia Corporation
-      vram: 5G
+  anyof:
+    - type: cpu
+      architecture: amd64
+    - type: cpu
+      architecture: arm64
 
 runtime: llamacpp-cuda
 
