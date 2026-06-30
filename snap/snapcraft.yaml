@@ -1,9 +1,30 @@
 name: deepseek-r1
 base: core24
-summary: DeepSeek R1
+summary: DeepSeek R1 inference snap
 description: |
-  This snap installs an optimized environment for inference with the
-  DeepSeek R1 LLM.
+  DeepSeek R1 is a reasoning model from DeepSeek.
+
+  Use this snap to run DeepSeek R1, optimized for your silicon.
+  
+  Before you start, make sure to have the necessary drivers installed on the host:
+  https://documentation.ubuntu.com/inference-snaps/how-to/setup/drivers/
+  
+  **Install:**
+  
+  `sudo snap install deepseek-r1`
+  
+  **Get help:**
+  
+  `deepseek-r1 --help`
+  
+  **Licensing:**
+  
+  The DeepSeek R1 model is licensed under Apache 2.0.
+
+  The licenses of all bundled software can be found after installing the snap at `/snap/deepseek-r1/current/usr/share/doc`.
+website: https://documentation.ubuntu.com/inference-snaps
+source-code: https://github.com/canonical/deepseek-r1-snap
+issues: https://github.com/canonical/inference-snaps/issues
 
 adopt-info: version
 
