@@ -5,10 +5,10 @@ description: |
   DeepSeek R1 is a reasoning model from DeepSeek.
 
   Use this snap to run DeepSeek R1, optimized for your silicon.
-  
+
   Before you start, make sure to have the necessary drivers installed on the host:
   https://documentation.ubuntu.com/inference-snaps/how-to/setup/drivers/
-  
+
   **Install:**
   
   `sudo snap install deepseek-r1`
