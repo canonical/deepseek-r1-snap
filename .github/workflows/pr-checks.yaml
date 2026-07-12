@@ -1,23 +1,35 @@
-name: Static check
+# This workflow is used to validate pull requests.
+# It includes the Canonical CLA check and engine validation.
+name: PR Checks
 on: [pull_request]
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
+  cla:
+    runs-on: ubuntu-slim
+    steps:
+      - name: Check if CLA signed
+        uses: canonical/has-signed-canonical-cla@v2
+        
   validate:
     runs-on: [ ubuntu-latest ]
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # Prevent usage of simulated merge commit of PR
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${ github.event.pull_request.head.sha || github.sha }
 
       - name: Checkout inference-snap-cli 
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: canonical/inference-snaps-cli
           path: inference-snaps-cli
-          ref: v2.0.0-beta.2
+          ref: v2.0.0-beta.5
 
       - name: Set up Go
         uses: actions/setup-go@v6
@@ -26,5 +38,5 @@ jobs:
 
       - name: Validate engines
         run: |
-          cd inference-snaps-cli/cmd/cli
+          cd inference-snaps-cli/cmd/modelctl
           go run . debug validate-engines ../../../engines/**/*.yaml

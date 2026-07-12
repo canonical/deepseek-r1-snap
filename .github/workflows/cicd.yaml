@@ -1,3 +1,4 @@
+# This workflow is used to build and publish the snap to the store on every push to main.
 name: CICD
 
 on:
@@ -10,7 +11,7 @@ on:
 
 # Keep one CICD run active at a time so publish/test/promote happen in order
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${ github.workflow }
   queue: max
 
 jobs:
@@ -20,12 +21,10 @@ jobs:
     with:
       build-runner: |
         [
-          ["amd64", "2xlarge-extra", "noble", "self-hosted"],
-          ["arm64", "large-extra", "noble", "self-hosted"]
-        ]
+          ["amd64", "2xlarge-extra", "noble", "self-hosted"]
       build-init-script: 'download-models.sh'
       store-track: latest
       snap-name: deepseek-r1
       smoke-test-engine: cpu
     secrets:
-      store-credentials: ${{ secrets.STORE_LOGIN_MAIN }}
+      store-credentials: ${ secrets.STORE_LOGIN_MAIN }
