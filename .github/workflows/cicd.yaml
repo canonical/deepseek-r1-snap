@@ -21,7 +21,10 @@ jobs:
     with:
       build-runner: |
         [
-          ["amd64", "2xlarge-extra", "noble", "self-hosted"]
+          ["amd64", "2xlarge-extra", "noble", "self-hosted"],
+          ["arm64", "large-extra", "noble", "self-hosted"]
+        ]
+      
       build-init-script: 'download-models.sh'
       store-track: latest
       snap-name: deepseek-r1
