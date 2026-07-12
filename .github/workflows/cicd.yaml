@@ -11,7 +11,7 @@ on:
 
 # Keep one CICD run active at a time so publish/test/promote happen in order
 concurrency:
-  group: ${ github.workflow }
+  group: ${{ github.workflow }}
   queue: max
 
 jobs:
@@ -27,4 +27,4 @@ jobs:
       snap-name: deepseek-r1
       smoke-test-engine: cpu
     secrets:
-      store-credentials: ${ secrets.STORE_LOGIN_MAIN }
+      store-credentials: ${{ secrets.STORE_LOGIN_MAIN }}

@@ -7,7 +7,7 @@ on:
     types: [ labeled ]
 
 concurrency:
-  group: ${ github.workflow }-${ github.event.pull_request.number }
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 permissions:
@@ -17,11 +17,11 @@ permissions:
 
 jobs:
   build-test:
-    name: ${ github.event.label.name }
+    name: ${{ github.event.label.name }}
     uses: canonical/inference-snaps-dev/.github/workflows/reuse-pr-build-test.yaml@v2
     with:
-      trigger-label: ${ github.event.label.name }
-      pr-number: "${ github.event.pull_request.number }"
+      trigger-label: ${{ github.event.label.name }}
+      pr-number: "${{ github.event.pull_request.number }}"
       build-runner: |
         [
           ["amd64", "2xlarge-extra", "noble", "self-hosted"]
@@ -76,8 +76,8 @@ jobs:
           }
 ]
       snap-name: deepseek-r1
-      testflinger-client-id: ${ vars.TESTFLINGER_CLIENT_ID }
+      testflinger-client-id: ${{ vars.TESTFLINGER_CLIENT_ID }}
     secrets:
-      store-credentials: ${ secrets.STORE_LOGIN_PR }
-      github-token: ${ secrets.GITHUB_TOKEN }
-      testflinger-secret-key: ${ secrets.TESTFLINGER_SECRET_KEY }
+      store-credentials: ${{ secrets.STORE_LOGIN_PR }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      testflinger-secret-key: ${{ secrets.TESTFLINGER_SECRET_KEY }}
