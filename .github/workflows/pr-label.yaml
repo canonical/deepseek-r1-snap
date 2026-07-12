@@ -77,7 +77,7 @@ jobs:
                     "select-engine": "intel-cpu",
                     "test-chat-tps": true
           }
-]
+        ]
       snap-name: deepseek-r1
       testflinger-client-id: ${{ vars.TESTFLINGER_CLIENT_ID }}
     secrets:
