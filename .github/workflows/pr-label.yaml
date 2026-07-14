@@ -1,0 +1,86 @@
+# This workflow is used to build and test pull requests when specific labels are applied.
+# Supported labels: trigger-build, trigger-tests
+name: PR Label
+
+on:
+  pull_request:
+    types: [ labeled ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+
+jobs:
+  build-test:
+    name: ${{ github.event.label.name }}
+    uses: canonical/inference-snaps-dev/.github/workflows/reuse-pr-build-test.yaml@v2
+    with:
+      trigger-label: ${{ github.event.label.name }}
+      pr-number: "${{ github.event.pull_request.number }}"
+      build-runner: |
+        [
+          ["amd64", "2xlarge-extra", "noble", "self-hosted"],
+          ["arm64", "large-extra", "noble", "self-hosted"]
+        ]
+      
+      test-jobs-matrix: |
+        [
+          {
+                    "job-queue": "ampere-altra",
+                    "provision-data": "distro: noble",
+                    "select-engine": "ampere-altra",
+                    "test-chat-tps": true,
+                    "expected-tps": 9
+          },
+          {
+                    "job-queue": "ampere-altra-max",
+                    "provision-data": "distro: noble",
+                    "select-engine": "ampere-altra",
+                    "test-chat-tps": true,
+                    "expected-tps": 18
+          },
+          {
+                    "job-queue": "ampere-one",
+                    "provision-data": "distro: noble",
+                    "select-engine": "ampere-one",
+                    "test-chat-tps": true,
+                    "expected-tps": 9
+          },
+          {
+                    "job-queue": "docker-nvidia",
+                    "provision-data": "distro: noble",
+                    "install-nvidia-driver-version": 595,
+                    "select-engine": "nvidia-gpu",
+                    "test-chat-tps": true,
+                    "expected-tps": 9.4
+          },
+          {
+                    "job-queue": "maas-systemtests-amd64",
+                    "provision-data": "distro: noble",
+                    "select-engine": "cpu",
+                    "test-chat-tps": true
+          },
+          {
+                    "job-queue": "202111-29603",
+                    "provision-data": "distro: noble",
+                    "select-engine": "intel-gpu",
+                    "test-chat-tps": true
+          },
+          {
+                    "job-queue": "202111-29603",
+                    "provision-data": "distro: noble",
+                    "select-engine": "intel-cpu",
+                    "test-chat-tps": true
+          }
+        ]
+      snap-name: deepseek-r1
+      testflinger-client-id: ${{ vars.TESTFLINGER_CLIENT_ID }}
+    secrets:
+      store-credentials: ${{ secrets.STORE_LOGIN_PR }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      testflinger-secret-key: ${{ secrets.TESTFLINGER_SECRET_KEY }}
