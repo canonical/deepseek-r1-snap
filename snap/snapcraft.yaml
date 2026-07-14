@@ -113,8 +113,8 @@ parts:
 
   cli:
     source:
-      - on amd64: https://github.com/canonical/inference-snaps-cli/releases/download/v2.0.0-beta.5/inference-snaps-cli-linux-amd64.tar.xz
-      - on arm64: https://github.com/canonical/inference-snaps-cli/releases/download/v2.0.0-beta.5/inference-snaps-cli-linux-arm64.tar.xz
+      - on amd64: https://github.com/canonical/inference-snaps-cli/releases/download/v2.0.0-beta.8/inference-snaps-cli-linux-amd64.tar.xz
+      - on arm64: https://github.com/canonical/inference-snaps-cli/releases/download/v2.0.0-beta.8/inference-snaps-cli-linux-arm64.tar.xz
     plugin: dump
     override-build: |
 
@@ -171,7 +171,7 @@ parts:
 
   webui:
     plugin: dump
-    source: https://github.com/canonical/inference-snaps-webui/releases/download/v1.0.0/inference-snaps-webui.tar.xz
+    source: https://github.com/canonical/inference-snaps-webui/releases/download/v1.1.0/inference-snaps-webui.tar.xz
     organize:
       "*": webui/
 

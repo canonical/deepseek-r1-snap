@@ -29,7 +29,7 @@ jobs:
         with:
           repository: canonical/inference-snaps-cli
           path: inference-snaps-cli
-          ref: v2.0.0-beta.5
+          ref: v2.0.0-beta.8
 
       - name: Set up Go
         uses: actions/setup-go@v6
