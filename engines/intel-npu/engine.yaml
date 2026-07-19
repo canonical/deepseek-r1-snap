@@ -30,6 +30,6 @@ devices:
 runtime: openvino-model-server
 
 model:
-  default: distill-qwen-7b-ov-int4-npu
+  default: deepseek-r1-7b-ov-npu
   options:
-    - distill-qwen-7b-ov-int4-npu
+    - deepseek-r1-7b-ov-npu

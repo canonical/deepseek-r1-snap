@@ -19,10 +19,10 @@ devices:
 runtime: llama-aio
 
 model:
-  default: distill-qwen-7b-q4-k-m-gguf
+  default: deepseek-r1-7b
   options:
-    - distill-qwen-7b-q4-k-m-gguf
-    - distill-qwen-1-5b-q8-0-gguf
+    - deepseek-r1-7b
+    - deepseek-r1-1.5b
 
 configurations:
   sleep-idle-seconds: 600

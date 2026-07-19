@@ -15,6 +15,6 @@ devices:
 runtime: openvino-model-server
 
 model:
-  default: distill-qwen-7b-ov-int4
+  default: deepseek-r1-7b-ov
   options:
-    - distill-qwen-7b-ov-int4
+    - deepseek-r1-7b-ov

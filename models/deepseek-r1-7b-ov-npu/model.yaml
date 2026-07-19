@@ -1,9 +1,9 @@
-id: distill-qwen-7b-ov-int4-npu
-name: 7b
+name: deepseek-r1-7b-ov-npu
+alias: deepseek-r1-7b
 
 description: DeepSeek R1 Distill Qwen 7B, a reasoning model distilled from DeepSeek R1, optimized for Intel NPU
 model-card-url: https://huggingface.co/llmware/DeepSeek-R1-Distill-Qwen-7B-ov-int4-npu
-quantization: INT4
+quantization: distill-qwen-int4
 
 disk-size: 4700M
 
