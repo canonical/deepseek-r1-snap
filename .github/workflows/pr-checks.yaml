@@ -1,5 +1,5 @@
 # This workflow is used to validate pull requests.
-# It includes the Canonical CLA check and engine validation.
+# It includes the Canonical CLA check and package linting.
 name: PR Checks
 on: [pull_request]
 
