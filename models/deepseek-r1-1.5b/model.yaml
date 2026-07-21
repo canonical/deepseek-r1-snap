@@ -2,7 +2,7 @@ name: deepseek-r1-1.5b
 
 description: DeepSeek R1 Distill Qwen 1.5B, a reasoning model distilled from DeepSeek R1
 model-card-url: https://huggingface.co/unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF
-quantization: distill-qwen-q8-0
+quantization: Q8_0
 
 disk-size: 1894M
 
