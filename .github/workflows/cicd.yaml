@@ -25,7 +25,6 @@ jobs:
           ["arm64", "large-extra", "noble", "self-hosted"]
         ]
       
-      build-init-script: 'download-models.sh'
       store-track: latest
       snap-name: deepseek-r1
       smoke-test-engine: cpu
