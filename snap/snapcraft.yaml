@@ -250,8 +250,8 @@ parts:
   llamacpp:
     plugin: dump
     source:
-      - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-amd64.tar.gz
-      - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-arm64.tar.gz
+      - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b10154/llamacpp-amd64.tar.gz
+      - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b10154/llamacpp-arm64.tar.gz
     override-build: |
       # Move license files to be included in the snap, not the component
       mkdir -p $CRAFT_PRIME/usr/share/doc/
@@ -266,8 +266,8 @@ parts:
   llamacpp-cuda:
     plugin: dump
     source:
-      - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-amd64+cuda12.9.tar.gz
-      - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-arm64+cuda12.9.tar.gz
+      - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b10154/llamacpp-amd64+cuda12.9.tar.gz
+      - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b10154/llamacpp-arm64+cuda12.9.tar.gz
     override-build: |
       # Move license files to be included in the snap, not the component
       mkdir -p $CRAFT_PRIME/usr/share/doc/
