@@ -8,7 +8,7 @@ echo "$status_json" > "$STATUS_SHARE/status.json"
 
 # OpenAI endpoint configuration in Open WebUI content sharing format
 rm -f "$OWUI_SHARE/openai.json"
-openai_url=$(echo "$status_json" | jq -r '.endpoints.openai // empty')
+openai_url=$(echo "$status_json" | jq -r '.entrypoints.openai.url // empty')
 if [ -n "$openai_url" ]; then
   mkdir -p "$OWUI_SHARE"
   jq -n \
