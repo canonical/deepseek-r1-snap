@@ -2,7 +2,6 @@
 
 port="$(modelctl get http.port)"
 host="$(modelctl get http.host)"
-min_context_size="$(modelctl get min-context-size)"
 
 extra_args=()
 
@@ -24,6 +23,5 @@ exec llama-server \
   --port "$port" \
   --host "$host" \
   --no-warmup \
-  --fit-ctx "$min_context_size" \
   "${extra_args[@]}" \
   "$@"
