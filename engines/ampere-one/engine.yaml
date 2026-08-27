@@ -27,3 +27,4 @@ model:
 
 configurations:
   sleep-idle-seconds: 600
+  min-context-size: 4096
