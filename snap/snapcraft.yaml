@@ -280,7 +280,7 @@ parts:
       "*": (component/llamacpp-cuda)
 
   llama-aio: &llama-aio-part
-    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.2.0/llama_aio_v3.2.0_3ccc799.tar.gz
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.4.2/llama_aio_v3.4.2_943aee2.tar.gz
     source-type: tar
     plugin: dump
     stage-packages:
@@ -288,22 +288,18 @@ parts:
     organize:
       "LICENSE*.txt": usr/share/doc/llama-aio/
       llama-server: (component/llama-aio)/bin/
-      libllama.so: (component/llama-aio)/lib/
-      "libggml*.so": (component/llama-aio)/lib/
-      libmtmd.so: (component/llama-aio)/lib/
+      "lib*.so*": (component/llama-aio)/lib/
       "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio)/lib/
     prime:
       - -*
 
   llama-aio-ampereone:
     <<: *llama-aio-part
-    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.2.0/llama_aio_v3.2.0_3ccc799_ampereone.tar.gz
+    source: https://github.com/AmpereComputingAI/llama.cpp/releases/download/v3.4.2/llama_aio_v3.4.2_943aee2_ampereone.tar.gz
     organize:
       "LICENSE*.txt": usr/share/doc/llama-aio-ampereone/
       llama-server: (component/llama-aio-ampereone)/bin/
-      libllama.so: (component/llama-aio-ampereone)/lib/
-      "libggml*.so": (component/llama-aio-ampereone)/lib/
-      libmtmd.so: (component/llama-aio-ampereone)/lib/
+      "lib*.so*": (component/llama-aio-ampereone)/lib/
       "usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/": (component/llama-aio-ampereone)/lib/
 
   openvino-model-server:
