@@ -304,7 +304,7 @@ parts:
 
   openvino-model-server:
     plugin: dump
-    source: https://github.com/openvinotoolkit/model_server/releases/download/v2026.2/ovms_ubuntu24_2026.2.0_python_off.tar.gz
+    source: https://github.com/openvinotoolkit/model_server/releases/download/v2026.3.1/ovms_ubuntu24_2026.2.0_python_off.tar.gz
     override-build: |
       if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
         license_dir=$CRAFT_PRIME/usr/share/doc/openvino-model-server
