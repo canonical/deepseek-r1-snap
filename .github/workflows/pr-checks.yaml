@@ -21,4 +21,4 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Lint package
-        uses: canonical/inference-snaps-cli/.github/actions/lint-package@v2.0.0-beta.12
+        uses: canonical/inference-snaps-cli/.github/actions/lint-package@v2.0.0-beta.13
