@@ -15,4 +15,3 @@ components:
 
 environment:
   - MODEL_FILE=$SNAP_COMPONENTS/model-distill-qwen-7b-q4-k-m-gguf/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf
-  - MODEL_NAME=deepseek-r1-distill-qwen-7b-q4-k-m
