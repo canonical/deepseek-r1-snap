@@ -4,6 +4,7 @@ port="$(modelctl get http.port)"
 host="$(modelctl get http.host)"
 sleep_idle_seconds="$(modelctl get sleep-idle-seconds)"
 min_context_size="$(modelctl get min-context-size)"
+model_name=$("$SNAP_NAME" model --format=json | jq -r '.name')
 
 extra_args=()
 
@@ -18,7 +19,7 @@ set -x
 # to reduce resource usage if not needed.
 exec llama-server \
   --model "$MODEL_FILE" \
-  --alias "$MODEL_NAME" \
+  --alias "$model_name" \
   --threads 40 \
   --threads-batch 40 \
   --no-mmap \

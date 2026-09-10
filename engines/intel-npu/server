@@ -5,6 +5,7 @@ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:$SNAP/npu-libs"
 
 port="$(modelctl get http.port)"
 host="$(modelctl get http.host)"
+model_name=$("$SNAP_NAME" model --format=json | jq -r '.name')
 
 extra_args=()
 
@@ -17,7 +18,7 @@ set -x
 ovms \
     --rest_port "$port" \
     --rest_bind_address "$host" \
-    --model_name "$MODEL_NAME" \
+    --model_name "$model_name" \
     --model_path "$MODEL_PATH" \
     --task text_generation \
     --target_device NPU \
