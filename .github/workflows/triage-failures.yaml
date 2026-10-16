@@ -1,0 +1,18 @@
+# This workflow is to triage failures in other workflow runs
+name: Triage Failures
+
+on:
+  workflow_run:
+    workflows:
+      - CICD
+      - PR Label
+    types: [completed]
+
+permissions:
+  actions: write # required to re-run jobs
+
+jobs:
+  triage:
+    uses: canonical/inference-snaps-dev/.github/workflows/reuse-triage-failures.yaml@v2
+    with:
+      workflow-run: "${{ toJson(github.event.workflow_run) }}"
