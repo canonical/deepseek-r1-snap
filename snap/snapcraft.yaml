@@ -155,7 +155,7 @@ parts:
   # OpenCL ICD and libigdgmm are required for Intel GPU vRAM lookup with clinfo
   cli-intel-opencl-icd:
     source: https://github.com/canonical/intel-compute-runtime-bundle.git
-    source-tag: 26.01.36711.4
+    source-tag: 26.22.38646.4
     plugin: make
     make-parameters:
       - BUNDLE=intel-opencl-icd
@@ -321,7 +321,7 @@ parts:
   # For Intel GPU usage, amd64 only
   intel-compute-runtime:
     source: https://github.com/canonical/intel-compute-runtime-bundle.git
-    source-tag: 26.01.36711.4
+    source-tag: 26.22.38646.4
     plugin: make
     make-parameters:
       - BUNDLE=intel-compute-runtime
