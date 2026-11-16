@@ -21,8 +21,8 @@ jobs:
     with:
       build-runner: |
         [
-          ["amd64", "2xlarge-extra", "noble", "self-hosted"],
-          ["arm64", "large-extra", "noble", "self-hosted"]
+          ["amd64", "medium-extra", "noble", "self-hosted"],
+          ["arm64", "medium-extra", "noble", "self-hosted"]
         ]
       
       store-track: latest
