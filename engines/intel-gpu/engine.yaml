@@ -6,6 +6,7 @@ description: |
   It is optimized for a range of Intel GPU families, including:
   - Xe Graphics (Alchemist)
   - Xe2 Graphics (Battlemage)
+  - Alder Lake
   - Raptor Lake
   - Meteor Lake
   - Lunar Lake
@@ -204,6 +205,11 @@ devices:
       vram: 7G
       vendor-id: 0x8086 # Intel
       device-id: 0xe216 # Battlemage G21 [Intel Graphics]
+    # Alder Lake = 12th generation CPUs
+    - type: gpu
+      vram: 7G
+      vendor-id: 0x8086 # Intel
+      device-id: 0x4680 # Alder Lake-S GT1 [UHD Graphics 770]
     # Raptor Lake = 13th and 14th generation CPUs
     - type: gpu
       vram: 7G
